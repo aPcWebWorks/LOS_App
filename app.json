@@ -1,0 +1,10 @@
+{
+  "name": "AndroidProject",
+  "displayName": "AndroidProject",
+  "expo": {
+    "slug": "AndroidProject",
+    "name": "AndroidProject",
+    "sdkVersion": "49.0.0",
+    "entryPoint": ".vscode\\exponentIndex.js"
+  }
+}
