@@ -295,7 +295,7 @@ const LeftSideDrawer = ({navigation}) => {
           {menu?.map((item, index) => {
             return (
               <>
-                <View style={style.menuCollapse} key={index}>
+                <View style={style.menuCollapse} {...index}>
                   <CollapsibleComponent
                     title={item?.title}
                     id={item?.id}
