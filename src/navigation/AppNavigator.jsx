@@ -6,6 +6,8 @@ import {
 } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
+import {useSelector} from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import SignInScreen from '../screens/auth/sign in/SignInScreen.js';
 import Home from '../screens/home/HomeScreen.js';
 import AppDrawer from '../components/Common/drawer/Drawer.js';
@@ -15,8 +17,6 @@ import FinancialSourcingScreen from '../screens/financial-sourcing/FinancialSour
 import {Keyboard, AppState} from 'react-native';
 import ReportsScreen from '../screens/reports/ReportsScreen.js';
 import ProfileScreen from '../screens/profile/ProfileScreen.js';
-import {useSelector} from 'react-redux';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -63,7 +63,7 @@ function StackNavigator() {
         <>
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
-          <Stack.Screen name="business partner" component={BusinessPartner} />
+          <Stack.Screen name="Customer Master" component={BusinessPartner} />
           <Stack.Screen
             name="Financial Sourcing"
             component={FinancialSourcingScreen}

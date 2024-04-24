@@ -18,6 +18,8 @@ axiosInstance.interceptors.request.use(
     const userToken = await AsyncStorage.getItem('token');
     if (userToken) {
       config.headers.Authorization = `Bearer ${userToken}`;
+    } else {
+      delete axiosInstance.defaults.headers.common['Authorization'];
     }
     return config;
   },
@@ -33,8 +35,7 @@ axiosInstance.interceptors.response.use(
     console.log(
       `Your Session is Expire within a ${available_session_time} Seconds.`,
     );
-    if (available_session_time < 0) {
-      AsyncStorage.clear();
+    if (available_session_time < 1) {
       userLogout();
     }
     return response;

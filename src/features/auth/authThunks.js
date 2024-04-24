@@ -35,6 +35,7 @@ const userLogin = createAsyncThunk(
 const userLogout = createAsyncThunk('auth/logout', async () => {
   try {
     await AsyncStorage.clear();
+    delete axiosInstance.defaults.headers.common['Authorization'];
   } catch (error) {
     console.error('Error logging out:', error);
     throw error;

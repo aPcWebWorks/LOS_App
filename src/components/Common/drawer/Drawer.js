@@ -8,15 +8,22 @@ import {
   ScrollView,
   Animated,
   Divider,
+  FlatList,
 } from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import LinearGradient from 'react-native-linear-gradient';
-import {Drawer, useTheme} from 'react-native-paper';
+import {Button, Drawer, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useSelector} from 'react-redux';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5.js';
 
-const CollapsibleComponent = ({id, isOpen, toggle, children, title}) => {
+const CollapsibleComponent = ({
+  id,
+  isOpen,
+  toggle,
+  children,
+  title,
+  ...rest
+}) => {
   const style = colapsedGetStyle(isOpen);
   // animations.
   const [height] = useState(new Animated.Value(isOpen ? 2000 : 0));
@@ -30,7 +37,9 @@ const CollapsibleComponent = ({id, isOpen, toggle, children, title}) => {
   useEffect(() => {
     Animated.parallel([
       Animated.timing(height, {
-        toValue: isOpen ? (id === 1 ? 50 : 0) || 100 : 0,
+        toValue: isOpen
+          ? (id === 1 ? 134 : 0) || (id === 2 ? 48 : 0) || 100
+          : 0,
         duration: 300,
         useNativeDriver: false,
       }),
@@ -53,11 +62,11 @@ const CollapsibleComponent = ({id, isOpen, toggle, children, title}) => {
   });
 
   return (
-    <View style={style.container}>
+    <SafeAreaView style={style.container} {...rest}>
       <TouchableOpacity style={style.listItem} onPress={toggleCollapse}>
         <View style={style.mainNav}>
           <Image
-            source={require('../../../assets/images/businesspartner.png')}
+            source={require('../../../assets/images/financialsourcing.png')}
             style={style.avatar}
           />
           <Text style={style.listTitle}>{title}</Text>
@@ -70,7 +79,7 @@ const CollapsibleComponent = ({id, isOpen, toggle, children, title}) => {
       <Animated.View style={[style.toggleContent, animatedStyle]}>
         {children}
       </Animated.View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -81,6 +90,7 @@ const colapsedGetStyle = isOpen => {
       borderRadius: 6,
       backgroundColor: 'white',
       overflow: 'hidden',
+      marginVertical: 4,
     },
     gradients: {
       borderRadius: 6,
@@ -114,59 +124,149 @@ const colapsedGetStyle = isOpen => {
 
     toggleContent: {
       position: 'relative',
-      // top: 16,
+      top: 6,
     },
   });
 };
 
-const LeftSideDrawer = ({navigation}) => {
+const menu = [
+  {
+    id: 1,
+    title: 'Financial Sourcing',
+    submenu: [
+      {
+        id: 1,
+        title: 'Customer Master',
+      },
+      {
+        id: 2,
+        title: 'Loan Master',
+      },
+      {
+        id: 3,
+        title: 'Loan Status',
+      },
+    ],
+  },
+  {
+    id: 2,
+    title: 'Reports',
+    submenu: [
+      {
+        id: 1,
+        title: 'All Types Reports',
+      },
+    ],
+  },
+];
+
+const Submenu = ({navigation, submenu}) => {
   const [active, setActive] = useState('');
-  const theme = useTheme();
-  const style = getStyle(theme);
-  const {userByScpNumber} = useSelector(state => state.scpUser);
-  const handleDrawerItemClick = (active, screen) => {
+
+  const handleDrawerItemClick = (id, title) => {
     // Keyboard.dismiss();
-    setActive(active);
-    navigation.navigate(screen);
+    setActive(id);
+    navigation.navigate(title);
   };
 
+  return (
+    <>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.hrLine} />
+        <FlatList
+          data={submenu}
+          renderItem={({item}) => (
+            <>
+              <Drawer.Item
+                style={styles.listItem}
+                label={item.title}
+                active={active === item.id}
+                onPress={() => {
+                  handleDrawerItemClick(item.id, item.title);
+                }}
+              />
+            </>
+          )}
+          keyExtractor={item => item.id}
+        />
+      </SafeAreaView>
+    </>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    columnGap: 6,
+  },
+
+  hrLine: {
+    height: '100%',
+    width: 4,
+    backgroundColor: '#e6e6e6',
+    marginLeft: 26,
+  },
+
+  listItem: {
+    width: '100%',
+    marginLeft: 0,
+    marginVertical: 1.5,
+    backgroundColor: 'transparent',
+    height: 40,
+    borderRadius: 0,
+  },
+});
+
+const LeftSideDrawer = ({navigation}) => {
+  const theme = useTheme();
+  const style = getStyle(theme);
+
+  const [active, setActive] = useState('');
   const [openId, setOpenId] = useState(null);
+
+  const {userByScpNumber} = useSelector(state => state.scpUser);
+
+  // const handleDrawerItemClick = (active, screen) => {
+  //   // Keyboard.dismiss();
+  //   setActive(active);
+  //   navigation.navigate(screen);
+  // };
 
   const toggleCollapse = id => {
     setOpenId(openId === id ? null : id);
   };
+
   return (
     <>
-      <View style={style.profileSection}>
-        {/* <View style={style.profile}> */}
-        <Image
-          source={require('../../../assets/images/profile.png')}
-          style={style.profileAvatar}
-        />
-        {/* </View> */}
-        <View style={style.profileInfo}>
-          <Text style={style.profileName}>{userByScpNumber?.scpDetail?.name}</Text>
-          <View style={style.profileRoleSection}>
-            <Text style={style.profileRole}>
-              {userByScpNumber?.scpDetail?.scpNo}
+      <SafeAreaView style={style.container}>
+        <View style={style.profileSection}>
+          <Image
+            source={require('../../../assets/images/profile.png')}
+            style={style.profileAvatar}
+          />
+          <View style={style.profileInfo}>
+            <Text style={style.profileName}>
+              {userByScpNumber?.scpDetail?.name}
             </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-              {/* <FontAwesome5
-                style={style.profileArrowIcon}
-                name="long-arrow-alt-right"
-              /> */}
-              <Icon name="facebook" size={30} color="#900" />
-            </TouchableOpacity>
+            <View style={style.profileRoleSection}>
+              <Text style={style.profileRole}>
+                {userByScpNumber?.scpDetail?.scpNo}
+              </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+                <Icon name="facebook" size={30} color="#900" />
+              </TouchableOpacity>
+            </View>
+            {/* <Button style={style.profileViewButton} mode="contained">Profile</Button> */}
           </View>
-          {/* <Button style={style.profileViewButton} mode="contained">Press me</Button> */}
         </View>
-      </View>
-      <Drawer.Section
-        style={style.container}
-        showDivider={false}
-        // titleMaxFontSizeMultiplier={100}
-      >
-        <CollapsibleComponent
+        <Drawer.Section
+          style={style.container}
+          showDivider={false}
+          // titleMaxFontSizeMultiplier={100}
+        >
+          {/* <CollapsibleComponent
           title="Business Partner"
           id={1}
           isOpen={openId === 1}
@@ -190,8 +290,32 @@ const LeftSideDrawer = ({navigation}) => {
               }}
             />
           }
-        />
-        <Drawer.Item
+        /> */}
+
+          {menu?.map((item, index) => {
+            return (
+              <>
+                <View style={style.menuCollapse} key={index}>
+                  <CollapsibleComponent
+                    title={item?.title}
+                    id={item?.id}
+                    isOpen={openId === item?.id}
+                    toggle={toggleCollapse}
+                    children={
+                      <Submenu
+                        submenu={
+                          (item?.id === 1 && menu[0]?.submenu) ||
+                          (item?.id === 2 && menu[1]?.submenu)
+                        }
+                      />
+                    }
+                  />
+                </View>
+              </>
+            );
+          })}
+
+          {/* <Drawer.Item
           style={style.listItem}
           icon={({color, size}) => (
             <Image
@@ -204,23 +328,9 @@ const LeftSideDrawer = ({navigation}) => {
           onPress={() => {
             handleDrawerItemClick('second', 'Financial Sourcing');
           }}
-        />
-
-        <Drawer.Item
-          style={style.listItem}
-          icon={({color, size}) => (
-            <Image
-              source={require('../../../assets/images/reports.png')}
-              style={style.avatar}
-            />
-          )}
-          label="Reports"
-          active={active === 'third'}
-          onPress={() => {
-            handleDrawerItemClick('third', 'Reports');
-          }}
-        />
-      </Drawer.Section>
+        /> */}
+        </Drawer.Section>
+      </SafeAreaView>
     </>
   );
 };
@@ -228,10 +338,8 @@ const LeftSideDrawer = ({navigation}) => {
 const getStyle = () => {
   return StyleSheet.create({
     container: {
+      flex: 1,
       backgroundColor: '#ecf9ec',
-      paddingVertical: 20,
-      paddingHorizontal: 10,
-      rowGap: 8,
     },
 
     profileSection: {
@@ -252,7 +360,6 @@ const getStyle = () => {
 
     profileInfo: {
       flex: 1,
-      // backgroundColor: 'red',
       marginLeft: 6,
       padding: 8,
       justifyContent: 'center',
@@ -264,27 +371,13 @@ const getStyle = () => {
       color: 'black',
     },
 
-    profileRole: {
-      fontSize: 14,
-      fontWeight: '300',
-      color: 'black',
-    },
-
     profileRoleSection: {
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
 
-    profileArrowIcon: {
-      fontSize: 22,
-      color: 'black',
-    },
-
-    avatar: {
-      width: 35,
-      height: 35,
-      borderRadius: 15,
-      backgroundColor: 'rgba(52 ,52, 52, 0)',
+    menuCollapse: {
+      paddingHorizontal: 10,
     },
 
     listItem: {
@@ -294,19 +387,10 @@ const getStyle = () => {
       backgroundColor: 'white',
       height: 50,
       borderRadius: 6,
-      // justifyContent: 'center',
       paddingLeft: 5,
     },
     label: {
       color: 'black',
-    },
-
-    drawerItem: {
-      background: 'transparent',
-    },
-    bgGradient: {
-      flex: 1,
-      borderRadius: 5,
     },
   });
 };

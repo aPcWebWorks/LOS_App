@@ -6,7 +6,7 @@ import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import authReducer from '../features/auth/authSlice.js';
 import customerMasterReducer from '../features/customer-master/customerMasterSlice.js';
 import scpUserReducer from '../features/scp-user/scpUserSlice.js';
-import { thunk } from 'redux-thunk';
+import {thunk} from 'redux-thunk';
 
 // Combine your reducers
 const rootReducer = combineReducers({
@@ -33,6 +33,10 @@ export const store = configureStore({
   // middleware: (getDefaultMiddleware) => {
   //   return getDefaultMiddleware().concat(thunk);
   // },
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 export const persistor = persistStore(store);

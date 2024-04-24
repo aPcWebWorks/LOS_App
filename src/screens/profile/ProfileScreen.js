@@ -98,10 +98,11 @@ const Profile = ({navigation}) => {
                         style={style.profileAvatar}
                       />
                       <View style={style.profileInfo}>
-                        <Text
-                          style={
-                            style.profileName
-                          }>{`${title?.toUpperCase()}. ${name?.toUpperCase()}`}</Text>
+                        <Text style={style.profileName}>
+                          {title && name
+                            ? `${title.toUpperCase()}.${name.toUpperCase()}`
+                            : 'Unknown SCP'}
+                        </Text>
                         <Text style={style.profileRole}>
                           {userByScpDetails?.scpDetail?.scpNo}
                         </Text>
