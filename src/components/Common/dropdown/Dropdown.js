@@ -115,17 +115,18 @@ const DropdownComponent = ({style, label, options, value, onChange}) => {
   };
   return (
     <View style={[styles.container, style]}>
-      <Text style={styles.label}>{label}</Text>
+      {/* <Text style={styles.label}>{label}</Text> */}
       <Dropdown
         style={[
           styles.dropdown,
           isFocus && {borderColor: 'black'},
+          style
         ]}
         data={options}
         mode="default"
         labelField="label"
         valueField="value"
-        placeholder={<Text style={{color: 'black'}}>Choose</Text>}
+        placeholder={<Text style={{color: 'black'}}>{label}</Text>}
         value={value}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
