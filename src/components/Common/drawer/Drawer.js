@@ -292,11 +292,12 @@ const LeftSideDrawer = ({navigation}) => {
           }
         /> */}
 
-          {menu?.map((item, index) => {
-            return (
-              <>
-                <View style={style.menuCollapse} {...index}>
+          <View style={style.menuCollapse}>
+            {menu?.map((item, index) => {
+              return (
+                <>
                   <CollapsibleComponent
+                    key={index}
                     title={item?.title}
                     id={item?.id}
                     isOpen={openId === item?.id}
@@ -310,11 +311,10 @@ const LeftSideDrawer = ({navigation}) => {
                       />
                     }
                   />
-                </View>
-              </>
-            );
-          })}
-
+                </>
+              );
+            })}
+          </View>
           {/* <Drawer.Item
           style={style.listItem}
           icon={({color, size}) => (
