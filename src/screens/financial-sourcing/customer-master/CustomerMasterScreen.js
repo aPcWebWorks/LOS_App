@@ -5,11 +5,11 @@
 //     StyleSheet,
 //     View,
 //     Text,
-//     Button,  
+//     Button,
 // } from 'react-native';
 // import { Picker } from "@react-native-picker/picker";
 // import { DataTable } from "react-native-paper";
-// import { TouchableOpacity } from "react-native-gesture-handler"; 
+// import { TouchableOpacity } from "react-native-gesture-handler";
 
 // const CustomerMasterScreen= ()=>{
 //     const [selectedCustomerId, selectedCustomerId]=useState();
@@ -28,35 +28,62 @@
 //         {key:3, name:"Rus",mobile:12345678998,email:'rushi@gmail.com',gender:'male',action:'Edit'},
 //         {key:4, name:"John Doe",mobile:12345678945,email:'sharwari@gmail.com',gender:'Female',action:'Edit'},
 //         {key:5, name:"John Doe",mobile:123456789101,email:'shruti@gmail.com',gender:'Female',action:'Edit'},
-        
+
 //     ];
 //     const [page, setPage] = useState(0);
 //     const itemsPerPage = 5;
 //     const from = page * itemsPerPage;
 //     const to = Math.min((page + 1) * itemsPerPage, customerDetails.length);
-  
+
 // }
 
-import React from 'react'
-import { SafeAreaView } from 'react-native'
-import DropdownComponent from 'react-native-element-dropdown/lib/typescript/components/Dropdown'
-import { View } from 'react-native-reanimated/lib/typescript/Animated'
+import React from 'react';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
+import DropdownComponent from '../../../components/Common/dropdown/Dropdown';
+import {Button, Searchbar} from 'react-native-paper';
 
 const Data = [
-    {label: 'Farmer', value: 'farmer'},
-    {label: 'Service', value: 'service'},
-    {label: 'Business', value: 'business'},
-    {label: 'Seller', value: 'seller'},
-  ];
+  {label: 'Name', value: 'name'},
+  {label: 'SCP Number', value: 'scpnumber'},
+  {label: 'Business', value: 'business'},
+];
 
 function CustomerMasterScreen() {
   return (
-    <SafeAreaView>
-        <View>
-            <DropdownComponent label='Select' options={Data} />
-        </View>
+    <SafeAreaView style={style.container}>
+      <View style={style.searchSection}>
+        <DropdownComponent style={style.search} options={Data} />
+        <Button style={style.button} mode="contained">
+          Add New
+        </Button>
+      </View>
+
+      {/* <Searchbar placeholder="Search" /> */}
     </SafeAreaView>
-  )
+  );
 }
 
-export default CustomerMasterScreen
+const style = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 4,
+  },
+  searchSection: {
+    // flex: 1,
+    flexDirection: 'row',
+    columnGap: 50,
+    alignItems: 'center'
+    // backgroundColor: 'yellow',
+  },
+  search: {
+    flex: 2,
+    // flexDirection: 'row',
+    // backgroundColor: 'red',
+  },
+  button: {
+    flex: 1,
+    height: 50,
+    backgroundColor: 'gray',
+  },
+});
+export default CustomerMasterScreen;
