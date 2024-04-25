@@ -181,6 +181,9 @@ const Submenu = ({navigation, submenu}) => {
                 style={styles.listItem}
                 label={item.title}
                 active={active === item.id}
+                // labelStyle={{color: 'white'}}
+                accessibilityLabel={item.title}
+                labelMaxFontSizeMultiplier={100}
                 onPress={() => {
                   handleDrawerItemClick(item.id, item.title);
                 }}
@@ -228,11 +231,11 @@ const LeftSideDrawer = ({navigation}) => {
 
   const {userByScpNumber} = useSelector(state => state.scpUser);
 
-  // const handleDrawerItemClick = (active, screen) => {
-  //   // Keyboard.dismiss();
-  //   setActive(active);
-  //   navigation.navigate(screen);
-  // };
+  const handleDrawerItemClick = (active, screen) => {
+    // Keyboard.dismiss();
+    setActive(active);
+    navigation.navigate(screen);
+  };
 
   const toggleCollapse = id => {
     setOpenId(openId === id ? null : id);
@@ -283,10 +286,10 @@ const LeftSideDrawer = ({navigation}) => {
               active={active === 'first'}
               label="SCP(ATBC) Profile"
               labelStyle={{color: 'white'}}
-              accessibilityLabel="Business Partner"
+              accessibilityLabel="Customer Master"
               labelMaxFontSizeMultiplier={100}
               onPress={() => {
-                handleDrawerItemClick('first', 'business partner');
+                handleDrawerItemClick('first', 'Customer Master');
               }}
             />
           }
@@ -308,6 +311,7 @@ const LeftSideDrawer = ({navigation}) => {
                           (item?.id === 1 && menu[0]?.submenu) ||
                           (item?.id === 2 && menu[1]?.submenu)
                         }
+                        navigation={navigation}
                       />
                     }
                   />

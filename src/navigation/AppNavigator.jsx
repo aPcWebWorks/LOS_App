@@ -64,11 +64,13 @@ function StackNavigator() {
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="Customer Master" component={BusinessPartner} />
-          <Stack.Screen
+          <Stack.Screen name="Loan Master" component={BusinessPartner} />
+          <Stack.Screen name="Loan Status" component={BusinessPartner} />
+          {/* <Stack.Screen
             name="Financial Sourcing"
             component={FinancialSourcingScreen}
-          />
-          <Stack.Screen name="Reports" component={ReportsScreen} />
+          /> */}
+          <Stack.Screen name="All Types Reports" component={ReportsScreen} />
         </>
       ) : (
         <Stack.Screen
