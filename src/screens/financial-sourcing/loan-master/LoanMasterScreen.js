@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
 
 import {
   Modal,
@@ -19,56 +19,108 @@ const Data = [
 const scpLoanStatusObj = [
   {
     id: 1,
-    label: 'Education',
+    label: 'Label',
     value: 'Value',
   },
   {
     id: 2,
-    label: 'Occupation',
+    label: 'Label',
+    value: 'Value',
+  },
+  {
+    id: 1,
+    label: 'Label',
+    value: 'Value',
+  },
+  {
+    id: 2,
+    label: 'Label',
     value: 'Value',
   },
 ];
 
+const scpLoanStatusDropdoenObj = [
+  {
+    id: 1,
+    label: 'Select Customer',
+    options: scpLoanStatusObj,
+  },
+  {
+    id: 1,
+    label: 'Select User',
+    options: scpLoanStatusObj,
+  },
+  {
+    id: 1,
+    label: 'Select SCP',
+    options: scpLoanStatusObj,
+  },
+  {
+    id: 1,
+    label: 'Select SCP',
+    options: scpLoanStatusObj,
+  },
+];
 const LoanGenerationForm = ({setToggleLoanForm}) => {
   const handleStack = () => {
     setToggleLoanForm(false);
   };
 
+  const handleCancel = () => {
+    setToggleLoanForm(false);
+  };
   return (
     <>
       <SafeAreaView>
-        {scpLoanStatusObj.map((item, index) => {
-          return (
-            <>
-              <View style={[styles.row, styles.rowTopMargin]} key={index}>
-                <View style={styles.widthFifty}>
-                  <Text style={styles.lebel}>{item.label}</Text>
-                  <Text style={styles.textValue}>
-                    {/* {userByScpDetails?.scpDetail?.education || 'NA'} */}
-                    {item.value}
-                  </Text>
-                </View>
+        <ScrollView>
+          <View style={styles.row}>
+            {scpLoanStatusObj.map((item, index) => {
+              return (
+                <>
+                  <View style={styles.inputText} key={index}>
+                    <Text style={styles.lebel}>{item.label}</Text>
+                    <Text style={styles.textValue}>
+                      {/* {userByScpDetails?.scpDetail?.education || 'NA'} */}
+                      {item.value}
+                    </Text>
+                  </View>
+                </>
+              );
+            })}
+          </View>
 
-                <View style={styles.widthFifty}>
-                  <Text style={styles.lebel}>{item.label}</Text>
-                  <Text style={styles.textValue}>
-                    {/* {userByScpDetails?.scpDetail?.occupation || 'NA'} */}
-                    {item.value}
-                  </Text>
-                </View>
-              </View>
-            </>
-          );
-        })}
+          <View style={styles.dropdownGroup}>
+            {scpLoanStatusDropdoenObj?.map((item, index) => {
+              return (
+                <DropdownComponent
+                  style={style.dropdown}
+                  label={item.label}
+                  options={Data}
+                />
+              );
+            })}
+          </View>
 
-        <Button
-          style={style.modalButton}
-          mode="contained"
-          dark={true}
-          textColor="white"
-          onPress={handleStack}>
-          Submit
-        </Button>
+          <View style={styles.buttonGroup}>
+            <Button
+              style={styles.button}
+              mode="contained"
+              dark={true}
+              textColor="white"
+              onPress={handleStack}>
+              <Text style={styles.buttonLebel}>Submit</Text>
+            </Button>
+
+            <Button
+              style={styles.button}
+              mode="contained"
+              dark={true}
+              textColor="white"
+              onPress={handleCancel}>
+              <Text style={styles.buttonLebel}>Cancel</Text>
+            </Button>
+          </View>
+        </ScrollView>
       </SafeAreaView>
     </>
   );
@@ -76,18 +128,23 @@ const LoanGenerationForm = ({setToggleLoanForm}) => {
 
 const styles = StyleSheet.create({
   row: {
+    display: 'flex',
     flexDirection: 'row',
-    // alignItems: 'center',
+    columnGap: 7,
+    rowGap: 20,
+    flexWrap: 'wrap',
+    padding: 15,
   },
-  rowTopMargin: {
-    marginTop: 20,
-  },
+
+  inputText: {width: '49%'},
+
   lebel: {
     fontWeight: '400',
     fontSize: 13,
     letterSpacing: 0.8,
     color: 'black',
   },
+
   textValue: {
     fontSize: 16,
     color: 'black',
@@ -95,16 +152,28 @@ const styles = StyleSheet.create({
     // marginLeft: 4,
     marginTop: 4,
   },
-  widthFifty: {
-    width: '50%',
+
+  dropdownGroup: {
+    marginTop: 20,
+    rowGap: 10,
   },
 
-  modalButton: {
+  buttonGroup: {
+    marginTop: 30,
+    rowGap: 15,
+  },
+
+  button: {
     borderRadius: 4,
     backgroundColor: 'green',
-    height: 55,
+    height: 50,
     justifyContent: 'center',
-    marginTop: 20,
+    // marginTop: 10,
+  },
+
+  buttonLebel: {
+    fontSize: 18,
+    fontWeight: '600',
   },
 });
 
