@@ -7,12 +7,14 @@ import authReducer from '../features/auth/authSlice.js';
 import customerMasterReducer from '../features/customer-master/customerMasterSlice.js';
 import scpUserReducer from '../features/scp-user/scpUserSlice.js';
 import {thunk} from 'redux-thunk';
+import loanMasterReducer from '../features/loan-master/loanMasterSlice.js';
 
 // Combine your reducers
 const rootReducer = combineReducers({
   auth: authReducer,
   customerMaster: customerMasterReducer,
   scpUser: scpUserReducer,
+  loanMaster: loanMasterReducer,
 });
 
 // Configuration for redux-persist

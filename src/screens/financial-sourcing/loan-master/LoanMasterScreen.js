@@ -1,14 +1,23 @@
-import React, {useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
-
+import React, {useEffect, useState} from 'react';
+import {
+  FlatList,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {
   Modal,
   Portal,
   Button,
   PaperProvider,
   Searchbar,
+  DataTable,
 } from 'react-native-paper';
 import DropdownComponent from '../../../components/Common/dropdown/Dropdown';
+import {useDispatch, useSelector} from 'react-redux';
+import {loanMasterHandler} from '../../../features/loan-master/loanMasterThunk';
 
 const Data = [
   {label: 'Name', value: 'name'},
@@ -61,6 +70,74 @@ const scpLoanStatusDropdoenObj = [
     options: scpLoanStatusObj,
   },
 ];
+
+const customers = [
+  {
+    id: 1,
+    name: 'John Doe',
+    scpnumber: 'SCP123',
+    business: 'Tech',
+    email: 'john@gmail.com',
+    mobilenumber: '87967645353',
+  },
+  {
+    id: 2,
+    name: 'Jonas Smith',
+    scpnumber: 'SCP456',
+    business: 'Retail',
+    email: 'jonas@gmail.com',
+    mobilenumber: '87967645355',
+  },
+  {
+    id: 3,
+    name: 'Ram',
+    scpnumber: 'SCP456',
+    business: 'Retail',
+    email: 'jonas@gmail.com',
+    mobilenumber: '87967645355',
+  },
+  {
+    id: 4,
+    name: 'Mackwin',
+    scpnumber: 'SCP456',
+    business: 'Retail',
+    email: 'jonas@gmail.com',
+    mobilenumber: '87967645355',
+  },
+  {
+    id: 4,
+    name: 'Mackwin',
+    scpnumber: 'SCP456',
+    business: 'Retail',
+    email: 'jonas@gmail.com',
+    mobilenumber: '87967645355',
+  },
+  {
+    id: 4,
+    name: 'Mackwin',
+    scpnumber: 'SCP456',
+    business: 'Retail',
+    email: 'jonas@gmail.com',
+    mobilenumber: '87967645355',
+  },
+  {
+    id: 4,
+    name: 'Mackwin',
+    scpnumber: 'SCP456',
+    business: 'Retail',
+    email: 'jonas@gmail.com',
+    mobilenumber: '87967645355',
+  },
+  {
+    id: 4,
+    name: 'Mackwin',
+    scpnumber: 'SCP456',
+    business: 'Retail',
+    email: 'jonas@gmail.com',
+    mobilenumber: '87967645355',
+  },
+];
+
 const LoanGenerationForm = ({setToggleLoanForm}) => {
   const handleStack = () => {
     setToggleLoanForm(false);
@@ -69,6 +146,7 @@ const LoanGenerationForm = ({setToggleLoanForm}) => {
   const handleCancel = () => {
     setToggleLoanForm(false);
   };
+
   return (
     <>
       <SafeAreaView>
@@ -175,6 +253,24 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
+
+  tableHeader: {
+    backgroundColor: '#ecf9ec',
+  },
+  columnHeader: {
+    justifyContent: 'center',
+  },
+  tableTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  tableRow: {
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+  },
+  tableCell: {
+    justifyContent: 'center',
+  },
 });
 
 const LoanMasterScreen = ({navigation}) => {
@@ -182,6 +278,14 @@ const LoanMasterScreen = ({navigation}) => {
   const [modalSearchQuery, setModalSearchQuery] = useState('');
   const [visible, setVisible] = useState(false);
   const [toggleLoanForm, setToggleLoanForm] = useState(false);
+
+  const dispatch = useDispatch();
+  const {loan} = useSelector(state => state.loanMaster);
+
+  useEffect(() => {
+    console.log('loan masetr screen', loan?.records?.record);
+    dispatch(loanMasterHandler());
+  }, [dispatch]);
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -191,87 +295,186 @@ const LoanMasterScreen = ({navigation}) => {
     setVisible(false);
   };
 
+  const numberOfCustomersPerPageList = [2, 3, 4];
+
+  const [page, setPage] = React.useState(0);
+  const [numberOfCustomersPerPage, onCustomersPerPageChange] = React.useState(
+    numberOfCustomersPerPageList[0],
+  );
+  const from = page * numberOfCustomersPerPage;
+  const to = Math.min((page + 1) * numberOfCustomersPerPage, customers.length);
+
+  React.useEffect(() => {
+    setPage(0);
+  }, [numberOfCustomersPerPage]);
+
   return (
-    <PaperProvider>
-      <SafeAreaView style={style.container}>
-        {!toggleLoanForm ? (
-          <>
-            <Portal>
-              <Modal
-                visible={!toggleLoanForm ? visible : hide}
-                onDismiss={hideModal}
-                // dismissable={false}
-                dismissableBackButton={false}
-                contentContainerStyle={style.modal}>
-                <Text style={style.modalText}>SCP NO. : SCP000300</Text>
+    <SafeAreaView style={style.container}>
+      <PaperProvider>
+        <ScrollView style={style.scrollview}>
+          {!toggleLoanForm ? (
+            <>
+              <View style={{rowGap: 10}}>
+                <Portal>
+                  <Modal
+                    visible={!toggleLoanForm ? visible : hide}
+                    onDismiss={hideModal}
+                    // dismissable={false}
+                    dismissableBackButton={false}
+                    contentContainerStyle={style.modal}>
+                    <Text style={style.modalText}>SCP NO. : SCP000300</Text>
 
-                <View style={style.modalSection}>
-                  <DropdownComponent
-                    style={style.dropdown}
-                    label="Select Customer"
-                    options={Data}
-                  />
+                    <View style={style.modalSection}>
+                      <DropdownComponent
+                        style={style.dropdown}
+                        label="Select Customer"
+                        options={Data}
+                      />
 
+                      <Searchbar
+                        style={style.modalSearchBar}
+                        placeholder="Search"
+                        onChangeText={setModalSearchQuery}
+                        value={modalSearchQuery}
+                        mode="bar"
+                      />
+
+                      <Button
+                        style={style.modalButton}
+                        mode="contained"
+                        dark={true}
+                        textColor="white"
+                        onPress={handleSearchCustomer}>
+                        Search Customer
+                      </Button>
+                    </View>
+                  </Modal>
+                </Portal>
+                <View style={style.elementGroup}>
                   <Searchbar
-                    style={style.modalSearchBar}
+                    style={style.search}
                     placeholder="Search"
-                    onChangeText={setModalSearchQuery}
-                    value={modalSearchQuery}
+                    onChangeText={setSearchQuery}
+                    value={searchQuery}
                     mode="bar"
                   />
 
                   <Button
-                    style={style.modalButton}
+                    style={style.button}
                     mode="contained"
                     dark={true}
                     textColor="white"
-                    onPress={handleSearchCustomer}>
-                    Search Customer
+                    onPress={showModal}>
+                    Add New
                   </Button>
                 </View>
-              </Modal>
-            </Portal>
-            <View style={style.elementGroup}>
-              <Searchbar
-                style={style.search}
-                placeholder="Search"
-                onChangeText={setSearchQuery}
-                value={searchQuery}
-                mode="bar"
-              />
 
-              <Button
-                style={style.button}
-                mode="contained"
-                dark={true}
-                textColor="white"
-                onPress={showModal}>
-                Add New
-              </Button>
-            </View>
-          </>
-        ) : (
-          <LoanGenerationForm
-            navigation={navigation}
-            setToggleLoanForm={setToggleLoanForm}
-          />
-        )}
-      </SafeAreaView>
-    </PaperProvider>
+                <View style={style.table}>
+                  <ScrollView horizontal>
+                    <DataTable>
+                      {/* Table Header */}
+                      <DataTable.Header style={styles.tableHeader}>
+                        <DataTable.Title style={styles.columnHeader} width={15}>
+                          <Text style={styles.tableTitle}>ID</Text>
+                        </DataTable.Title>
+                        <DataTable.Title
+                          style={styles.columnHeader}
+                          width={150}>
+                          <Text style={styles.tableTitle}>Vi. Ref. No.</Text>
+                        </DataTable.Title>
+                        <DataTable.Title
+                          style={styles.columnHeader}
+                          width={100}>
+                          <Text style={styles.tableTitle}>Loan Type ID.</Text>
+                        </DataTable.Title>
+                        <DataTable.Title
+                          style={styles.columnHeader}
+                          width={200}>
+                          <Text style={styles.tableTitle}>Loan Amount</Text>
+                        </DataTable.Title>
+                        <DataTable.Title
+                          style={styles.columnHeader}
+                          width={100}>
+                          <Text style={styles.tableTitle}>Action</Text>
+                        </DataTable.Title>
+                      </DataTable.Header>
+
+                      {/* Table Rows */}
+                      <FlatList
+                        data={loan?.records?.record}
+                        renderItem={({item}) => (
+                          <DataTable.Row style={styles.tableRow}>
+                            <DataTable.Cell style={styles.tableCell} width={15}>
+                              {item?.response?.id}
+                            </DataTable.Cell>
+                            <DataTable.Cell
+                              style={styles.tableCell}
+                              width={150}>
+                              {item?.response?.virefno}
+                            </DataTable.Cell>
+                            <DataTable.Cell
+                              style={styles.tableCell}
+                              width={100}>
+                              {item?.response?.loanTypeId}
+                            </DataTable.Cell>
+                            <DataTable.Cell
+                              style={styles.tableCell}
+                              width={200}>
+                              {item?.response?.loanAmount}
+                            </DataTable.Cell>
+                            <DataTable.Cell
+                              style={styles.tableCell}
+                              width={100}>
+                              <Text>Update</Text>
+                              <Text>Edit</Text>
+                            </DataTable.Cell>
+                          </DataTable.Row>
+                        )}
+                        keyExtractor={item => item.id}
+                      />
+                    </DataTable>
+                  </ScrollView>
+                  <DataTable>
+                    <DataTable.Pagination
+                      page={page}
+                      numberOfPages={Math.ceil(
+                        customers.length / numberOfCustomersPerPage,
+                      )}
+                      onPageChange={page => setPage(page)}
+                      label={`${from + 5}-${to} of ${customers.length}`}
+                      showFastPaginationControls
+                      numberOfItemsPerPageList={numberOfCustomersPerPageList}
+                      numberOfItemsPerPage={numberOfCustomersPerPage}
+                      onItemsPerPageChange={onCustomersPerPageChange}
+                      selectPageDropdownLabel={'Rows per page'}
+                    />
+                  </DataTable>
+                </View>
+              </View>
+            </>
+          ) : (
+            <LoanGenerationForm
+              navigation={navigation}
+              setToggleLoanForm={setToggleLoanForm}
+            />
+          )}
+        </ScrollView>
+      </PaperProvider>
+    </SafeAreaView>
   );
 };
 
 const style = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
     backgroundColor: 'white',
   },
+
+  scrollview: {padding: 4},
 
   elementGroup: {
     // width: '100%',
     flexDirection: 'row',
-    // backgroundColor: 'red',
     columnGap: 10,
     // height: 40,
   },
@@ -292,6 +495,8 @@ const style = StyleSheet.create({
   },
 
   dropdown: {backgroundColor: '#ecf9ec', borderWidth: 0, height: 55},
+
+  table: {backgroundColor: 'white'},
 
   modal: {
     backgroundColor: 'white',
