@@ -283,7 +283,7 @@ const LoanMasterScreen = ({navigation}) => {
   const {loan} = useSelector(state => state.loanMaster);
 
   useEffect(() => {
-    console.log('loan masetr screen', loan?.records?.record);
+    // console.log('loan masetr screen', loan?.records?.record);
     dispatch(loanMasterHandler());
   }, [dispatch]);
 
