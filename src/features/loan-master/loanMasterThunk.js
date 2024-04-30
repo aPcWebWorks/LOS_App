@@ -6,9 +6,10 @@ const loanMasterHandler = createAsyncThunk(
   async (_id, {rejectWithValue}) => {
     try {
       const {data} = await axiosInstance.get(
-        'http://192.168.29.113:8589/api/v1/los/loan/master?pageNumber=1&pageSize=8',
+        'http://192.168.29.113:8589/api/v1/los/loan/master?pageNumber=1&pageSize=9',
+        // 'http://192.168.29.113:8589/api/v1/los/loan/master'
       );
-    //   console.log("Loan Master Handler", data?.records?.record[0]?.response);
+      //   console.log("Loan Master Handler", data?.records?.record[0]?.response);
       return data;
     } catch (error) {
       if (error.response && error.response.data.message) {

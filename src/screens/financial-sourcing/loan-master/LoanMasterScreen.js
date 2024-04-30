@@ -18,6 +18,7 @@ import {
 import DropdownComponent from '../../../components/Common/dropdown/Dropdown';
 import {useDispatch, useSelector} from 'react-redux';
 import {loanMasterHandler} from '../../../features/loan-master/loanMasterThunk';
+import {filterHandler} from '../../../features/loan-master/loanMasterSlice';
 
 const Data = [
   {label: 'Name', value: 'name'},
@@ -253,37 +254,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
-
-  tableHeader: {
-    backgroundColor: '#ecf9ec',
-  },
-  columnHeader: {
-    justifyContent: 'center',
-  },
-  tableTitle: {
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  tableRow: {
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-  },
-  tableCell: {
-    justifyContent: 'center',
-  },
 });
 
 const LoanMasterScreen = ({navigation}) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState();
   const [modalSearchQuery, setModalSearchQuery] = useState('');
   const [visible, setVisible] = useState(false);
   const [toggleLoanForm, setToggleLoanForm] = useState(false);
 
   const dispatch = useDispatch();
-  const {loan} = useSelector(state => state.loanMaster);
+  const {loan, filteredData} = useSelector(state => state.loanMaster);
+  const _data = loan?.records?.record;
 
   useEffect(() => {
-    // console.log('loan masetr screen', loan?.records?.record);
     dispatch(loanMasterHandler());
   }, [dispatch]);
 
@@ -295,6 +278,12 @@ const LoanMasterScreen = ({navigation}) => {
     setVisible(false);
   };
 
+  const onChangeHandler = async text => {
+    await setSearchQuery(text);
+    dispatch(filterHandler({value: searchQuery}));
+    // console.log(searchQuery)
+  };
+
   const numberOfCustomersPerPageList = [2, 3, 4];
 
   const [page, setPage] = React.useState(0);
@@ -304,7 +293,7 @@ const LoanMasterScreen = ({navigation}) => {
   const from = page * numberOfCustomersPerPage;
   const to = Math.min((page + 1) * numberOfCustomersPerPage, customers.length);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setPage(0);
   }, [numberOfCustomersPerPage]);
 
@@ -354,7 +343,7 @@ const LoanMasterScreen = ({navigation}) => {
                   <Searchbar
                     style={style.search}
                     placeholder="Search"
-                    onChangeText={setSearchQuery}
+                    onChangeText={item => onChangeHandler(item)}
                     value={searchQuery}
                     mode="bar"
                   />
@@ -373,60 +362,58 @@ const LoanMasterScreen = ({navigation}) => {
                   <ScrollView horizontal>
                     <DataTable>
                       {/* Table Header */}
-                      <DataTable.Header style={styles.tableHeader}>
-                        <DataTable.Title style={styles.columnHeader} width={15}>
-                          <Text style={styles.tableTitle}>ID</Text>
+                      <DataTable.Header style={style.tableHeader}>
+                        <DataTable.Title style={style.columnHeader} width={15}>
+                          <Text style={style.tableTitle}>ID</Text>
                         </DataTable.Title>
-                        <DataTable.Title
-                          style={styles.columnHeader}
-                          width={150}>
-                          <Text style={styles.tableTitle}>Vi. Ref. No.</Text>
+                        <DataTable.Title style={style.columnHeader} width={150}>
+                          <Text style={style.tableTitle}>Vi. Ref. No.</Text>
                         </DataTable.Title>
-                        <DataTable.Title
-                          style={styles.columnHeader}
-                          width={100}>
-                          <Text style={styles.tableTitle}>Loan Type ID.</Text>
+                        <DataTable.Title style={style.columnHeader} width={100}>
+                          <Text style={style.tableTitle}>Loan Type ID.</Text>
                         </DataTable.Title>
-                        <DataTable.Title
-                          style={styles.columnHeader}
-                          width={200}>
-                          <Text style={styles.tableTitle}>Loan Amount</Text>
+                        <DataTable.Title style={style.columnHeader} width={200}>
+                          <Text style={style.tableTitle}>Loan Amount</Text>
                         </DataTable.Title>
-                        <DataTable.Title
-                          style={styles.columnHeader}
-                          width={100}>
-                          <Text style={styles.tableTitle}>Action</Text>
+                        <DataTable.Title style={style.columnHeader} width={150}>
+                          <Text style={style.tableTitle}>Action</Text>
                         </DataTable.Title>
                       </DataTable.Header>
 
                       {/* Table Rows */}
                       <FlatList
-                        data={loan?.records?.record}
-                        renderItem={({item}) => (
-                          <DataTable.Row style={styles.tableRow}>
-                            <DataTable.Cell style={styles.tableCell} width={15}>
-                              {item?.response?.id}
+                        data={_data}
+                        renderItem={({item, index}) => (
+                          <DataTable.Row style={style.tableRow}>
+                            <DataTable.Cell style={style.tableCell} width={15}>
+                              {index + 1}
                             </DataTable.Cell>
-                            <DataTable.Cell
-                              style={styles.tableCell}
-                              width={150}>
+                            <DataTable.Cell style={style.tableCell} width={150}>
                               {item?.response?.virefno}
                             </DataTable.Cell>
-                            <DataTable.Cell
-                              style={styles.tableCell}
-                              width={100}>
+                            <DataTable.Cell style={style.tableCell} width={100}>
                               {item?.response?.loanTypeId}
                             </DataTable.Cell>
-                            <DataTable.Cell
-                              style={styles.tableCell}
-                              width={200}>
+                            <DataTable.Cell style={style.tableCell} width={200}>
                               {item?.response?.loanAmount}
                             </DataTable.Cell>
-                            <DataTable.Cell
-                              style={styles.tableCell}
-                              width={100}>
-                              <Text>Update</Text>
-                              <Text>Edit</Text>
+                            <DataTable.Cell style={style.tableCell} width={150}>
+                              <View style={style.actionButtonGroup}>
+                                <Button
+                                  style={style.button}
+                                  mode="contained"
+                                  dark={true}
+                                  textColor="white">
+                                  Ud
+                                </Button>
+                                <Button
+                                  style={style.button}
+                                  mode="contained"
+                                  dark={true}
+                                  textColor="white">
+                                  Dl
+                                </Button>
+                              </View>
                             </DataTable.Cell>
                           </DataTable.Row>
                         )}
@@ -520,6 +507,32 @@ const style = StyleSheet.create({
   },
 
   modalSearchBar: {borderRadius: 4, backgroundColor: '#ecf9ec'},
+
+  tableHeader: {
+    backgroundColor: '#ecf9ec',
+  },
+  columnHeader: {
+    justifyContent: 'center',
+  },
+  tableTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  tableRow: {
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+  },
+  tableCell: {
+    justifyContent: 'center',
+  },
+
+  actionButtonGroup: {
+    flexDirection: 'row',
+    columnGap: 4,
+    // backgroundColor: 'cyan'
+  },
+
+  actionButton: {},
 });
 
 export default LoanMasterScreen;
