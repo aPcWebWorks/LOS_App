@@ -1,137 +1,58 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaView, StyleSheet, View, ScrollView, Text} from 'react-native';
 import {Button, Searchbar, DataTable} from 'react-native-paper';
 import DropdownComponent from '../../../components/Common/dropdown/Dropdown';
-
-const Data = [
-  {label: 'Name', value: 'name'},
-  {label: 'SCP Number', value: 'scpnumber'},
-  {label: 'Business', value: 'business'},
-];
-
-const customers = [
-  {
-    id: 1,
-    name: 'John Doe',
-    scpnumber: 'SCP123',
-    business: 'Tech',
-    email: 'john@gmail.com',
-    mobilenumber: '87967645353',
-  },
-  {
-    id: 2,
-    name: 'Jonas Smith',
-    scpnumber: 'SCP456',
-    business: 'Retail',
-    email: 'jonas@gmail.com',
-    mobilenumber: '87967645355',
-  },
-  {
-    id: 3,
-    name: 'Ram',
-    scpnumber: 'SCP456',
-    business: 'Retail',
-    email: 'jonas@gmail.com',
-    mobilenumber: '87967645355',
-  },
-  {
-    id: 4,
-    name: 'Mackwin',
-    scpnumber: 'SCP456',
-    business: 'Retail',
-    email: 'jonas@gmail.com',
-    mobilenumber: '87967645355',
-  },
-  {
-    id: 4,
-    name: 'Mackwin',
-    scpnumber: 'SCP456',
-    business: 'Retail',
-    email: 'jonas@gmail.com',
-    mobilenumber: '87967645355',
-  },
-  {
-    id: 4,
-    name: 'Mackwin',
-    scpnumber: 'SCP456',
-    business: 'Retail',
-    email: 'jonas@gmail.com',
-    mobilenumber: '87967645355',
-  },
-  {
-    id: 4,
-    name: 'Mackwin',
-    scpnumber: 'SCP456',
-    business: 'Retail',
-    email: 'jonas@gmail.com',
-    mobilenumber: '87967645355',
-  },
-  {
-    id: 4,
-    name: 'Mackwin',
-    scpnumber: 'SCP456',
-    business: 'Retail',
-    email: 'jonas@gmail.com',
-    mobilenumber: '87967645355',
-  },
-  {
-    id: 4,
-    name: 'Mackwin',
-    scpnumber: 'SCP456',
-    business: 'Retail',
-    email: 'jonas@gmail.com',
-    mobilenumber: '87967645355',
-  },
-  {
-    id: 4,
-    name: 'Mackwin',
-    scpnumber: 'SCP456',
-    business: 'Retail',
-    email: 'jonas@gmail.com',
-    mobilenumber: '87967645355',
-  },
-];
-
-// const ITEMS_PER_PAGE = 5;
-const numberOfCustomersPerPageList = [2, 3, 4];
+import {useDispatch, useSelector} from 'react-redux';
+import {customerMasterHandler} from '../../../features/customer-master/customerMasterThunk';
+import {FlatList} from 'react-native-gesture-handler';
 
 const CustomerMasterScreen = () => {
+  const dispatch = useDispatch();
+  const {customer} = useSelector(state => state.customerMaster);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [numberOfCustomersPerPage, setNumberOfCustomersPerPage] = useState(10);
 
-  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    dispatch(customerMasterHandler());
+  }, [dispatch]);
 
-  const showModal = () => setVisible(true);
+  const handleSearch = query => {
+    setSearchQuery(query);
+  };
 
-  // Filtered customers based on search query
-  const filteredCustomers = customers.filter(
-    customer =>
-      customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      customer.email.toLowerCase().includes(searchQuery.toLowerCase()),
+  const handlePageChange = pageNumber => {
+    setCurrentPage(pageNumber);
+  };
+
+  const renderCustomerItem = (item, index) => (
+    <>
+    <DataTable.Row key={index}>
+      <DataTable.Cell>
+        {(currentPage - 1) * numberOfCustomersPerPage + index + 1}
+      </DataTable.Cell>
+      <DataTable.Cell style={styles.tableCell} width={70}>
+        {item?.externalCustomerId}
+      </DataTable.Cell>
+      <DataTable.Cell style={styles.tableCell} width={100}>
+        {item?.customerName}
+      </DataTable.Cell>
+      <DataTable.Cell style={styles.tableCell} width={100}>
+        {item?.mobileNumber}
+      </DataTable.Cell>
+      <DataTable.Cell style={styles.tableCell} width={120}>
+        {item?.email}
+      </DataTable.Cell>
+      <DataTable.Cell style={styles.tableCell} width={100}>
+        {item?.gender}
+      </DataTable.Cell>
+      <DataTable.Cell style={styles.tableCell} width={100}>
+        <Text>Update</Text>
+        <Text>Edit</Text>
+      </DataTable.Cell>
+    </DataTable.Row>
+    </>
   );
-
-  // // Pagination logic
-  // const totalItems = filteredCustomers.length;
-  // const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-
-  // const paginatedCustomers = filteredCustomers.slice(
-  //   (currentPage - 1) * ITEMS_PER_PAGE,
-  //   currentPage * ITEMS_PER_PAGE
-  // );
-
-  // const handlePageChange = page => {
-  //   setCurrentPage(page);
-  // };
-  const [page, setPage] = React.useState(0);
-  const [numberOfCustomersPerPage, onCustomersPerPageChange] = React.useState(
-    numberOfCustomersPerPageList[0],
-  );
-  const from = page * numberOfCustomersPerPage;
-  const to = Math.min((page + 1) * numberOfCustomersPerPage, customers.length);
-
-  React.useEffect(() => {
-    setPage(0);
-  }, [numberOfCustomersPerPage]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -142,7 +63,7 @@ const CustomerMasterScreen = () => {
             <DropdownComponent
               style={styles.dropdown}
               label="Select Customer"
-              options={Data}
+              options={[]}
             />
 
             <Button
@@ -150,7 +71,7 @@ const CustomerMasterScreen = () => {
               mode="contained"
               dark={true}
               textColor="white"
-              onPress={showModal}>
+              onPress={() => console.log('Add New clicked')}>
               Add New
             </Button>
           </View>
@@ -159,72 +80,64 @@ const CustomerMasterScreen = () => {
           <Searchbar
             style={styles.search}
             placeholder="Search"
-            onChangeText={setSearchQuery}
+            onChangeText={handleSearch}
             value={searchQuery}
             mode="bar"
           />
 
           {/* DataTable with pagination */}
-          <View>
-            <ScrollView horizontal>
-              <DataTable>
-                {/* Table Header */}
-                <DataTable.Header style={styles.tableHeader}>
-                  <DataTable.Title style={styles.columnHeader} width={15}>
-                    <Text style={styles.tableTitle}>ID</Text>
-                  </DataTable.Title>
-                  <DataTable.Title style={styles.columnHeader} width={200}>
-                    <Text style={styles.tableTitle}>Name</Text>
-                  </DataTable.Title>
-                  <DataTable.Title style={styles.columnHeader} width={100}>
-                    <Text style={styles.tableTitle}>SCP No.</Text>
-                  </DataTable.Title>
-                  <DataTable.Title style={styles.columnHeader} width={200}>
-                    <Text style={styles.tableTitle}>Email</Text>
-                  </DataTable.Title>
-                  <DataTable.Title style={styles.columnHeader} width={100}>
-                    <Text style={styles.tableTitle}>Mobile No.</Text>
-                  </DataTable.Title>
-                </DataTable.Header>
-
-                {/* Table Rows */}
-                {customers?.map((customer, index) => (
-                  <DataTable.Row style={styles.tableRow} key={index}>
-                    <DataTable.Cell style={styles.tableCell} width={15}>
-                      {customer.id}
-                    </DataTable.Cell>
-                    <DataTable.Cell style={styles.tableCell} width={200}>
-                      {customer.name}
-                    </DataTable.Cell>
-                    <DataTable.Cell style={styles.tableCell} width={100}>
-                      {customer.scpnumber}
-                    </DataTable.Cell>
-                    <DataTable.Cell style={styles.tableCell} width={200}>
-                      {customer.email}
-                    </DataTable.Cell>
-                    <DataTable.Cell style={styles.tableCell} width={100}>
-                      {customer.mobilenumber}
-                    </DataTable.Cell>
-                  </DataTable.Row>
-                ))}
-              </DataTable>
-            </ScrollView>
+          <ScrollView horizontal>
             <DataTable>
-              <DataTable.Pagination
-                page={page}
-                numberOfPages={Math.ceil(
-                  customers.length / numberOfCustomersPerPage,
-                )}
-                onPageChange={page => setPage(page)}
-                label={`${from + 1}-${to} of ${customers.length}`}
-                showFastPaginationControls
-                numberOfItemsPerPageList={numberOfCustomersPerPageList}
-                numberOfItemsPerPage={numberOfCustomersPerPage}
-                onItemsPerPageChange={onCustomersPerPageChange}
-                selectPageDropdownLabel={'Rows per page'}
+              <DataTable.Header style={styles.tableHeader}>
+                <DataTable.Title style={[styles.columnHeader, {width: 30}]}>
+                  <Text style={styles.tableTitle}>No</Text>
+                </DataTable.Title>
+                <DataTable.Title style={[styles.columnHeader, {width: 150}]}>
+                  <Text style={styles.tableTitle}>CustomerID</Text>
+                </DataTable.Title>
+                <DataTable.Title style={[styles.columnHeader, {width: 150}]}>
+                  <Text style={styles.tableTitle}>Name</Text>
+                </DataTable.Title>
+                <DataTable.Title style={[styles.columnHeader, {width: 150}]}>
+                  <Text style={styles.tableTitle}>Mobile Number</Text>
+                </DataTable.Title>
+                <DataTable.Title style={[styles.columnHeader, {width: 150}]}>
+                  <Text style={styles.tableTitle}>EmailId</Text>
+                </DataTable.Title>
+                <DataTable.Title style={[styles.columnHeader, {width: 150}]}>
+                  <Text style={styles.tableTitle}>Gender</Text>
+                </DataTable.Title>
+                <DataTable.Title style={[styles.columnHeader, {width: 150}]}>
+                  <Text style={styles.tableTitle}>Action</Text>
+                </DataTable.Title>
+              </DataTable.Header>
+
+              <FlatList
+                data={customer?.customers}
+                renderItem={({item,index}) => renderCustomerItem(item,index)}
+                keyExtractor={(item, index) => index.toString()}
+                initialNumToRender={numberOfCustomersPerPage}
               />
             </DataTable>
-          </View>
+          </ScrollView>
+
+          {/* Pagination */}
+          <DataTable.Pagination
+            page={currentPage - 1}
+            numberOfPages={Math.ceil(
+              (customer?.customers?.length || 0) / numberOfCustomersPerPage,
+            )}
+            onPageChange={handlePageChange}
+            label={`${(currentPage - 1) * numberOfCustomersPerPage + 1}-
+                    ${Math.min(
+                      currentPage * numberOfCustomersPerPage,
+                      customer?.customers?.length || 0,
+                    )}
+                    of ${customer?.customers?.length || 0}`}
+            numberOfItemsPerPageList={[10, 20, 30]} // Adjust as needed
+            numberOfItemsPerPage={numberOfCustomersPerPage}
+            onItemsPerPageChange={setNumberOfCustomersPerPage}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -235,46 +148,47 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    padding: 4,
+    padding: 0,
+    paddingTop: 0,
+    paddingBottom: 0,
+    paddingHorizontal: 0,
   },
-
   scrollView: {
-    rowGap: 10,
+    marginHorizontal: 10,
+    marginTop: 10,
   },
-
   elementGroup: {
     flexDirection: 'row',
-    columnGap: 10,
-  },
-
-  search: {
-    borderRadius: 0,
-    backgroundColor: '#ecf9ec',
-  },
-
-  button: {
-    flex: 1,
-    backgroundColor: 'green',
-    borderRadius: 0,
-    fontSize: 16,
-    justifyContent: 'center',
-  },
-
-  searchSection: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     marginBottom: 10,
   },
   dropdown: {
     flex: 3,
+    height: 55,
     backgroundColor: '#ecf9ec',
     borderWidth: 0,
-    height: 55,
+    marginRight: 10,
   },
-
+  search: {
+    flex: 2, // Adjust flex to control the width of the search bar
+    borderRadius: 0,
+    backgroundColor: '#ecf9ec',
+    marginRight: 8,
+    paddingHorizontal:2,
+    marginTop:1,
+  },
+  button: {
+    flex: 1,
+    fontSize: 16,
+    borderRadius: 0,
+    backgroundColor: 'green',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 5,
+  },
   tableHeader: {
     backgroundColor: '#ecf9ec',
+    marginTop:10,
   },
   columnHeader: {
     justifyContent: 'center',
@@ -282,10 +196,6 @@ const styles = StyleSheet.create({
   tableTitle: {
     fontWeight: 'bold',
     fontSize: 16,
-  },
-  tableRow: {
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
   },
   tableCell: {
     justifyContent: 'center',

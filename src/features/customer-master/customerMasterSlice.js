@@ -1,10 +1,11 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import axiosInstance from '../../api/axiosInstence.js';
+import {customerMasterHandler} from './customerMasterThunk.js';
 
 export const postCustomerCredentials = createAsyncThunk(
   'customer/postCustomerCredentials',
   async (credentials, thunkAPI) => {
-    console.log('postCustomerCredentials', credentials);
+    // console.log('postCustomerCredentials', credentials);
     try {
       const config = {
         headers: {
@@ -25,32 +26,35 @@ export const postCustomerCredentials = createAsyncThunk(
 );
 
 const initialState = {
+  loading: false,
   customer: null,
   error: null,
-  loading: false,
 };
 
-const customerSlice = createSlice({
-  name: 'customer',
+const customerMasterSlice = createSlice({
+  name: 'customer-master',
   initialState,
   reducers: {},
   extraReducers: builder => {
     builder
-      .addCase(postCustomerCredentials.pending, state => {
+      .addCase(customerMasterHandler.pending, state => {
         state.loading = true;
         state.error = null;
+        // console.log('Customer Master Slice');
       })
-      .addCase(postCustomerCredentials.fulfilled, (state, action) => {
+      .addCase(customerMasterHandler.fulfilled, (state, {payload}) => {
         state.loading = false;
-        state.customer = action.payload;
+        state.customer = payload;
+        // console.log('Customer Master Slice payload', payload);
       })
-      .addCase(postCustomerCredentials.rejected, (state, action) => {
+      .addCase(customerMasterHandler.rejected, (state, {payload}) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = payload;
+        console.log('Customer Master Slice error', action.payload);
       });
   },
 });
 
 // export const customerCredentials = state => state.customer_master;
 // export const {setCredentialsReducer} = customerSlice.actions;
-export default customerSlice.reducer;
+export default customerMasterSlice.reducer;
