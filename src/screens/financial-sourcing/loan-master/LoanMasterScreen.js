@@ -18,7 +18,7 @@ import {
 import DropdownComponent from '../../../components/Common/dropdown/Dropdown';
 import {useDispatch, useSelector} from 'react-redux';
 import {loanMasterHandler} from '../../../features/loan-master/loanMasterThunk';
-import {filterHandler} from '../../../features/loan-master/loanMasterSlice';
+// import {searchHandler} from '../../../features/loan-master/loanMasterSlice';
 
 const Data = [
   {label: 'Name', value: 'name'},
@@ -257,14 +257,14 @@ const styles = StyleSheet.create({
 });
 
 const LoanMasterScreen = ({navigation}) => {
-  const [searchQuery, setSearchQuery] = useState();
+  const [searchQuery, setSearchQuery] = useState('');
   const [modalSearchQuery, setModalSearchQuery] = useState('');
   const [visible, setVisible] = useState(false);
   const [toggleLoanForm, setToggleLoanForm] = useState(false);
 
   const dispatch = useDispatch();
-  const {loan, filteredData} = useSelector(state => state.loanMaster);
-  const _data = loan?.records?.record;
+  const {loan} = useSelector(state => state.loanMaster);
+  const [filteredLoans, setFilteredLoans] = useState(loan);
 
   useEffect(() => {
     dispatch(loanMasterHandler());
@@ -278,11 +278,27 @@ const LoanMasterScreen = ({navigation}) => {
     setVisible(false);
   };
 
-  const onChangeHandler = async text => {
-    await setSearchQuery(text);
-    dispatch(filterHandler({value: searchQuery}));
-    // console.log(searchQuery)
-  };
+  useEffect(() => {
+    if (searchQuery) {
+      const matchedLoans = loan?.filter(
+        item =>
+          item?.response?.virefno
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          item?.response?.loanTypeId
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          (item?.response?.loanAmount &&
+            item.response.loanAmount
+              .toString()
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase())),
+      );
+      setFilteredLoans(matchedLoans);
+    } else {
+      setFilteredLoans(loan);
+    }
+  }, [searchQuery, loan]);
 
   const numberOfCustomersPerPageList = [2, 3, 4];
 
@@ -343,7 +359,8 @@ const LoanMasterScreen = ({navigation}) => {
                   <Searchbar
                     style={style.search}
                     placeholder="Search"
-                    onChangeText={item => onChangeHandler(item)}
+                    // onChangeText={item => onChangeHandler(item)}
+                    onChangeText={setSearchQuery}
                     value={searchQuery}
                     mode="bar"
                   />
@@ -359,68 +376,92 @@ const LoanMasterScreen = ({navigation}) => {
                 </View>
 
                 <View style={style.table}>
-                  <ScrollView horizontal>
-                    <DataTable>
-                      {/* Table Header */}
-                      <DataTable.Header style={style.tableHeader}>
-                        <DataTable.Title style={style.columnHeader} width={15}>
-                          <Text style={style.tableTitle}>ID</Text>
-                        </DataTable.Title>
-                        <DataTable.Title style={style.columnHeader} width={150}>
-                          <Text style={style.tableTitle}>Vi. Ref. No.</Text>
-                        </DataTable.Title>
-                        <DataTable.Title style={style.columnHeader} width={100}>
-                          <Text style={style.tableTitle}>Loan Type ID.</Text>
-                        </DataTable.Title>
-                        <DataTable.Title style={style.columnHeader} width={200}>
-                          <Text style={style.tableTitle}>Loan Amount</Text>
-                        </DataTable.Title>
-                        <DataTable.Title style={style.columnHeader} width={150}>
-                          <Text style={style.tableTitle}>Action</Text>
-                        </DataTable.Title>
-                      </DataTable.Header>
+                  {filteredLoans ? (
+                    <ScrollView horizontal>
+                      <DataTable>
+                        {/* Table Header */}
+                        <DataTable.Header style={style.tableHeader}>
+                          <DataTable.Title
+                            style={style.columnHeader}
+                            width={15}>
+                            <Text style={style.tableTitle}>ID</Text>
+                          </DataTable.Title>
+                          <DataTable.Title
+                            style={style.columnHeader}
+                            width={150}>
+                            <Text style={style.tableTitle}>Vi. Ref. No.</Text>
+                          </DataTable.Title>
+                          <DataTable.Title
+                            style={style.columnHeader}
+                            width={100}>
+                            <Text style={style.tableTitle}>Loan Type ID.</Text>
+                          </DataTable.Title>
+                          <DataTable.Title
+                            style={style.columnHeader}
+                            width={200}>
+                            <Text style={style.tableTitle}>Loan Amount</Text>
+                          </DataTable.Title>
+                          <DataTable.Title
+                            style={style.columnHeader}
+                            width={150}>
+                            <Text style={style.tableTitle}>Action</Text>
+                          </DataTable.Title>
+                        </DataTable.Header>
 
-                      {/* Table Rows */}
-                      <FlatList
-                        data={_data}
-                        renderItem={({item, index}) => (
-                          <DataTable.Row style={style.tableRow}>
-                            <DataTable.Cell style={style.tableCell} width={15}>
-                              {index + 1}
-                            </DataTable.Cell>
-                            <DataTable.Cell style={style.tableCell} width={150}>
-                              {item?.response?.virefno}
-                            </DataTable.Cell>
-                            <DataTable.Cell style={style.tableCell} width={100}>
-                              {item?.response?.loanTypeId}
-                            </DataTable.Cell>
-                            <DataTable.Cell style={style.tableCell} width={200}>
-                              {item?.response?.loanAmount}
-                            </DataTable.Cell>
-                            <DataTable.Cell style={style.tableCell} width={150}>
-                              <View style={style.actionButtonGroup}>
-                                <Button
-                                  style={style.button}
-                                  mode="contained"
-                                  dark={true}
-                                  textColor="white">
-                                  Ud
-                                </Button>
-                                <Button
-                                  style={style.button}
-                                  mode="contained"
-                                  dark={true}
-                                  textColor="white">
-                                  Dl
-                                </Button>
-                              </View>
-                            </DataTable.Cell>
-                          </DataTable.Row>
-                        )}
-                        keyExtractor={item => item.id}
-                      />
-                    </DataTable>
-                  </ScrollView>
+                        {/* Table Rows */}
+                        <FlatList
+                          data={filteredLoans}
+                          renderItem={({item, index}) => (
+                            <DataTable.Row style={style.tableRow}>
+                              <DataTable.Cell
+                                style={style.tableCell}
+                                width={15}>
+                                {index + 1}
+                              </DataTable.Cell>
+                              <DataTable.Cell
+                                style={style.tableCell}
+                                width={150}>
+                                {item?.response?.virefno}
+                              </DataTable.Cell>
+                              <DataTable.Cell
+                                style={style.tableCell}
+                                width={100}>
+                                {item?.response?.loanTypeId}
+                              </DataTable.Cell>
+                              <DataTable.Cell
+                                style={style.tableCell}
+                                width={200}>
+                                {item?.response?.loanAmount}
+                              </DataTable.Cell>
+                              <DataTable.Cell
+                                style={style.tableCell}
+                                width={150}>
+                                <View style={style.actionButtonGroup}>
+                                  <Button
+                                    style={style.button}
+                                    mode="contained"
+                                    dark={true}
+                                    textColor="white">
+                                    Ud
+                                  </Button>
+                                  <Button
+                                    style={style.button}
+                                    mode="contained"
+                                    dark={true}
+                                    textColor="white">
+                                    Dl
+                                  </Button>
+                                </View>
+                              </DataTable.Cell>
+                            </DataTable.Row>
+                          )}
+                          keyExtractor={item => item.id}
+                        />
+                      </DataTable>
+                    </ScrollView>
+                  ) : (
+                    'No Data Found'
+                  )}
                   <DataTable>
                     <DataTable.Pagination
                       page={page}
