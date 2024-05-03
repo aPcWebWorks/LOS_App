@@ -4,7 +4,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {persistStore, persistReducer} from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import authReducer from '../features/auth/authSlice.js';
-import customerMasterReducer from '../features/customer-master/customerMasterSlice.js';
+import customerMasterReducer, {
+  customerMasterParamsSlice,
+  geCustomerWithIdSlice,
+} from '../features/customer-master/customerMasterSlice.js';
 import scpUserReducer from '../features/scp-user/scpUserSlice.js';
 import {thunk} from 'redux-thunk';
 import loanMasterReducer from '../features/loan-master/loanMasterSlice.js';
@@ -15,6 +18,8 @@ const rootReducer = combineReducers({
   customerMaster: customerMasterReducer,
   scpUser: scpUserReducer,
   loanMaster: loanMasterReducer,
+  customerMasterParams: customerMasterParamsSlice.reducer,
+  getCustomerById: geCustomerWithIdSlice.reducer,
 });
 
 // Configuration for redux-persist

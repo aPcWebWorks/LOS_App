@@ -19,6 +19,8 @@ import ReportsScreen from '../screens/reports/ReportsScreen.js';
 import ProfileScreen from '../screens/profile/ProfileScreen.js';
 import CustomerMasterScreen from '../screens/financial-sourcing/customer-master/CustomerMasterScreen.js';
 import LoanMasterScreen from '../screens/financial-sourcing/loan-master/LoanMasterScreen.js';
+import LoanSelectedCustomerScreen from '../screens/financial-sourcing/loan-master/LoanSelectedCustomerScreen.js';
+import LoanGenerationScreen from '../screens/financial-sourcing/loan-master/LoanGenerationScreen.js';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -65,14 +67,21 @@ function StackNavigator() {
         <>
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
-          <Stack.Screen name="Customer Master" component={CustomerMasterScreen} />
+          <Stack.Screen
+            name="Customer Master"
+            component={CustomerMasterScreen}
+          />
           <Stack.Screen name="Loan Master" component={LoanMasterScreen} />
           <Stack.Screen name="Loan Status" component={BusinessPartner} />
-          {/* <Stack.Screen
-            name="Financial Sourcing"
-            component={FinancialSourcingScreen}
-          /> */}
+          <Stack.Screen
+            name="Loan Selected Customer"
+            component={LoanSelectedCustomerScreen}
+          />
           <Stack.Screen name="All Types Reports" component={ReportsScreen} />
+          <Stack.Screen
+            name="Loan Generation"
+            component={LoanGenerationScreen}
+          />
         </>
       ) : (
         <Stack.Screen

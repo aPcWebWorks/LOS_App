@@ -18,7 +18,7 @@ import {
 import DropdownComponent from '../../../components/Common/dropdown/Dropdown';
 import {useDispatch, useSelector} from 'react-redux';
 import {loanMasterHandler} from '../../../features/loan-master/loanMasterThunk';
-// import {searchHandler} from '../../../features/loan-master/loanMasterSlice';
+import {searchCustomerParamsHandler} from '../../../features/customer-master/customerMasterThunk';
 
 const Data = [
   {label: 'Name', value: 'name'},
@@ -158,14 +158,22 @@ const LoanGenerationForm = ({setToggleLoanForm}) => {
                 <>
                   <View style={styles.inputText} key={index}>
                     <Text style={styles.lebel}>{item.label}</Text>
-                    <Text style={styles.textValue}>
-                      {/* {userByScpDetails?.scpDetail?.education || 'NA'} */}
-                      {item.value}
-                    </Text>
+                    <Text style={styles.textValue}>{item.value}</Text>
                   </View>
                 </>
               );
             })}
+
+            {/* <FlatList
+              data={scpLoanStatusObj}
+              renderItem={({item}) => (
+                <View style={styles.inputText}>
+                  <Text style={styles.lebel}>{item.label}</Text>
+                  <Text style={styles.textValue}>{item.value}</Text>
+                </View>
+              )}
+              keyExtractor={item => item.id}
+            /> */}
           </View>
 
           <View style={styles.dropdownGroup}>
@@ -259,11 +267,14 @@ const styles = StyleSheet.create({
 const LoanMasterScreen = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [modalSearchQuery, setModalSearchQuery] = useState('');
+  const [selectQuery, setSelectQuery] = useState('');
   const [visible, setVisible] = useState(false);
   const [toggleLoanForm, setToggleLoanForm] = useState(false);
 
   const dispatch = useDispatch();
   const {loan} = useSelector(state => state.loanMaster);
+  const {userByScpNumber} = useSelector(state => state.scpUser);
+  const {customerParams} = useSelector(state => state.customerMasterParams);
   const [filteredLoans, setFilteredLoans] = useState(loan);
 
   useEffect(() => {
@@ -272,11 +283,6 @@ const LoanMasterScreen = ({navigation}) => {
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
-
-  const handleSearchCustomer = () => {
-    setToggleLoanForm(true);
-    setVisible(false);
-  };
 
   useEffect(() => {
     if (searchQuery) {
@@ -313,6 +319,24 @@ const LoanMasterScreen = ({navigation}) => {
     setPage(0);
   }, [numberOfCustomersPerPage]);
 
+  // Loan Generation
+
+  const handleSearchCustomer = () => {
+    // setToggleLoanForm(true);
+    // setVisible(false);
+
+    if (selectQuery.value && modalSearchQuery) {
+      dispatch(
+        searchCustomerParamsHandler({
+          criteriaType: selectQuery.value,
+          criteriaValue: modalSearchQuery,
+        }),
+      );
+      navigation.navigate('Loan Selected Customer');
+    }
+    // console.log('Please selct option and search your value', customerParams);
+  };
+
   return (
     <SafeAreaView style={style.container}>
       <PaperProvider>
@@ -327,13 +351,16 @@ const LoanMasterScreen = ({navigation}) => {
                     // dismissable={false}
                     dismissableBackButton={false}
                     contentContainerStyle={style.modal}>
-                    <Text style={style.modalText}>SCP NO. : SCP000300</Text>
+                    <Text style={style.modalText}>
+                      SCP No. : {userByScpNumber?.scpDetail?.scpNo}
+                    </Text>
 
                     <View style={style.modalSection}>
                       <DropdownComponent
                         style={style.dropdown}
                         label="Select Customer"
                         options={Data}
+                        onChangeText={setSelectQuery}
                       />
 
                       <Searchbar
@@ -376,92 +403,59 @@ const LoanMasterScreen = ({navigation}) => {
                 </View>
 
                 <View style={style.table}>
-                  {filteredLoans ? (
-                    <ScrollView horizontal>
-                      <DataTable>
-                        {/* Table Header */}
-                        <DataTable.Header style={style.tableHeader}>
-                          <DataTable.Title
-                            style={style.columnHeader}
-                            width={15}>
-                            <Text style={style.tableTitle}>ID</Text>
-                          </DataTable.Title>
-                          <DataTable.Title
-                            style={style.columnHeader}
-                            width={150}>
-                            <Text style={style.tableTitle}>Vi. Ref. No.</Text>
-                          </DataTable.Title>
-                          <DataTable.Title
-                            style={style.columnHeader}
-                            width={100}>
-                            <Text style={style.tableTitle}>Loan Type ID.</Text>
-                          </DataTable.Title>
-                          <DataTable.Title
-                            style={style.columnHeader}
-                            width={200}>
-                            <Text style={style.tableTitle}>Loan Amount</Text>
-                          </DataTable.Title>
-                          <DataTable.Title
-                            style={style.columnHeader}
-                            width={150}>
-                            <Text style={style.tableTitle}>Action</Text>
-                          </DataTable.Title>
-                        </DataTable.Header>
+                  <ScrollView horizontal>
+                    <DataTable>
+                      {/* Table Header */}
+                      <DataTable.Header style={style.tableHeader}>
+                        <DataTable.Title style={style.columnHeader} width={15}>
+                          <Text style={style.tableTitle}>ID</Text>
+                        </DataTable.Title>
+                        <DataTable.Title style={style.columnHeader} width={150}>
+                          <Text style={style.tableTitle}>Vi. Ref. No.</Text>
+                        </DataTable.Title>
+                        <DataTable.Title style={style.columnHeader} width={100}>
+                          <Text style={style.tableTitle}>Loan Type ID.</Text>
+                        </DataTable.Title>
+                        <DataTable.Title style={style.columnHeader} width={200}>
+                          <Text style={style.tableTitle}>Loan Amount</Text>
+                        </DataTable.Title>
+                        <DataTable.Title style={style.columnHeader} width={100}>
+                          <Text style={style.tableTitle}>Action</Text>
+                        </DataTable.Title>
+                      </DataTable.Header>
 
-                        {/* Table Rows */}
-                        <FlatList
-                          data={filteredLoans}
-                          renderItem={({item, index}) => (
-                            <DataTable.Row style={style.tableRow}>
-                              <DataTable.Cell
-                                style={style.tableCell}
-                                width={15}>
-                                {index + 1}
-                              </DataTable.Cell>
-                              <DataTable.Cell
-                                style={style.tableCell}
-                                width={150}>
-                                {item?.response?.virefno}
-                              </DataTable.Cell>
-                              <DataTable.Cell
-                                style={style.tableCell}
-                                width={100}>
-                                {item?.response?.loanTypeId}
-                              </DataTable.Cell>
-                              <DataTable.Cell
-                                style={style.tableCell}
-                                width={200}>
-                                {item?.response?.loanAmount}
-                              </DataTable.Cell>
-                              <DataTable.Cell
-                                style={style.tableCell}
-                                width={150}>
-                                <View style={style.actionButtonGroup}>
-                                  <Button
-                                    style={style.button}
-                                    mode="contained"
-                                    dark={true}
-                                    textColor="white">
-                                    Ud
-                                  </Button>
-                                  <Button
-                                    style={style.button}
-                                    mode="contained"
-                                    dark={true}
-                                    textColor="white">
-                                    Dl
-                                  </Button>
-                                </View>
-                              </DataTable.Cell>
-                            </DataTable.Row>
-                          )}
-                          keyExtractor={item => item.id}
-                        />
-                      </DataTable>
-                    </ScrollView>
-                  ) : (
-                    'No Data Found'
-                  )}
+                      {/* Table Rows */}
+                      <FlatList
+                        data={filteredLoans}
+                        renderItem={({item, index}) => (
+                          <DataTable.Row style={style.tableRow}>
+                            <DataTable.Cell style={style.tableCell} width={15}>
+                              {index + 1}
+                            </DataTable.Cell>
+                            <DataTable.Cell style={style.tableCell} width={150}>
+                              {item?.response?.virefno}
+                            </DataTable.Cell>
+                            <DataTable.Cell style={style.tableCell} width={100}>
+                              {item?.response?.loanTypeId}
+                            </DataTable.Cell>
+                            <DataTable.Cell style={style.tableCell} width={200}>
+                              {item?.response?.loanAmount}
+                            </DataTable.Cell>
+                            <DataTable.Cell style={style.tableCell} width={100}>
+                              <Button
+                                style={style.button}
+                                mode="contained"
+                                dark={true}
+                                textColor="white">
+                                Update
+                              </Button>
+                            </DataTable.Cell>
+                          </DataTable.Row>
+                        )}
+                        keyExtractor={item => item.id}
+                      />
+                    </DataTable>
+                  </ScrollView>
                   <DataTable>
                     <DataTable.Pagination
                       page={page}
@@ -566,14 +560,6 @@ const style = StyleSheet.create({
   tableCell: {
     justifyContent: 'center',
   },
-
-  actionButtonGroup: {
-    flexDirection: 'row',
-    columnGap: 4,
-    // backgroundColor: 'cyan'
-  },
-
-  actionButton: {},
 });
 
 export default LoanMasterScreen;

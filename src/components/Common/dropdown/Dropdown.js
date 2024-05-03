@@ -107,11 +107,11 @@ import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 
-const DropdownComponent = ({style, label, options, value, onChange}) => {
+const DropdownComponent = ({style, label, options, value, onChangeText}) => {
   const [isFocus, setIsFocus] = useState(false);
 
   const handleDropdownChange = selectedValue => {
-    onChange(selectedValue);
+    onChangeText(selectedValue);
   };
   return (
     <View style={[styles.container, style]}>
