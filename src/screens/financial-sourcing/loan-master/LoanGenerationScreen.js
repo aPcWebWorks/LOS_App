@@ -20,9 +20,10 @@ import DropdownComponent from '../../../components/Common/dropdown/Dropdown';
 import {useDispatch, useSelector} from 'react-redux';
 import {loanMasterHandler} from '../../../features/loan-master/loanMasterThunk';
 import {
-  geCustomerWithId,
+  getCustomerWithId,
   searchCustomerParamsHandler,
 } from '../../../features/customer-master/customerMasterThunk';
+import {documentHandler} from '../../../features/documents/documentThunk';
 
 const Data = [
   {label: 'Name', value: 'name'},
@@ -82,14 +83,16 @@ const LoanGenerationScreen = ({navigation, route}) => {
   const {customer} = useSelector(state => state.getCustomerById);
 
   useEffect(() => {
-    dispatch(geCustomerWithId(id));
+    dispatch(getCustomerWithId(id));
+    // dispatch(documentHandler(1381))
+    // console.log('Customer', customer.documents[0].id);
   }, []);
   const handleStack = () => {
     setToggleLoanForm(false);
   };
 
   const handleCancel = () => {
-    navigation.navigate('Loan Selected Customer');
+    navigation.navigate('Searched Customer');
   };
 
   const obj = [
@@ -171,9 +174,7 @@ const LoanGenerationScreen = ({navigation, route}) => {
                 <View style={styles.inputText} key={index}>
                   <Text style={styles.lebel}>{item.key}</Text>
                   {/* <Text style={styles.textValue}>{item.value}</Text> */}
-                  <Image
-                    source={{ uri: `file:///${item.value}` }}
-                  />
+                  <Image source={{uri: `file:///${item.value}`}} />
                 </View>
               </>
             );

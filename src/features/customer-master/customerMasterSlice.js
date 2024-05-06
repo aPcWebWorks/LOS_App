@@ -2,8 +2,8 @@ import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import axiosInstance from '../../api/axiosInstence.js';
 import {
   customerMasterHandler,
-  geCustomerWithId,
-  searchCustomerParamsHandler,
+  getCustomerWithId,
+  searchCustomerHandler,
 } from './customerMasterThunk.js';
 
 export const postCustomerCredentials = createAsyncThunk(
@@ -73,28 +73,28 @@ const customerMasterSlice = createSlice({
 // export const {setCredentialsReducer} = customerSlice.actions;
 // export const {filterHandler}=customerMasterSlice.actions;
 
-const geCustomerWithIdSlice = createSlice({
-  name: 'geCustomerWithId',
+const getCustomerWithIdSlice = createSlice({
+  name: 'getCustomerWithId',
   initialState: {isLoading: false, isError: null, customer: null},
   reducers: {},
   extraReducers: builder => {
     builder
-      .addCase(geCustomerWithId.pending, state => {
+      .addCase(getCustomerWithId.pending, state => {
         state.isLoading = true;
       })
-      .addCase(geCustomerWithId.fulfilled, (state, {payload}) => {
+      .addCase(getCustomerWithId.fulfilled, (state, {payload}) => {
         state.isLoading = false;
         state.customer = payload;
       })
-      .addCase(geCustomerWithId.rejected, (state, {payload}) => {
+      .addCase(getCustomerWithId.rejected, (state, {payload}) => {
         state.isError = payload;
       });
   },
 });
 
-const customerMasterParamsSlice = createSlice({
+const searchedCustomerSlice = createSlice({
   name: 'initialParamsState',
-  initialState: {isLoading: false, customerParams: null, error: null},
+  initialState: {isLoading: false, customers: null, error: null},
   reducers: {
     customerParamsClearState: state => {
       state.customerParams = null;
@@ -103,24 +103,23 @@ const customerMasterParamsSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(searchCustomerParamsHandler.pending, state => {
+      .addCase(searchCustomerHandler.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
 
-      .addCase(searchCustomerParamsHandler.fulfilled, (state, {payload}) => {
+      .addCase(searchCustomerHandler.fulfilled, (state, {payload}) => {
         state.isLoading = false;
-        state.customerParams = payload;
-        // console.log("payload", payload)
+        state.customers = payload;
       })
 
-      .addCase(searchCustomerParamsHandler.rejected, (state, {payload}) => {
+      .addCase(searchCustomerHandler.rejected, (state, {payload}) => {
         state.isLoading = false;
         state.error = payload;
       });
   },
 });
 
-export const {customerParamsClearState} = customerMasterParamsSlice.actions;
-export {customerMasterParamsSlice, geCustomerWithIdSlice};
+export const {customerParamsClearState} = searchedCustomerSlice.actions;
+export {searchedCustomerSlice, getCustomerWithIdSlice};
 export default customerMasterSlice.reducer;

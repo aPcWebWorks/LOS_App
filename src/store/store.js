@@ -5,8 +5,8 @@ import {persistStore, persistReducer} from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import authReducer from '../features/auth/authSlice.js';
 import customerMasterReducer, {
-  customerMasterParamsSlice,
-  geCustomerWithIdSlice,
+  searchedCustomerSlice,
+  getCustomerWithIdSlice,
 } from '../features/customer-master/customerMasterSlice.js';
 import scpUserReducer from '../features/scp-user/scpUserSlice.js';
 import {thunk} from 'redux-thunk';
@@ -18,8 +18,8 @@ const rootReducer = combineReducers({
   customerMaster: customerMasterReducer,
   scpUser: scpUserReducer,
   loanMaster: loanMasterReducer,
-  customerMasterParams: customerMasterParamsSlice.reducer,
-  getCustomerById: geCustomerWithIdSlice.reducer,
+  searchedCustomer: searchedCustomerSlice.reducer,
+  getCustomerById: getCustomerWithIdSlice.reducer,
 });
 
 // Configuration for redux-persist

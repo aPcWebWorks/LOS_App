@@ -18,7 +18,7 @@ import {
 import DropdownComponent from '../../../components/Common/dropdown/Dropdown';
 import {useDispatch, useSelector} from 'react-redux';
 import {loanMasterHandler} from '../../../features/loan-master/loanMasterThunk';
-import {searchCustomerParamsHandler} from '../../../features/customer-master/customerMasterThunk';
+import {searchCustomerHandler} from '../../../features/customer-master/customerMasterThunk';
 
 const Data = [
   {label: 'Name', value: 'name'},
@@ -274,7 +274,7 @@ const LoanMasterScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const {loan} = useSelector(state => state.loanMaster);
   const {userByScpNumber} = useSelector(state => state.scpUser);
-  const {customerParams} = useSelector(state => state.customerMasterParams);
+  const {searchedCustomer} = useSelector(state => state.searchedCustomer);
   const [filteredLoans, setFilteredLoans] = useState(loan);
 
   useEffect(() => {
@@ -327,12 +327,12 @@ const LoanMasterScreen = ({navigation}) => {
 
     if (selectQuery.value && modalSearchQuery) {
       dispatch(
-        searchCustomerParamsHandler({
+        searchCustomerHandler({
           criteriaType: selectQuery.value,
           criteriaValue: modalSearchQuery,
         }),
       );
-      navigation.navigate('Loan Selected Customer');
+      navigation.navigate('Searched Customer');
     }
     // console.log('Please selct option and search your value', customerParams);
   };

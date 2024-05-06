@@ -24,14 +24,14 @@ const customerMasterHandler = createAsyncThunk(
   },
 );
 
-const geCustomerWithId = createAsyncThunk(
-  'customer-master/geCustomerWithId',
+const getCustomerWithId = createAsyncThunk(
+  'customer-master/getCustomerWithId',
   async (_id, {rejectWithValue}) => {
     try {
       const {data} = await axiosInstance.get(
         `${CUSTOMERMASTER_ENDPOINT}/${_id}`,
       );
-      // console.log("Customer with id Data Handler", data)
+      // console.log("singal Customer thunk document", data)
       return data;
     } catch (error) {
       if (error.response && error.response.data.message) {
@@ -45,7 +45,7 @@ const geCustomerWithId = createAsyncThunk(
   },
 );
 
-const searchCustomerParamsHandler = createAsyncThunk(
+const searchCustomerHandler = createAsyncThunk(
   'customer-master/searchByCustomerUrlParamsHandler',
   async ({criteriaType, criteriaValue}, {rejectWithValue}) => {
     try {
@@ -72,11 +72,11 @@ const searchCustomerParamsHandler = createAsyncThunk(
       }
 
       const {data} = await axiosInstance.get(endpoint);
-      console.log('criteria data', data);
+      // console.log('criteria data', data);
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
     }
   },
 );
-export {customerMasterHandler, geCustomerWithId, searchCustomerParamsHandler};
+export {customerMasterHandler, getCustomerWithId, searchCustomerHandler};

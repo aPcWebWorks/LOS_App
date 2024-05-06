@@ -9,11 +9,11 @@ import {
 import {Button, DataTable} from 'react-native-paper';
 import {useSelector} from 'react-redux';
 
-const LoanSelectedCustomerScreen = ({navigation}) => {
-  const {customerParams} = useSelector(state => state.customerMasterParams);
-
+const SearchedCustomer = ({navigation}) => {
+  const {customers} = useSelector(state => state.searchedCustomer);
+// console.log('searchedCustomer', customers.customers)
   const selectHandler = id => {
-    console.log('Selected Customer Id', id);
+    // console.log('Selected Customer Id', id);
     navigation.navigate('Loan Generation', {id});
   };
   return (
@@ -60,7 +60,7 @@ const LoanSelectedCustomerScreen = ({navigation}) => {
 
             {/* Table Rows */}
             <FlatList
-              data={customerParams?.customers}
+              data={customers?.customers}
               renderItem={({item, index}) => (
                 <DataTable.Row style={style.tableRow}>
                   <DataTable.Cell style={style.tableCell} width={15}>
@@ -115,4 +115,4 @@ const LoanSelectedCustomerScreen = ({navigation}) => {
 };
 
 const style = StyleSheet.create({});
-export default LoanSelectedCustomerScreen;
+export default SearchedCustomer;
