@@ -11,6 +11,7 @@ import customerMasterReducer, {
 import scpUserReducer from '../features/scp-user/scpUserSlice.js';
 import {thunk} from 'redux-thunk';
 import loanMasterReducer from '../features/loan-master/loanMasterSlice.js';
+import documentSlice from '../features/documents/documentSlice.js';
 
 // Combine your reducers
 const rootReducer = combineReducers({
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   loanMaster: loanMasterReducer,
   searchedCustomer: searchedCustomerSlice.reducer,
   getCustomerById: getCustomerWithIdSlice.reducer,
+  document: documentSlice,
 });
 
 // Configuration for redux-persist

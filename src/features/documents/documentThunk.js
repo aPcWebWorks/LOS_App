@@ -3,14 +3,12 @@ import axiosInstance from '../../api/axiosInstence.js';
 import {DOCUMENT_ENDPOINT} from '../../api/endpoints.js';
 
 const documentHandler = createAsyncThunk(
-  'documents',
+  'document',
   async (_id, {rejectWithValue}) => {
     try {
       const {data} = await axiosInstance.get(`${DOCUMENT_ENDPOINT}/${_id}`);
-      const blob = new Blob();
-      const _blob = await data.blob;
-        console.log("Singal Customer Document", data)
-      console.log("blob", _blob);
+      //   console.log('Singal Customer Document', data);
+      //   console.log('blob', _blob);
       return data;
     } catch (error) {
       if (error.response && error.response.data.message) {

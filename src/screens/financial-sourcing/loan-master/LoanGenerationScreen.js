@@ -80,12 +80,17 @@ const scpLoanStatusDropdoenObj = [
 const LoanGenerationScreen = ({navigation, route}) => {
   const dispatch = useDispatch();
   const {id} = route.params;
+  const {userByScpNumber} = useSelector(state => state.scpUser);
   const {customer} = useSelector(state => state.getCustomerById);
+  const {document} = useSelector(state => state.document);
 
   useEffect(() => {
     dispatch(getCustomerWithId(id));
-    // dispatch(documentHandler(1381))
+    // dispatch(documentHandler(customer.documents[0].id));
+    // dispatch(documentHandler(customer.documents[1].id))
+    // dispatch(documentHandler(customer.documents[2].id))
     // console.log('Customer', customer.documents[0].id);
+    console.log('Document', document);
   }, []);
   const handleStack = () => {
     setToggleLoanForm(false);
@@ -98,7 +103,7 @@ const LoanGenerationScreen = ({navigation, route}) => {
   const obj = [
     {
       key: 'SCP No.',
-      value: customer?.id,
+      value: userByScpNumber?.scpDetail?.scpNo,
     },
     {
       key: 'Customer Name',
