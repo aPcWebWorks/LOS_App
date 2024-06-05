@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
-import {Image, View, Dimensions, StyleSheet, Alert} from 'react-native';
+import {Image, View, Dimensions, StyleSheet} from 'react-native';
 import {
   Button,
   HelperText,
@@ -64,7 +64,7 @@ const SignInScreen = ({navigation}) => {
   const theme = useTheme();
   const styles = getStyles(theme, windowWidth);
   const dispatch = useDispatch();
-  const [snackVisible, setSnackVisible] = useState(false);
+  // const [snackVisible, setSnackVisible] = useState(false);
 
   const {isLoading, user, error, success} = useSelector(state => state.auth);
 
@@ -87,6 +87,7 @@ const SignInScreen = ({navigation}) => {
   const [isToggleIcon, setIsToggleIcon] = useState(false);
   const [usernameError, setUsernameError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [loginSuccess, setLoginSuccess] = useState(false);
 
   const iconHandler = () => {
     setIsToggleIcon(!isToggleIcon);
@@ -112,13 +113,74 @@ const SignInScreen = ({navigation}) => {
   //   getScpUserDetails();
   // }, [success]);
 
+  // const handleChange = (name, value) => {
+  //   if(name==='username'){
+  //     value=value.toUpperCase();
+  //   }
+  //   setCredentials({
+  //     ...credentials,
+  //     [name]: value,
+  //   });
+  // };
   const handleChange = (name, value) => {
+    if (name === 'username') {
+      value = value.toUpperCase();
+      // Example: Ensure username is not empty
+      if (!value.trim()) {
+        setUsernameError('Please enter your username');
+      } else {
+        setUsernameError(''); // Clear error message if valid
+      }
+    }
+    if (name === 'password') {
+      // Validate password complexity
+      const hasUpperCase = /[A-Z]/.test(value);
+      const hasLowerCase = /[a-z]/.test(value);
+      const hasNumeric = /[0-9]/.test(value);
+      const hasSymbol = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(value);
+
+      const isValidPassword =
+        value.length >= 6 &&
+        hasUpperCase &&
+        hasLowerCase &&
+        hasNumeric &&
+        hasSymbol;
+
+      if (!isValidPassword) {
+        setPasswordError(
+          value.trim()
+            ? 'Password must contain at least 6 characters with uppercase, lowercase, numeric, and symbol'
+            : 'Please enter your password',
+        );
+      } else {
+        setPasswordError('');
+      }
+    }
     setCredentials({
       ...credentials,
       [name]: value,
     });
   };
+  const handleLogin = async () => {
+    if (!hasErrors()) {
+      usernameRef.current.blur();
+      passwordRef.current.blur();
+      const {username, password} = credentials;
+      const Username = username.trim();
+      const Password = password.trim();
+      await dispatch(userLogin({loginId: Username, password: Password}));
 
+      const _token = await AsyncStorage.getItem('token');
+      if (_token) {
+        const {sub} = await decodeJWT(_token);
+        await dispatch(getWithSCPNumberHandler(sub));
+        setLoginSuccess(true);
+        console.log('Login Successfull');
+        // Optionally, navigate to another screen after successful login
+        // navigation.navigate('Home'); // Example navigation
+      }
+    }
+  };
   const hasErrors = () => {
     if (!credentials.username || !credentials.password) {
       if (!credentials.username) {
@@ -155,27 +217,27 @@ const SignInScreen = ({navigation}) => {
     }
   }
 
-  const handleLogin = async () => {
-    if (!hasErrors()) {
-      usernameRef.current.blur();
-      passwordRef.current.blur();
-      const {username, password} = credentials;
-      const Username = username.trim();
-      const Password = password.trim();
-      await dispatch(userLogin({loginId: Username, password: Password}));
+  // const handleLogin = async () => {
+  //   if (!hasErrors()) {
+  //     usernameRef.current.blur();
+  //     passwordRef.current.blur();
+  //     const {username, password} = credentials;
+  //     const Username = username.trim();
+  //     const Password = password.trim();
+  //     await dispatch(userLogin({loginId: Username, password: Password}));
 
-      const _token = await AsyncStorage.getItem('token');
-      if (_token) {
-        const {sub} = await decodeJWT(_token);
-        await dispatch(getWithSCPNumberHandler(sub));
+  //     const _token = await AsyncStorage.getItem('token');
+  //     if (_token) {
+  //       const {sub} = await decodeJWT(_token);
+  //       await dispatch(getWithSCPNumberHandler(sub));
 
-        // const _id = await AsyncStorage.getItem('scpId');
-        // console.log('Sign In Screen all Keys', _id);
-        // await dispatch(scpUserDetailsHandler(_id));
-      }
-    }
-    return;
-  };
+  //       // const _id = await AsyncStorage.getItem('scpId');
+  //       // console.log('Sign In Screen all Keys', _id);
+  //       // await dispatch(scpUserDetailsHandler(_id));
+  //     }
+  //   }
+  //   return;
+  // };
 
   return (
     <>
@@ -234,17 +296,18 @@ const SignInScreen = ({navigation}) => {
                     value={credentials.username}
                     onChangeText={text => handleChange('username', text)}
                   />
-                  {usernameError && !credentials?.username && (
+                  {/* {usernameError && !credentials?.username && ( */}
+                  {usernameError ? (
                     <HelperText
                       style={{
                         color: 'red',
                       }}
                       type="error"
-                      visible={() => hasErrors()}
+                      visible={true}
                       padding="none">
                       {usernameError}
                     </HelperText>
-                  )}
+                  ) : null}
                 </View>
 
                 <View>
@@ -272,17 +335,18 @@ const SignInScreen = ({navigation}) => {
                     value={credentials.password}
                     onChangeText={text => handleChange('password', text)}
                   />
-                  {passwordError && !credentials?.password && (
+                  {/* {passwordError && !credentials?.password && ( */}
+                  {passwordError ? (
                     <HelperText
                       style={{
                         color: 'red',
                       }}
                       type="error"
-                      visible={() => hasErrors()}
+                      visible={true}
                       padding="none">
                       {passwordError}
                     </HelperText>
-                  )}
+                  ) : null}
                 </View>
               </View>
               <View style={styles.forgotAndLogin}>
@@ -301,6 +365,9 @@ const SignInScreen = ({navigation}) => {
                     </Text>
                   </LinearGradient>
                 </TouchableRipple>
+                {loginSuccess && (
+                  <Text style={styles.successMessage}>Login Successfull !</Text>
+                )}
 
                 <TouchableRipple>
                   <View style={styles.forgotContent}>
@@ -337,8 +404,6 @@ export const getStyles = (theme, windowWidth) => {
     container: {
       backgroundColor: '#b2cfb2',
       flex: 1,
-      // flexDirection: windowWidth > 500 ? "row" : "column",
-      // alignItems: 'center',
       justifyContent: 'space-between',
       overflow: 'hidden',
       // paddingHorizontal: 10,
@@ -349,14 +414,11 @@ export const getStyles = (theme, windowWidth) => {
       width: '100%',
       height: 300,
       flexDirection: 'column',
-      // paddingTop: 60,
       backgroundColor: 'white',
       alignItems: 'center',
-      // opacity: 0.8,
     },
 
     logo: {
-      // flex: 1,
       height: 130,
       width: 300,
       objectFit: 'contain',
@@ -364,16 +426,13 @@ export const getStyles = (theme, windowWidth) => {
     },
 
     formStyle: {
-      // backgroundColor: 'white',
       width: windowWidth > 500 ? '50%' : '100%',
       padding: 20,
       borderTopLeftRadius: 50,
       borderTopRightRadius: 50,
       justifyContent: 'center',
       alignItems: 'center',
-      // height: 380
       marginTop: -240,
-      // borderWidth: 2,
       backgroundColor: '#b2cfb2',
     },
 
@@ -399,6 +458,16 @@ export const getStyles = (theme, windowWidth) => {
     forgotAndLogin: {
       marginTop: 40,
       width: '100%',
+    },
+    successMessage: {
+      marginTop: 20,
+      padding: 10,
+      backgroundColor: '#4CAF50', // Green color for success
+      color: 'white',
+      borderRadius: 5,
+      textAlign: 'center',
+      fontSize: 16,
+      fontWeight: 'bold',
     },
 
     forgotContent: {
@@ -443,7 +512,6 @@ export const getStyles = (theme, windowWidth) => {
       objectFit: 'contain',
       backgroundColor: 'white',
       borderRadius: 8,
-      // marginTop: 80
     },
 
     footer: {

@@ -21,6 +21,7 @@ import CustomerMasterScreen from '../screens/financial-sourcing/customer-master/
 import LoanMasterScreen from '../screens/financial-sourcing/loan-master/LoanMasterScreen.js';
 import LoanSearchedCustomerScreen from '../screens/financial-sourcing/loan-master/LoanSearchedCustomerScreen.js';
 import LoanGenerationScreen from '../screens/financial-sourcing/loan-master/LoanGenerationScreen.js';
+import CustomerDetailsScreen from '../screens/financial-sourcing/customer-master/CustomerDetailsScreen.js';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -90,6 +91,7 @@ function StackNavigator() {
           options={{headerShown: false}}
         />
       )}
+      <Stack.Screen name="Customer Details" component={CustomerDetailsScreen} />
     </Stack.Navigator>
   );
 }

@@ -1,24 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   FlatList,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  ActivityIndicator
 } from 'react-native';
 import {Button, DataTable} from 'react-native-paper';
 import {useSelector} from 'react-redux';
 
+
 const SearchedCustomer = ({navigation}) => {
-  const {customers} = useSelector(state => state.searchedCustomer);
+  const {customers,isLoading} = useSelector(state => state.searchedCustomer);
   // console.log('searchedCustomer', customers.customers)
   const selectHandler = id => {
     // console.log('Selected Customer Id', id);
     navigation.navigate('Loan Generation', {id});
   };
+
+  
   return (
     <>
       <SafeAreaView style={style.container}>
+      {isLoading ? (
+            <ActivityIndicator
+              size="large"
+              color="green"
+              style={style.loadingIndicator}
+            />
+          ) : (
+   
         <ScrollView horizontal>
           <DataTable>
             {/* Table Header */}
@@ -109,6 +121,7 @@ const SearchedCustomer = ({navigation}) => {
             />
           </DataTable>
         </ScrollView>
+    )}
       </SafeAreaView>
     </>
   );
@@ -142,6 +155,10 @@ const style = StyleSheet.create({
   },
   tableCell: {
     justifyContent: 'center',
+  },
+  loadingIndicator: {
+    marginTop: 20,
+    alignSelf: 'center',
   },
 });
 export default SearchedCustomer;

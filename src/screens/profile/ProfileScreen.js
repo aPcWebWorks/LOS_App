@@ -457,3 +457,653 @@ const ProfileScreen = () => {
 };
 
 export default ProfileScreen;
+
+
+
+// import React, {useEffect} from 'react';
+// import {
+//   View,
+//   Text,
+//   Image,
+//   StyleSheet,
+//   Alert,
+//   SafeAreaView,
+//   FlatList,
+// } from 'react-native';
+// import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
+// import FontAwesome5 from 'react-native-vector-icons/FontAwesome5.js';
+// import {
+//   Modal,
+//   Portal,
+//   Button,
+//   Provider as PaperProvider,
+//   Divider,
+//   ActivityIndicator,
+//   Colors,
+// } from 'react-native-paper';
+// import {useDispatch, useSelector} from 'react-redux';
+// import {userLogout} from '../../features/auth/authThunks';
+// import {scpUserDetailsHandler} from '../../features/scp-user/scpUserThunk';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// const Profile = ({navigation}) => {
+//   const dispatch = useDispatch();
+//   const [visible, setVisible] = React.useState(false);
+
+//   const showModal = () => setVisible(true);
+//   const hideModal = () => setVisible(false);
+//   const containerStyle = {
+//     backgroundColor: 'white',
+//     padding: 20,
+//     alignItems: 'center',
+//   };
+//   const {userByScpDetails} = useSelector(state => state.scpUser);
+
+//   useEffect(() => {
+//     const scpUserHandler = async () => {
+//       const _id = await AsyncStorage.getItem('scpId');
+//       await dispatch(scpUserDetailsHandler(_id));
+//     };
+
+//     scpUserHandler();
+//   }, [dispatch]);
+
+//   const handleLogout = () => {
+//     Alert.alert(
+//       'Confirm Action',
+//       'Are you sure you want to proceed for logout?',
+//       [
+//         {
+//           text: 'Cancel',
+//           style: 'cancel',
+//         },
+//         {
+//           text: 'OK',
+//           onPress: () => {
+//             dispatch(userLogout());
+//           },
+//         },
+//       ],
+//       {cancelable: false},
+//     );
+//   };
+
+//   const accountInfoData = [
+//     {label: 'Gender:', value: userByScpDetails?.scpDetail?.gender || 'NA'},
+//     {
+//       label: 'Residential Address:',
+//       value: userByScpDetails?.scpDetail?.residentialAddress || 'NA',
+//     },
+//     {label: 'Pincode:', value: userByScpDetails?.scpDetail?.pinCode || 'NA'},
+//     {label: 'Mobile:', value: userByScpDetails?.scpDetail?.mobile || 'NA'},
+//     {
+//       label: 'Alternate Mobile:',
+//       value: userByScpDetails?.scpDetail?.alternateMobile || 'NA',
+//     },
+//     {label: 'Email:', value: userByScpDetails?.scpDetail?.email || 'NA'},
+//     {
+//       label: 'PAN No.:',
+//       value: userByScpDetails?.documents[2]?.docNumber || 'NA',
+//     },
+//     {
+//       label: 'Aadhar No.:',
+//       value: userByScpDetails?.documents[1]?.docNumber || 'NA',
+//     },
+//     {
+//       label: 'Education:',
+//       value: userByScpDetails?.scpDetail?.education || 'NA',
+//     },
+//     {
+//       label: 'Occupation:',
+//       value: userByScpDetails?.scpDetail?.occupation || 'NA',
+//     },
+//     {
+//       label: 'PVC Certificate No.:',
+//       value: userByScpDetails?.documents[4]?.docNumber || 'NA',
+//     },
+//     {
+//       label: 'IIBF Certificate No.:',
+//       value: userByScpDetails?.documents[5]?.docNumber || 'NA',
+//     },
+//     {
+//       label: 'DRA Certificate No:',
+//       value: userByScpDetails?.documents[6]?.docNumber || 'NA',
+//     },
+//     {label: 'BCA/FBC:', value: userByScpDetails?.scpDetail?.bcaFbc || 'NA'},
+//     {
+//       label: 'BCA Bank:',
+//       value: userByScpDetails?.scpDetail?.bcaBankName || 'NA',
+//     },
+  
+//   ];
+
+//   const bankDetailsData = [
+//     {label: 'Bank Name:', value: userByScpDetails?.scpDetail?.bankName || 'NA'},
+//     {
+//       label: 'Cust Id/CifNo:',
+//       value: userByScpDetails?.scpDetail?.bankCustomerId || 'NA',
+//     },
+//     {
+//       label: 'Savings Account No.:',
+//       value: userByScpDetails?.scpDetail?.savingsAccountNum || 'NA',
+//     },
+//     {
+//       label: 'Settlement Account No.:',
+//       value: userByScpDetails?.scpDetail?.settlementAccountNum || 'NA',
+//     },
+//     {
+//       label: 'Payment Received Date:',
+//       value: userByScpDetails?.scpDetail?.receivedDate || 'NA',
+//     },
+//     {
+//       label: 'Payment Received Amount:',
+//       value: userByScpDetails?.scpDetail?.amount || 'NA',
+//     },
+    
+//   ];
+
+//   return (
+//     <SafeAreaView style={styles.container}>
+//       {userByScpDetails?.isLoading ? (
+//         <ActivityIndicator
+//           animating={true}
+//           color={Colors.green800}
+//           size="large"
+//           style={{flex: 1, backgroundColor: 'white'}}
+//         />
+//       ) : (
+//         <ScrollView>
+//           <PaperProvider>
+//             <Portal>
+//               <Modal
+//                 visible={visible}
+//                 onDismiss={hideModal}
+//                 contentContainerStyle={containerStyle}>
+//                 <Text style={{fontSize: 24, color: 'black'}}>Edit Profile</Text>
+//               </Modal>
+//             </Portal>
+
+//             <View style={styles.profileDetails}>
+//               <View style={styles.profileSection}>
+//                 <Image
+//                   source={require('../../assets/images/profile.png')}
+//                   style={styles.profileAvatar}
+//                 />
+//                 <View style={styles.profileInfo}>
+//                   <Text style={styles.profileName}>
+//                     {userByScpDetails?.scpDetail?.title &&
+//                     userByScpDetails?.scpDetail?.name
+//                       ? `${userByScpDetails?.scpDetail?.title.toUpperCase()}.${userByScpDetails?.scpDetail?.name.toUpperCase()}`
+//                       : 'Unknown SCP'}
+//                   </Text>
+//                   <Text style={styles.profileRole}>
+//                     {userByScpDetails?.scpDetail?.scpNo}
+//                   </Text>
+//                 </View>
+
+//                 <View style={styles.groupIcon}>
+//                   <TouchableOpacity>
+//                     <Button style={styles.button} onPress={showModal}>
+//                       <FontAwesome5
+//                         style={styles.penIcon}
+//                         name="sign-out-alt"
+//                       />
+//                     </Button>
+//                   </TouchableOpacity>
+
+//                   <TouchableOpacity>
+//                     <Button style={styles.button} onPress={handleLogout}>
+//                       <FontAwesome5
+//                         style={styles.penIcon}
+//                         name="sign-out-alt"
+//                       />
+//                     </Button>
+//                   </TouchableOpacity>
+//                 </View>
+//               </View>
+
+//               <Divider />
+
+//               {/* Render Account Info */}
+//               <Text style={styles.AC_Info}>Account Information</Text>
+//               <FlatList
+//                 data={accountInfoData}
+//                 keyExtractor={(item, index) => index.toString()}
+//                 renderItem={({item}) => (
+//                   <View style={styles.info}>
+//                     <Text style={styles.textLabel}>{item.label}</Text>
+//                     <Text style={styles.textValue}>{item.value}</Text>
+//                   </View>
+//                 )}
+//               />
+
+//               <Divider />
+
+//               {/* Render Bank Details */}
+//               <Text style={styles.AC_Info}>Bank And Payment Information</Text>
+//               <FlatList
+//                 data={bankDetailsData}
+//                 keyExtractor={(item, index) => index.toString()}
+//                 renderItem={({item}) => (
+//                   <View style={styles.info}>
+//                     <Text style={styles.textLabel}>{item.label}</Text>
+//                     <Text style={styles.textValue}>{item.value}</Text>
+//                   </View>
+//                 )}
+//               />
+//             </View>
+//           </PaperProvider>
+//         </ScrollView>
+//       )}
+//     </SafeAreaView>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: 'white',
+//   },
+//   profileSection: {
+//     backgroundColor: 'white',
+//     paddingVertical: 16,
+//     paddingHorizontal: 24,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     flexDirection: 'row',
+//   },
+//   profileAvatar: {
+//     borderRadius: 100,
+//     width: 100,
+//     height: 100,
+//     resizeMode: 'contain',
+//     borderColor: 'green',
+//   },
+//   profileInfo: {
+//     flex: 1,
+//     marginLeft: 26,
+//     justifyContent: 'center',
+//   },
+//   profileName: {
+//     fontWeight: '500',
+//     fontSize: 16,
+//     color: 'black',
+//   },
+//   profileRole: {
+//     fontSize: 14,
+//     fontWeight: '300',
+//     color: 'black',
+//   },
+//   groupIcon: {
+//     flexDirection: 'column',
+//     rowGap: 4,
+//   },
+//   button: {
+//     borderWidth: 1,
+//     width: 10,
+//     borderColor: 'gray',
+//     borderRadius: 100,
+//     backgroundColor: '#f2f2f2',
+//   },
+//   penIcon: {
+//     color: 'black',
+//     fontSize: 18,
+//   },
+//   info: {
+//     flex: 1,
+//     backgroundColor: 'white',
+//     paddingVertical: 12,
+//     paddingHorizontal: 15,
+//     marginBottom: 10,
+//     width: '100%',
+//   },
+
+//   AC_Info: {
+//     fontSize: 20,
+//     fontWeight: '500',
+//     color: 'black',
+//     letterSpacing: 2,
+//     padding: 10,
+//   },
+//   textLabel: {
+//     fontSize: 15,
+//     fontWeight: '500',
+//     color: 'black',
+//     letterSpacing: 2,
+//   },
+
+//   textValue: {
+//     fontSize: 16,
+//     color: 'grey',
+//     fontWeight: '600',
+//     marginTop: 4,
+//   },
+// });
+
+// export default Profile;
+// import React, { useEffect } from 'react';
+// import {
+//   View,
+//   Text,
+//   Image,
+//   StyleSheet,
+//   Alert,
+//   SafeAreaView,
+//   FlatList,
+// } from 'react-native';
+// import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+// import FontAwesome5 from 'react-native-vector-icons/FontAwesome5.js';
+// import {
+//   Modal,
+//   Portal,
+//   Button,
+//   Provider as PaperProvider,
+//   Divider,
+//   ActivityIndicator,
+//   Colors,
+// } from 'react-native-paper';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { userLogout } from '../../features/auth/authThunks';
+// import { scpUserDetailsHandler } from '../../features/scp-user/scpUserThunk';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// const Profile = ({ navigation }) => {
+//   const dispatch = useDispatch();
+//   const [visible, setVisible] = React.useState(false);
+
+//   const showModal = () => setVisible(true);
+//   const hideModal = () => setVisible(false);
+//   const containerStyle = {
+//     backgroundColor: 'white',
+//     padding: 20,
+//     alignItems: 'center',
+//   };
+//   const { userByScpDetails } = useSelector((state) => state.scpUser);
+
+//   useEffect(() => {
+//     const scpUserHandler = async () => {
+//       const _id = await AsyncStorage.getItem('scpId');
+//       await dispatch(scpUserDetailsHandler(_id));
+//     };
+
+//     scpUserHandler();
+//   }, [dispatch]);
+
+//   const handleLogout = () => {
+//     Alert.alert(
+//       'Confirm Action',
+//       'Are you sure you want to proceed for logout?',
+//       [
+//         {
+//           text: 'Cancel',
+//           style: 'cancel',
+//         },
+//         {
+//           text: 'OK',
+//           onPress: () => {
+//             dispatch(userLogout());
+//           },
+//         },
+//       ],
+//       { cancelable: false }
+//     );
+//   };
+
+//   const renderItem = ({ item }) => (
+//     <View style={styles.info}>
+//       <Text style={styles.textLabel}>{item.label}</Text>
+//       <Text style={styles.textValue}>{item.value}</Text>
+//     </View>
+//   );
+
+//   const accountInfoData = [
+//     { label: 'Gender:', value: userByScpDetails?.scpDetail?.gender || 'NA' },
+//     {
+//       label: 'Residential Address:',
+//       value: userByScpDetails?.scpDetail?.residentialAddress || 'NA',
+//     },
+//     { label: 'Pincode:', value: userByScpDetails?.scpDetail?.pinCode || 'NA' },
+//     { label: 'Mobile:', value: userByScpDetails?.scpDetail?.mobile || 'NA' },
+//     {
+//       label: 'Alternate Mobile:',
+//       value: userByScpDetails?.scpDetail?.alternateMobile || 'NA',
+//     },
+//     { label: 'Email:', value: userByScpDetails?.scpDetail?.email || 'NA' },
+//     {
+//       label: 'PAN No.:',
+//       value: userByScpDetails?.documents[2]?.docNumber || 'NA',
+//     },
+//     {
+//       label: 'Aadhar No.:',
+//       value: userByScpDetails?.documents[1]?.docNumber || 'NA',
+//     },
+//     {
+//       label: 'Education:',
+//       value: userByScpDetails?.scpDetail?.education || 'NA',
+//     },
+//     {
+//       label: 'Occupation:',
+//       value: userByScpDetails?.scpDetail?.occupation || 'NA',
+//     },
+//     {
+//       label: 'PVC Certificate No.:',
+//       value: userByScpDetails?.documents[4]?.docNumber || 'NA',
+//     },
+//     {
+//       label: 'IIBF Certificate No.:',
+//       value: userByScpDetails?.documents[5]?.docNumber || 'NA',
+//     },
+//     {
+//       label: 'DRA Certificate No:',
+//       value: userByScpDetails?.documents[6]?.docNumber || 'NA',
+//     },
+//     { label: 'BCA/FBC:', value: userByScpDetails?.scpDetail?.bcaFbc || 'NA' },
+//     {
+//       label: 'BCA Bank:',
+//       value: userByScpDetails?.scpDetail?.bcaBankName || 'NA',
+//     },
+//   ];
+//     const bankDetailsData = [
+//         {label: 'Bank Name:', value: userByScpDetails?.scpDetail?.bankName || 'NA'},
+//         {
+//           label: 'Cust Id/CifNo:',
+//           value: userByScpDetails?.scpDetail?.bankCustomerId || 'NA',
+//         },
+//         {
+//           label: 'Savings Account No.:',
+//           value: userByScpDetails?.scpDetail?.savingsAccountNum || 'NA',
+//         },
+//         {
+//           label: 'Settlement Account No.:',
+//           value: userByScpDetails?.scpDetail?.settlementAccountNum || 'NA',
+//         },
+//         {
+//           label: 'Payment Received Date:',
+//           value: userByScpDetails?.scpDetail?.receivedDate || 'NA',
+//         },
+//         {
+//           label: 'Payment Received Amount:',
+//           value: userByScpDetails?.scpDetail?.amount || 'NA',
+//         },
+        
+//       ];
+
+//   return (
+//     <SafeAreaView style={styles.container}>
+//       {userByScpDetails?.isLoading ? (
+//         <ActivityIndicator
+//           animating={true}
+//           color={Colors.green800}
+//           size="large"
+//           style={{ flex: 1, backgroundColor: 'white' }}
+//         />
+//       ) : (
+//         <ScrollView>
+//           <PaperProvider>
+//             <Portal>
+//               <Modal
+//                 visible={visible}
+//                 onDismiss={hideModal}
+//                 contentContainerStyle={containerStyle}
+//               >
+//                 <Text style={{ fontSize: 24, color: 'black' }}>Edit Profile</Text>
+//               </Modal>
+//             </Portal>
+
+//             <View style={styles.profileDetails}>
+//               <View style={styles.profileSection}>
+//                 <Image
+//                   source={require('../../assets/images/profile.png')}
+//                   style={styles.profileAvatar}
+//                 />
+//                 <View style={styles.profileInfo}>
+//                   <Text style={styles.profileName}>
+//                     {userByScpDetails?.scpDetail?.title &&
+//                       userByScpDetails?.scpDetail?.name
+//                       ? `${userByScpDetails?.scpDetail?.title.toUpperCase()}.${userByScpDetails?.scpDetail?.name.toUpperCase()}`
+//                       : 'Unknown SCP'}
+//                   </Text>
+//                   <Text style={styles.profileRole}>
+//                     {userByScpDetails?.scpDetail?.scpNo}
+//                   </Text>
+//                 </View>
+
+//                 <View style={styles.groupIcon}>
+//                   <TouchableOpacity>
+//                     <Button style={styles.button} onPress={showModal}>
+//                       <FontAwesome5
+//                         style={styles.penIcon}
+//                         name="sign-out-alt"
+//                       />
+//                     </Button>
+//                   </TouchableOpacity>
+
+//                   <TouchableOpacity>
+//                     <Button style={styles.button} onPress={handleLogout}>
+//                       <FontAwesome5
+//                         style={styles.penIcon}
+//                         name="sign-out-alt"
+//                       />
+//                     </Button>
+//                   </TouchableOpacity>
+//                 </View>
+//               </View>
+
+//               <Divider />
+
+//               {/* Render Account Info */}
+//               <Text style={styles.AC_Info}>Account Information</Text>
+//               <FlatList
+//                 data={accountInfoData}
+//                 keyExtractor={(item, index) => index.toString()}
+//                 renderItem={renderItem}
+//               />
+
+//               <Divider />
+
+              
+//                {/* Render Bank Details */}
+//                <Text style={styles.AC_Info}>Bank And Payment Information</Text>
+//                <FlatList
+//                 data={bankDetailsData}
+//                 keyExtractor={(item, index) => index.toString()}
+//                 renderItem={({item}) => (
+//                   <View style={styles.info}>
+//                     <Text style={styles.textLabel}>{item.label}</Text>
+//                     <Text style={styles.textValue}>{item.value}</Text>
+//                   </View>
+//                 )}
+//               />
+//             </View>
+//           </PaperProvider>
+//         </ScrollView>
+//       )}
+//     </SafeAreaView>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: 'white',
+//   },
+//   profileSection: {
+//     backgroundColor: 'white',
+//     paddingVertical: 16,
+//     paddingHorizontal: 24,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     flexDirection: 'row',
+//   },
+//   profileAvatar: {
+//     borderRadius: 100,
+//     width: 100,
+//     height: 100,
+//     resizeMode: 'contain',
+//     borderColor: 'green',
+//   },
+//   profileInfo: {
+//     flex: 1,
+//     marginLeft: 26,
+//     justifyContent: 'center',
+//   },
+//   profileName: {
+//     fontWeight: '500',
+//     fontSize: 16,
+//     color: 'black',
+//   },
+//   profileRole: {
+//     fontSize: 14,
+//     fontWeight: '300',
+//     color: 'black',
+//   },
+//   groupIcon: {
+//     flexDirection: 'column',
+//     rowGap: 4,
+//   },
+//   button: {
+//     borderWidth: 1,
+//     width: 10,
+//     borderColor: 'gray',
+//     borderRadius: 100,
+//     backgroundColor: '#f2f2f2',
+//   },
+//   penIcon: {
+//     color: 'black',
+//     fontSize: 18,
+//   },
+//   info: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     alignItems: 'center',
+//     paddingVertical: 12,
+//     paddingHorizontal: 15,
+//     marginBottom: 10,
+//     width: '100%',
+//     marginLeft:10,
+//   },
+//   AC_Info: {
+//     fontSize: 20,
+//     fontWeight: '500',
+//     color: 'black',
+//     letterSpacing: 2,
+//     padding: 8,
+//   },
+//   textLabel: {
+//     fontWeight: '400',
+//     fontSize: 15,
+//     color: 'black',
+//     letterSpacing: 2,
+//     marginLeft:15,
+//   },
+//   textValue: {
+//     fontSize: 16,
+//     color: 'grey',
+//     fontWeight: '500',
+//     marginLeft: 15,
+//     marginRight:30,
+//   },
+// });
+
+// export default Profile;
+

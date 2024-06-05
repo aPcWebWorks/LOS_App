@@ -11,6 +11,7 @@ const loanMasterSlice = createSlice({
   name: 'loan-Master',
   initialState,
   reducers: {},
+  
   extraReducers: builder => {
     builder
       .addCase(loanMasterHandler.pending, state => {

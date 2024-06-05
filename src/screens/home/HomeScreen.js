@@ -7,17 +7,17 @@ const HomeScreen = () => {
   const theme = useTheme();
   const styles = getStyles(theme);
 
-  // const [visible, setVisible] = React.useState(true);
+  const [visible, setVisible] = React.useState(true);
 
-  // const onToggleSnackBar = () => setVisible(!visible);
+  const onToggleSnackBar = () => setVisible(!visible);
 
-  // const onDismissSnackBar = () => setVisible(false);
+  const onDismissSnackBar = () => setVisible(false);
 
   return (
     <>
       <SafeAreaView style={styles.container}>
         <Text>Home Screen</Text>
-        {/* <Snackbar
+        <Snackbar
         style={{backgroundColor: 'green'}}
           visible={visible}
           onDismiss={onDismissSnackBar}
@@ -28,7 +28,7 @@ const HomeScreen = () => {
             },
           }}>
           Login SuccessFully!
-        </Snackbar> */}
+        </Snackbar>
       </SafeAreaView>
     </>
   );
