@@ -301,6 +301,7 @@ import {
   ScrollView,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
+import {Dropdown} from 'react-native-element-dropdown';
 import {getCustomerWithId} from '../../../features/customer-master/customerMasterThunk';
 import DropdownComponent from '../../../components/Common/dropdown/Dropdown';
 
@@ -309,6 +310,7 @@ const LoanGenerationScreen = ({navigation, route}) => {
   const {id} = route.params;
   const {userByScpNumber} = useSelector(state => state.scpUser);
   const {customer, isLoading} = useSelector(state => state.getCustomerById);
+  const [selectQuery, setSelectQuery] = useState('');
 
   const [obj, setObj] = useState([]);
   const [image, setImage] = useState([]);
@@ -355,89 +357,141 @@ const LoanGenerationScreen = ({navigation, route}) => {
 
   return (
     <>
-      <SafeAreaView style={styles.container}> 
-      <ScrollView>
-        <View style={styles.contentContainer}>
-              <FlatList 
-                data={obj.concat(image)}
-                renderItem={({item}) => (
-                  <View style={styles.itemContainer}>
-                    <Text style={styles.label}>{item.key}</Text>
-                    {item.key.startsWith('Photo') ? (
-                      <Image
-                        source={{uri: `file:///${item.value}`}}
-                        style={styles.photo}
-                      />
-                    ) : (
-                      <Text style={styles.textValue}>{item.value}</Text>
-                    )}
-                  </View>
-                )}
-                keyExtractor={(item, index) => `${item.key}-${index}`}
+      <SafeAreaView style={styles.container}>
+        <ScrollView style={styles.scrollView}>
+            <FlatList
+              data={obj.concat(image)}
+              renderItem={({item}) => (
+                <View style={styles.itemContainer}>
+                  <Text style={styles.label}>{item.key}</Text>
+                  {item.key.startsWith('Photo') ? (
+                    <Image
+                      source={{uri: `file:///${item.value}`}}
+                      style={styles.photo}
+                    />
+                  ) : (
+                    <Text style={styles.textValue}>{item.value}</Text>
+                  )}
+                </View>
+              )}
+              keyExtractor={(item, index) => `${item.key}-${index}`}
+            />
+
+            {/* Render ActivityIndicator when isLoading is true */}
+            {isLoading && (
+              <ActivityIndicator
+                size="large"
+                color="green"
+                style={styles.loadingIndicator}
               />
-              
-          
-           {/* Render ActivityIndicator when isLoading is true */}
-        {isLoading && (
-          <ActivityIndicator size="large" color="green" style={styles.loadingIndicator} />
-        )}
-          {/* Dropdown Components */}
-          <View style={styles.dropdownGroup}>
-            <DropdownComponent
+            )}
+            {/* Dropdown Components */}
+            <View style={styles.dropdownGroup}>
+              {/* <DropdownComponent
               label="Select Customer"
               options={[
                 {label: 'Name', value: 'name'},
                 {label: 'Aadhar or PAN Number', value: 'aadharorpannumber'},
                 {label: 'Customer ID', value: 'customerid'},
               ]}
-            />
-            <View style={{marginTop: 10}} />
-            <DropdownComponent
-              label="Select User"
-              options={[
-                {label: 'Name', value: 'name'},
-                {label: 'Aadhar or PAN Number', value: 'aadharorpannumber'},
-                {label: 'Customer ID', value: 'customerid'},
-              ]}
-            />
-            <View style={{marginTop: 10}} />
-            <DropdownComponent
-              label="Select SCP"
-              options={[
-                {label: 'Name', value: 'name'},
-                {label: 'Aadhar or PAN Number', value: 'aadharorpannumber'},
-                {label: 'Customer ID', value: 'customerid'},
-              ]}
-            />
-            <View style={{marginTop: 10}} />
-            <DropdownComponent
-              label="Select SCP"
-              options={[
-                {label: 'Name', value: 'name'},
-                {label: 'Aadhar or PAN Number', value: 'aadharorpannumber'},
-                {label: 'Customer ID', value: 'customerid'},
-              ]}
-            />
-          </View>
+            /> */}
 
-          <View style={styles.buttonGroup}>
-            <Button
-              style={styles.button}
-              title="Submit"
-              onPress={handleStack}
-              color="green"
-            />
-            <Button
-              style={styles.button}
-              title="Cancel"
-              onPress={handleCancel}
-              color="green"
-            />
-            
-          </View>
-        
-       </View>
-       </ScrollView> 
+              <Dropdown
+                style={styles.dropdown}
+                data={[
+                  {label: 'Name', value: 'name'},
+                  {label: 'Aadhar or PAN Number', value: 'aadharorpannumber'},
+                  {label: 'Customer ID', value: 'customerid'},
+                ]}
+                mode="default"
+                labelField="label"
+                valueField="value"
+                placeholder={
+                  <Text style={{color: 'black'}}>Select Customer</Text>
+                }
+                // value={credentials?.customer?.occupation}
+                // onFocus={() => setIsFocus(true)}
+                // onBlur={() => setIsFocus(false)}
+                onChange={setSelectQuery}
+                iconColor="black"
+              />
+              {/* <View style={{marginTop: 10}} /> */}
+              <Dropdown
+                style={styles.dropdown}
+                data={[
+                  {label: 'Name', value: 'name'},
+                  {label: 'Aadhar or PAN Number', value: 'aadharorpannumber'},
+                  {label: 'Customer ID', value: 'customerid'},
+                ]}
+                mode="default"
+                labelField="label"
+                valueField="value"
+                placeholder={
+                  <Text style={{color: 'black'}}>Select Customer</Text>
+                }
+                // value={credentials?.customer?.occupation}
+                // onFocus={() => setIsFocus(true)}
+                // onBlur={() => setIsFocus(false)}
+                onChange={setSelectQuery}
+                iconColor="black"
+              />
+              {/* <View style={{marginTop: 10}} /> */}
+              <Dropdown
+                style={styles.dropdown}
+                data={[
+                  {label: 'Name', value: 'name'},
+                  {label: 'Aadhar or PAN Number', value: 'aadharorpannumber'},
+                  {label: 'Customer ID', value: 'customerid'},
+                ]}
+                mode="default"
+                labelField="label"
+                valueField="value"
+                placeholder={
+                  <Text style={{color: 'black'}}>Select Customer</Text>
+                }
+                // value={credentials?.customer?.occupation}
+                // onFocus={() => setIsFocus(true)}
+                // onBlur={() => setIsFocus(false)}
+                onChange={setSelectQuery}
+                iconColor="black"
+              />
+              {/* <View style={{marginTop: 10}} /> */}
+              <Dropdown
+                style={styles.dropdown}
+                data={[
+                  {label: 'Name', value: 'name'},
+                  {label: 'Aadhar or PAN Number', value: 'aadharorpannumber'},
+                  {label: 'Customer ID', value: 'customerid'},
+                ]}
+                mode="default"
+                labelField="label"
+                valueField="value"
+                placeholder={
+                  <Text style={{color: 'black'}}>Select Customer</Text>
+                }
+                // value={credentials?.customer?.occupation}
+                // onFocus={() => setIsFocus(true)}
+                // onBlur={() => setIsFocus(false)}
+                onChange={setSelectQuery}
+                iconColor="black"
+              />
+            </View>
+
+            <View style={styles.buttonGroup}>
+              <Button
+                style={styles.button}
+                title="Submit"
+                onPress={handleStack}
+                color="green"
+              />
+              <Button
+                style={styles.button}
+                title="Cancel"
+                onPress={handleCancel}
+                color="green"
+              />
+            </View>
+        </ScrollView>
       </SafeAreaView>
     </>
   );
@@ -446,10 +500,9 @@ const LoanGenerationScreen = ({navigation, route}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 15,
   },
-  contentContainer: {
-    padding: 15,
+  scrollView: {
+    padding: 10,
   },
 
   itemContainer: {
@@ -460,6 +513,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 15,
     backgroundColor: '#f0f0f0',
+    // backgroundColor: '#ecf9ec',
     borderRadius: 8,
   },
   label: {
@@ -479,18 +533,30 @@ const styles = StyleSheet.create({
   },
   dropdownGroup: {
     marginTop: 20,
+    rowGap: 10,
+  },
+  dropdown: {
+    // borderWidth: 1.5,
+    // borderColor: 'gray',
+    height: 55,
+    fontSize: 18,
+    color: 'black',
+    // marginTop: 4,
+    // borderRadius: 4,
+    backgroundColor: '#ecf9ec',
   },
   buttonGroup: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
+    // flexDirection: 'row',
+    marginTop: 40,
+    rowGap: 10,
   },
   button: {
-    width: '40%',
-    height: 50,
-    backgroundColor: 'green',
-    justifyContent: 'center',
-    borderRadius: 10,
+    // width: '40%',
+    // flex: 1,
+    // height: 100,
+    // backgroundColor: 'red',
+    // justifyContent: 'center',
+    // borderRadius: 10,
   },
   loadingIndicator: {
     marginTop: 20,

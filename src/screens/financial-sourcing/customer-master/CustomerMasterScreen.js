@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -6,15 +6,16 @@ import {
   ScrollView,
   Text,
   ActivityIndicator,
+  Animated,
+  TouchableOpacity,
 } from 'react-native';
-import {Button, Searchbar, DataTable} from 'react-native-paper';
-import DropdownComponent from '../../../components/Common/dropdown/Dropdown';
+import {Searchbar} from 'react-native-paper';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5.js';
+import {Dropdown} from 'react-native-element-dropdown';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  customerMasterHandler,
-  getCustomerWithId,
-} from '../../../features/customer-master/customerMasterThunk';
-import {FlatList} from 'react-native-gesture-handler';
+import {customerMasterHandler} from '../../../features/customer-master/customerMasterThunk';
+import NewCustomer from '../../../components/Features/financial sourcing/customer-master/NewCustomer';
+import AllCustomer from '../../../components/Features/financial sourcing/customer-master/AllCustomer';
 
 const data = [
   {label: 'Name', value: 'customername'},
@@ -23,12 +24,17 @@ const data = [
   {label: 'Email', value: 'emailid'},
 ];
 
-const CustomerMasterScreen = ({navigation}) => {
+const CustomerMasterScreen = () => {
   const dispatch = useDispatch();
   const {customer, isLoading} = useSelector(state => state.customerMaster);
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [numberOfCustomersPerPage, setNumberOfCustomersPerPage] = useState(10);
+
+  const [expanded, setExpanded] = useState(false);
+  const animationHeight = useRef(new Animated.Value(0)).current;
+  const rotateValue = useRef(new Animated.Value(0)).current;
+
+  const [isFocus, setIsFocus] = useState(false);
 
   const [selectedFilter, setSelectedFilter] = useState(
     'customerName',
@@ -41,199 +47,143 @@ const CustomerMasterScreen = ({navigation}) => {
     dispatch(customerMasterHandler());
   }, [dispatch]);
 
-  useEffect(() => {
-    console.log('Customer data:', customer);
-  }, [customer]);
+  // useEffect(() => {
+  //   console.log('Customer data:', customer);
+  // }, [customer]);
+
+  const toggleExpand = () => {
+    if (expanded) {
+      Animated.parallel([
+        Animated.timing(animationHeight, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+        Animated.timing(rotateValue, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start(() => setExpanded(false));
+    } else {
+      setExpanded(true);
+      Animated.parallel([
+        Animated.timing(animationHeight, {
+          toValue: 1180, // adjust this value to the height of your content
+          duration: 300,
+          useNativeDriver: false,
+        }),
+        Animated.timing(rotateValue, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  };
+
+  const rotateInterpolate = rotateValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '180deg'],
+  });
+
+  // const handleDropdownChange = selectedValue => {
+  //   onChangeText(selectedValue);
+  // };
 
   const handleFilterChange = filter => {
     setSelectedFilter(filter);
-    setSearchQuery(''); // Clear search query when filter changes
+    setSearchQuery('');
   };
+
   const handleSearch = query => {
-    let filteredQuery = query; // Initialize with the original query
+    let filteredQuery = query;
 
     switch (selectedFilter) {
       case 'customerName':
-        // Allow only letters and spaces in the search query
         filteredQuery = query.replace(/[^a-zA-Z\s]/g, '');
         break;
       case 'customerid':
-        // Allow only numeric values in the search query
-        filteredQuery = query.replace(/\D/g, ''); // Remove non-numeric characters
+        filteredQuery = query.replace(/\D/g, '');
         break;
       case 'mobilenumber':
-        // Allow only numeric values in the search query
-        filteredQuery = query.replace(/\D/g, ''); // Remove non-numeric characters
+        filteredQuery = query.replace(/\D/g, '');
         break;
       case 'email':
-        // Allow alphabetical characters and symbols in the search query
-        filteredQuery = query.replace(/[^a-zA-Z@._]/g, ''); // Only allow letters, '@', '.', '_'
+        filteredQuery = query.replace(/[^a-zA-Z@._]/g, '');
         break;
       default:
-        // Default case: Allow all characters if no specific filter is selected
         filteredQuery = query;
         break;
     }
 
-    setSearchQuery(filteredQuery); // Update the search query state
+    setSearchQuery(filteredQuery);
   };
 
-  const handleEdit = id => {
-    console.log('View customer:', id);
-    if (id) {
-      dispatch(getCustomerWithId(id));
-      navigation.navigate('Customer Details', {id});
-    }
-  };
-
-  const handleDelete = customer => {
-    console.log('Delete customer:', customer);
-  };
-
-  const renderCustomerItem = (item, index) => {
-    const {customerName, externalCustomerId, mobileNumber, email, gender} =
-      item;
-
-    if (
-      (customerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        externalCustomerId
-          ?.toString()
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        mobileNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        email?.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      gender
-    ) {
-      return (
-        <DataTable.Row key={index}>
-          <DataTable.Cell>
-            {(currentPage - 1) * numberOfCustomersPerPage + index + 1}
-          </DataTable.Cell>
-          <DataTable.Cell style={styles.tableCell} >
-            {item?.externalCustomerId}
-          </DataTable.Cell>
-          <DataTable.Cell style={styles.tableCell}>
-            {item?.customerName}
-          </DataTable.Cell>
-          <DataTable.Cell style={styles.tableCell}>
-            {item?.mobileNumber}
-          </DataTable.Cell>
-          <DataTable.Cell style={styles.tableCell} >
-            {item?.email}
-          </DataTable.Cell>
-          <DataTable.Cell style={styles.tableCell} >
-            {item?.gender}
-          </DataTable.Cell>
-          <DataTable.Cell style={styles.tableCell} >
-            <Button
-              onPress={() => handleEdit(item?.id)}
-              style={styles.actionButton}
-              mode="contained"
-              dark={true}
-              textColor="white">
-              View
-            </Button>
-          </DataTable.Cell>
-          <DataTable.Cell style={styles.tableCell} width={100}>
-            <Button
-              onPress={() => handleDelete(item)}
-              style={styles.actionButton}
-              mode="contained"
-              dark={true}
-              textColor="white">
-              Edit
-            </Button>
-          </DataTable.Cell>
-        </DataTable.Row>
-      );
-    }
-    return null;
-  };
+  // const handleDelete = customer => {
+  //   console.log('Delete customer:', customer);
+  // };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <View style={styles.scrollView}>
-          <View style={styles.elementGroup}>
-            <DropdownComponent
-              style={styles.dropdown}
-              label="Select Customer"
-              options={data}
-              onChangeText={handleFilterChange}
+      {isLoading ? (
+        <ActivityIndicator
+          size="large"
+          color="green"
+          style={styles.loadingIndicator}
+        />
+      ) : (
+        <>
+          <ScrollView style={styles.scrollView}>
+            <View>
+              <TouchableOpacity
+                onPress={toggleExpand}
+                style={styles.toggleExpand}>
+                <Text style={styles.title}>Add New Customer</Text>
+                <Animated.View
+                  style={{transform: [{rotate: rotateInterpolate}]}}>
+                  <FontAwesome5 size={20} color="white" name="angle-down" />
+                </Animated.View>
+              </TouchableOpacity>
+              <Animated.View
+                style={[styles.content, {height: animationHeight}]}>
+                {expanded && <NewCustomer />}
+              </Animated.View>
+            </View>
+
+            <Dropdown
+              style={[styles.dropdown, isFocus && {borderColor: 'black'}]}
+              data={data}
+              mode="default"
+              labelField="label"
+              valueField="value"
+              placeholder={
+                <Text style={{color: 'white', fontSize: 16, fontWeight: '700'}}>
+                  Select
+                </Text>
+              }
+              // value={value}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={handleFilterChange}
+              iconColor="white"
             />
 
-            <Button
-              style={styles.button}
-              mode="contained"
-              dark={true}
-              textColor="white"
-              onPress={() => console.log('Add New clicked')}>
-              Add New
-            </Button>
-          </View>
-
-          
-          <Searchbar
-            style={styles.search}
-            placeholder="Search"
-            onChangeText={item => handleSearch(item)}
-            value={searchQuery}
-            mode="bar"
-          />
-          {isLoading ? (
-            <ActivityIndicator
-              size="large"
-              color="green"
-              style={styles.loadingIndicator}
+            <Searchbar
+              style={styles.search}
+              placeholder="Search Customer"
+              onChangeText={item => handleSearch(item)}
+              value={searchQuery}
+              mode="bar"
+              // inputStyle={{color: 'white'}}
+              // rippleColor='red'
+              // searchAccessibilityLabel="Search Customer"
             />
-          ) : (
-            <>
-              <ScrollView horizontal>
-                <DataTable>
-                  <DataTable.Header style={styles.tableHeader}>
-                    <DataTable.Title style={[styles.columnHeader, {width: 30}]}>
-                      <Text style={styles.tableTitle}>No</Text>
-                    </DataTable.Title>
-                    <DataTable.Title
-                      style={[styles.columnHeader]}>
-                      <Text style={styles.tableTitle}>CustomerID</Text>
-                    </DataTable.Title>
-                    <DataTable.Title
-                      style={[styles.columnHeader]}>
-                      <Text style={styles.tableTitle}>Name</Text>
-                    </DataTable.Title>
-                    <DataTable.Title
-                      style={[styles.columnHeader]}>
-                      <Text style={styles.tableTitle}>Mobile Number</Text>
-                    </DataTable.Title>
-                    <DataTable.Title
-                      style={[styles.columnHeader]}>
-                      <Text style={styles.tableTitle}>EmailID</Text>
-                    </DataTable.Title>
-                    <DataTable.Title
-                      style={[styles.columnHeader]}>
-                      <Text style={styles.tableTitle}>Gender</Text>
-                    </DataTable.Title>
-                    <DataTable.Title
-                      style={[styles.columnHeader]}>
-                      <Text style={styles.tableTitle}>Action</Text>
-                    </DataTable.Title>
-                  </DataTable.Header>
 
-                  <FlatList
-                    data={customer?.customers}
-                    renderItem={({item, index}) =>
-                      renderCustomerItem(item, index)
-                    }
-                    keyExtractor={(item, index) => index.toString()}
-                    initialNumToRender={numberOfCustomersPerPage}
-                  />
-                </DataTable>
-              </ScrollView>
-            </>
-          )}
-        </View>
-      </ScrollView>
+            <AllCustomer customer={customer?.customers} query={searchQuery} />
+          </ScrollView>
+        </>
+      )}
     </SafeAreaView>
   );
 };
@@ -244,77 +194,38 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   scrollView: {
-    marginHorizontal: 10,
-    marginTop: 10,
+    padding: 10,
   },
-  elementGroup: {
+  toggleExpand: {
+    backgroundColor: 'green',
+    // flex: 1,
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    paddingHorizontal: 12,
+    height: 55,
+  },
+  title: {
+    color: 'white',
+    fontWeight: '700',
+    fontSize: 16,
   },
   dropdown: {
-    flex: 3,
+    marginTop: 8,
     height: 55,
-    backgroundColor: '#ecf9ec',
-    borderWidth: 0,
-    marginRight: 10,
+    backgroundColor: 'green',
+    paddingHorizontal: 10,
   },
   search: {
-    flex: 2,
-    borderRadius: 0,
-    backgroundColor: '#ecf9ec',
-    marginRight: 8,
-    paddingHorizontal: 2,
-    marginTop: 1,
-  },
-  button: {
     flex: 1,
-    fontSize: 16,
     borderRadius: 0,
+    marginTop: 8,
     backgroundColor: 'green',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 5,
-  },
-  tableHeader: {
-    backgroundColor: '#ecf9ec',
-    marginTop: 10,
-    
-  },
-  columnHeader: {
-    justifyContent: 'center',
-    width:120,
-  },
-  tableTitle: {
-    fontWeight: 'bold',
-    fontSize: 16,
-  
-  },
-  tableCell: {
-    justifyContent: 'center',
-    width:80,
-    
+    height: 55,
   },
   loadingIndicator: {
-    marginTop: 20,
-    alignSelf: 'center',
-  },
-  actionButtonsContainer: {
-    display: 'flex',
-    flexdirection: 'row',
-    justifycontent: 'flex-start',
-    alignitems: 'center',
     flex: 1,
-  },
-  actionButton: {
-    backgroundColor: 'green',
-    borderRadius: 0,
-    fontSize: 16,
-    justifyContent: 'center',
-    padding: '2px',
-    columnGap: 10,
-    marginRight: 10,
-    color: 'white',
+    backgroundColor: 'white',
   },
 });
 

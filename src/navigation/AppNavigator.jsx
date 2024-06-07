@@ -12,8 +12,6 @@ import SignInScreen from '../screens/auth/sign in/SignInScreen.js';
 import Home from '../screens/home/HomeScreen.js';
 import AppDrawer from '../components/Common/drawer/Drawer.js';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import BusinessPartner from '../screens/business-partner/BusinessPartnerScreen.js';
-import FinancialSourcingScreen from '../screens/financial-sourcing/FinancialSourcingScreen.js';
 import {Keyboard, AppState} from 'react-native';
 import ReportsScreen from '../screens/reports/ReportsScreen.js';
 import ProfileScreen from '../screens/profile/ProfileScreen.js';
@@ -22,6 +20,7 @@ import LoanMasterScreen from '../screens/financial-sourcing/loan-master/LoanMast
 import LoanSearchedCustomerScreen from '../screens/financial-sourcing/loan-master/LoanSearchedCustomerScreen.js';
 import LoanGenerationScreen from '../screens/financial-sourcing/loan-master/LoanGenerationScreen.js';
 import CustomerDetailsScreen from '../screens/financial-sourcing/customer-master/CustomerDetailsScreen.js';
+import LoanStatusScreen from '../screens/financial-sourcing/loan-status/LoanStatusScreen.js';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -73,7 +72,7 @@ function StackNavigator() {
             component={CustomerMasterScreen}
           />
           <Stack.Screen name="Loan Master" component={LoanMasterScreen} />
-          <Stack.Screen name="Loan Status" component={BusinessPartner} />
+          <Stack.Screen name="Loan Status" component={LoanStatusScreen} />
           <Stack.Screen
             name="Searched Customer"
             component={LoanSearchedCustomerScreen}

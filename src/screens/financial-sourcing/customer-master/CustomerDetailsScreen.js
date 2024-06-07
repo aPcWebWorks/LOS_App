@@ -1,18 +1,11 @@
-
 import React from 'react';
-import { SafeAreaView, StyleSheet, View, Text, FlatList,ActivityIndicator } from 'react-native';
-import { useSelector } from 'react-redux';
+import CustomerDetails from '../../../components/Features/financial sourcing/customer-master/CustomerDetails';
+import {SafeAreaView, ScrollView, StyleSheet} from 'react-native';
+import {useSelector} from 'react-redux';
+import {ActivityIndicator} from 'react-native-paper';
 
-const CustomerDetailsScreen = ({ route }) => {
-  const { customer,isLoading } = useSelector(state => state.getCustomerById);
-
-  if (isLoading) {
-    return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="green" />
-      </SafeAreaView>
-    );
-  }
+const CustomerDetailsScreen = () => {
+  const {customer, isLoading} = useSelector(state => state.getCustomerById);
 
   const customerDetails = {
     Id: customer.externalCustomerId,
@@ -26,26 +19,24 @@ const CustomerDetailsScreen = ({ route }) => {
     PanCardNumber: customer.panCardNumber,
   };
 
-  const renderDetailItem = ({ item }) => (
-    <View style={styles.detailRow}>
-      <Text style={styles.label}>{item.label}</Text>
-      <Text style={styles.value}>{item.value}</Text>
-    </View>
-  );
-
-  const data = Object.entries(customerDetails).map(([key, value]) => ({
-    label: key,
-    value: value,
-  }));
-
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={data}
-        renderItem={renderDetailItem}
-        keyExtractor={(item, index) => index.toString()}
-      />
-    </SafeAreaView>
+    <>
+      <SafeAreaView style={styles.container}>
+        {isLoading ? (
+          <ActivityIndicator
+            size="large"
+            color="green"
+            style={styles.loadingIndicator}
+          />
+        ) : (
+          <>
+            <ScrollView style={styles.scrollview}>
+              <CustomerDetails customerDetails={customerDetails} />
+            </ScrollView>
+          </>
+        )}
+      </SafeAreaView>
+    </>
   );
 };
 
@@ -53,36 +44,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  scrollview: {
     padding: 10,
   },
-  flatListContent: {
-    flexGrow: 1,
-    paddingBottom: 20, 
-  },
   loadingIndicator: {
-    marginTop: 20,
-    alignSelf: 'center',
-  },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems:"center",
-    paddingVertical: 10,
-    paddingHorizontal:16
-    
-  },
-  label: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    flex:1,
-    marginRight:15,
-    marginLeft:10
-  },
-  value: {
-    fontSize: 16,
-    flex:2,
+    flex: 1,
+    backgroundColor: 'white',
   },
 });
-
 export default CustomerDetailsScreen;
-

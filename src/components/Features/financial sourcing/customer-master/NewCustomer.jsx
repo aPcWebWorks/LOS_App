@@ -1,24 +1,11 @@
-import React, {useEffect, useRef, useState} from 'react';
-import RNFetchBlob from 'rn-fetch-blob';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Animated,
-  ActivityIndicator,
-} from 'react-native';
+import React, {useState} from 'react';
+// import RNFetchBlob from 'rn-fetch-blob';
+import {View, Text, StyleSheet, SafeAreaView} from 'react-native';
 import {TextInput, RadioButton, Button, useTheme} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
-import {postCustomerCredentials} from '../../../../../features/customer-master/customerMasterSlice.js';
-import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
-import {ScrollView} from 'react-native-gesture-handler';
-import {Picker} from '@react-native-picker/picker';
-import DocumentPicker from 'react-native-document-picker';
-import DateTimePicker from '../../../../Common/date-time-picker/DateTimePicker.js';
-import Dropdown from '../../../../Common/dropdown/Dropdown.js';
-import LinearGradient from 'react-native-linear-gradient';
-import CustomDocumentPicker from '../../../../Common/document-picker/DocumentPicker.js';
+import {postCustomerCredentials} from '../../../../features/customer-master/customerMasterSlice.js';
+import {Dropdown} from 'react-native-element-dropdown';
+import CustomDocumentPicker from '../../../Common/document-picker/DocumentPicker.js';
 
 const title = [
   {label: 'Mr', value: 'mr'},
@@ -34,7 +21,7 @@ const occupation = [
 ];
 
 // Main Component
-const CustomerMaster = ({id, isOpen, toggle}) => {
+const NewCustomer = ({navigation, id, isOpen, toggle}) => {
   // commom state.
   const theme = useTheme();
   const styles = getStyles(theme);
@@ -44,7 +31,9 @@ const CustomerMaster = ({id, isOpen, toggle}) => {
   // const credentials = useSelector(state => state.customer);
 
   // component state.
-  const [toggleContent, setToggleContent] = useState(false);
+  const [isFocus, setIsFocus] = useState(false);
+
+  // const [toggleContent, setToggleContent] = useState(false);
   const [credentials, setCredentials] = useState({
     idDocument: null,
     panCard: null,
@@ -96,54 +85,58 @@ const CustomerMaster = ({id, isOpen, toggle}) => {
       formData.append('customer', customerBlob._data, 'customer.json');
       console.log('credentials.idDocument.name', credentials.idDocument.name);
       dispatch(postCustomerCredentials(formData._parts));
-      console.log('formData _parts', customerBlob);
+      // console.log('formData _parts', customerBlob);
       // console.log('formData _parts', customerBlob._data);
+      // navigation.navigate('/Customer Master')
     } catch (error) {
-      console.log(error);
+      console.log('Error', error);
     }
   };
 
-  const ToggleContentHandler = () => {
-    setToggleContent(!toggleContent);
+  const handleFilterChange = filter => {
+    setSelectedFilter(filter);
+    setSearchQuery('');
   };
+
+  // const ToggleContentHandler = () => {
+  //   setToggleContent(!toggleContent);
+  // };
 
   return (
     <>
-      {/* {
-    loading ? <View style={styles.loaderContainer}>
-    <ActivityIndicator size="large" color="#0000ff" />
-  </View> : */}
-
-      <View
-        style={styles.container}
-        colors={['#006600', '#009900']}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 0}}>
-        <View>
-          <Text style={styles.label}>SCP Id*</Text>
-          <TextInput
-            style={styles.input}
-            autoFocus={false}
-            textColor="black"
-            inputMode="text"
-            mode="outlined"
-            outlineStyle={styles.inputOutline}
-            keyboardType="number-pad"
-            outlineColor="gray"
-            activeOutlineColor="black"
-            name="scpId"
-            value={credentials?.customer?.scpId}
-            onChangeText={value => handleChange('scpId', value)}
-          />
+      <SafeAreaView style={styles.container}>
+        <View style={styles.scpId}>
+          <Text style={styles.label}>SCP Id : </Text>
+          <Text>SCP000300</Text>
         </View>
 
         <View style={styles.customerTitle}>
-          <View style={styles.customerTitleDropdown}>
-            <Dropdown
+          <View>
+            {/* <Dropdown
+              labelDisplay={true}
               label="Title"
               options={title}
               value={credentials?.customer?.title}
               onChange={value => handleChange('title', value?.value)}
+            /> */}
+
+            <Text style={styles.label}>Title</Text>
+            <Dropdown
+              style={[
+                styles.dropdown,
+                {width: 100},
+                isFocus && {borderColor: 'black'},
+              ]}
+              data={title}
+              mode="default"
+              labelField="label"
+              valueField="value"
+              placeholder={<Text style={{color: 'black'}}>Select</Text>}
+              value={credentials?.customer?.title}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={value => handleChange('title', value?.value)}
+              iconColor="black"
             />
           </View>
           <View style={styles.customerName}>
@@ -296,11 +289,19 @@ const CustomerMaster = ({id, isOpen, toggle}) => {
         </View>
 
         <View>
+          <Text style={styles.label}>Occupation</Text>
           <Dropdown
-            label="Occupation"
-            options={occupation}
+            style={[styles.dropdown, isFocus && {borderColor: 'black'}]}
+            data={occupation}
+            mode="default"
+            labelField="label"
+            valueField="value"
+            placeholder={<Text style={{color: 'black'}}>Select</Text>}
             value={credentials?.customer?.occupation}
+            onFocus={() => setIsFocus(true)}
+            onBlur={() => setIsFocus(false)}
             onChange={value => handleChange('occupation', value?.value)}
+            iconColor="black"
           />
         </View>
 
@@ -346,32 +347,25 @@ const CustomerMaster = ({id, isOpen, toggle}) => {
           onPress={handleFormCredential}>
           Submit
         </Button>
-      </View>
+      </SafeAreaView>
     </>
   );
 };
 
 function getStyles(theme) {
   return StyleSheet.create({
-    loaderContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-
     container: {
       flex: 1,
-      borderTopLeftRadius: 30,
-      borderTopRightRadius: 30,
-      backgroundColor: '#b2cfb2',
-      padding: 20,
-      rowGap: 20,
+      rowGap: 14,
+      marginTop: 4,
     },
 
-    customerTitleDropdown: {
-      width: 100,
+    scpId: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      paddingVertical: 20,
     },
-
+    
     customerTitle: {
       flexDirection: 'row',
       columnGap: 4,
@@ -380,7 +374,14 @@ function getStyles(theme) {
     },
 
     dropdown: {
-      width: 100,
+      borderWidth: 1.5,
+      height: 45,
+      borderColor: 'gray',
+      fontSize: 18,
+      color: 'black',
+      marginTop: 4,
+      borderRadius: 4,
+      backgroundColor: 'white',
     },
 
     customerName: {
@@ -457,4 +458,4 @@ function getStyles(theme) {
   });
 }
 
-export default CustomerMaster;
+export default NewCustomer;
