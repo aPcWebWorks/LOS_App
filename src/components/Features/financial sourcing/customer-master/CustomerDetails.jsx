@@ -8,16 +8,20 @@ const CustomerDetails = ({customerDetails}) => {
   }));
 
   return (
-    <FlatList
-      data={data}
-      renderItem={({item}) => (
-        <View style={styles.detailRow}>
-          <Text style={styles.label}>{item.label}</Text>
-          <Text style={styles.value}>{item.value}</Text>
-        </View>
-      )}
-      keyExtractor={(item, index) => index.toString()}
-    />
+    <>
+      <FlatList
+        data={data}
+        renderItem={({item}) => (
+          <>
+            <View style={styles.detailRow}>
+              <Text style={styles.label}>{item.label}</Text>
+              <Text style={styles.value}>{item.value}</Text>
+            </View>
+          </>
+        )}
+        keyExtractor={(item, index) => index.toString()}
+      />
+    </>
   );
 };
 

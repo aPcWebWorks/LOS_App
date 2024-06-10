@@ -6,6 +6,7 @@ import {
   Button,
   PaperProvider,
   Searchbar,
+  ActivityIndicator,
 } from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useDispatch, useSelector} from 'react-redux';
@@ -24,10 +25,9 @@ const LoanMasterScreen = ({navigation}) => {
   const [modalSearchQuery, setModalSearchQuery] = useState('');
   const [selectQuery, setSelectQuery] = useState('');
   const [visible, setVisible] = useState(false);
-  const [toggleLoanForm, setToggleLoanForm] = useState(false);
 
   const dispatch = useDispatch();
-  const {loan} = useSelector(state => state.loanMaster);
+  const {loan, isLoading} = useSelector(state => state.loanMaster);
   const {userByScpNumber} = useSelector(state => state.scpUser);
   // const {searchedCustomer} = useSelector(state => state.searchedCustomer);
   const [filteredLoans, setFilteredLoans] = useState(loan);
@@ -79,80 +79,96 @@ const LoanMasterScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={style.container}>
-      <PaperProvider>
-        <ScrollView style={style.scrollview}>
-          <View style={{rowGap: 10}}>
-            <Portal>
-              <Modal
-                visible={!toggleLoanForm ? visible : hide}
-                onDismiss={hideModal}
-                // dismissable={false}
-                dismissableBackButton={false}
-                contentContainerStyle={style.modal}>
-                <Text style={style.modalText}>
-                  SCP No. : {userByScpNumber?.scpDetail?.scpNo}
-                </Text>
+      {isLoading ? (
+        <>
+          <ActivityIndicator
+            size="large"
+            color="green"
+            style={style.loadingIndicator}
+          />
+        </>
+      ) : (
+        <>
+          <PaperProvider>
+            <ScrollView style={style.scrollview}>
+              <View style={{rowGap: 10}}>
+                <Portal>
+                  <Modal
+                    // visible={!toggleLoanForm ? visible : hide}
+                    visible={visible}
+                    onDismiss={hideModal}
+                    // dismissable={false}
+                    dismissableBackButton={false}
+                    contentContainerStyle={style.modal}>
+                    <Text style={style.modalText}>
+                      SCP No. : {userByScpNumber?.scpDetail?.scpNo}
+                    </Text>
 
-                <View style={style.modalSection}>
-                  <Dropdown
-                    style={style.dropdown}
-                    data={Data}
-                    mode="default"
-                    labelField="label"
-                    valueField="value"
-                    placeholder={
-                      <Text style={{color: 'black'}}>Select Customer</Text>
-                    }
-                    value={selectQuery}
-                    // onFocus={() => setIsFocus(true)}
-                    // onBlur={() => setIsFocus(false)}
-                    onChange={setSelectQuery}
-                    iconColor="black"
-                  />
+                    <View style={style.modalSection}>
+                      <Dropdown
+                        style={style.dropdown}
+                        data={Data}
+                        mode="default"
+                        labelField="label"
+                        valueField="value"
+                        placeholder={
+                          <Text style={{color: 'black'}}>Select Customer</Text>
+                        }
+                        value={selectQuery}
+                        // onFocus={() => setIsFocus(true)}
+                        // onBlur={() => setIsFocus(false)}
+                        onChange={setSelectQuery}
+                        iconColor="black"
+                        placeholderStyle={{color: 'black'}}
+                      />
 
+                      <Searchbar
+                        style={style.modalSearchBar}
+                        placeholder="Search"
+                        onChangeText={setModalSearchQuery}
+                        value={modalSearchQuery}
+                        mode="bar"
+                        iconColor="black"
+                        placeholderTextColor="black"
+                      />
+
+                      <Button
+                        style={style.modalButton}
+                        mode="contained"
+                        dark={true}
+                        textColor="white"
+                        onPress={handleSearchCustomer}>
+                        Search Customer
+                      </Button>
+                    </View>
+                  </Modal>
+                </Portal>
+                <View style={style.elementGroup}>
                   <Searchbar
-                    style={style.modalSearchBar}
+                    style={style.search}
                     placeholder="Search"
-                    onChangeText={setModalSearchQuery}
-                    value={modalSearchQuery}
+                    // onChangeText={item => onChangeHandler(item)}
+                    onChangeText={setSearchQuery}
+                    value={searchQuery}
                     mode="bar"
                   />
 
                   <Button
-                    style={style.modalButton}
+                    style={style.button}
                     mode="contained"
                     dark={true}
                     textColor="white"
-                    onPress={handleSearchCustomer}>
-                    Search Customer
+                    onPress={showModal}>
+                    Add New
                   </Button>
                 </View>
-              </Modal>
-            </Portal>
-            <View style={style.elementGroup}>
-              <Searchbar
-                style={style.search}
-                placeholder="Search"
-                // onChangeText={item => onChangeHandler(item)}
-                onChangeText={setSearchQuery}
-                value={searchQuery}
-                mode="bar"
-              />
 
-              <Button
-                style={style.button}
-                mode="contained"
-                dark={true}
-                textColor="white"
-                onPress={showModal}>
-                Add New
-              </Button>
-            </View>
-
-            <AllLoan filteredLoans={filteredLoans} />
-          </View>
-        </ScrollView>
-      </PaperProvider>
+                <AllLoan filteredLoans={filteredLoans} />
+              </View>
+            </ScrollView>
+          </PaperProvider>
+        </>
+      )}
     </SafeAreaView>
   );
 };
@@ -205,6 +221,10 @@ const style = StyleSheet.create({
     marginTop: 20,
   },
   modalSearchBar: {borderRadius: 4, backgroundColor: '#ecf9ec'},
+  loadingIndicator: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
 });
 
 export default LoanMasterScreen;

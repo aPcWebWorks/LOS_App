@@ -24,27 +24,27 @@ const AllCustomer = ({customer, query}) => {
   return (
     <>
       <ScrollView horizontal>
-        <DataTable>
+        <DataTable style={styles.container} key="">
           <DataTable.Header style={styles.tableHeader}>
             <DataTable.Title style={[styles.columnHeader, {width: 30}]}>
               <Text style={styles.tableTitle}>No</Text>
             </DataTable.Title>
-            <DataTable.Title style={[styles.columnHeader]}>
+            <DataTable.Title style={[styles.columnHeader, {width: 120}]}>
               <Text style={styles.tableTitle}>CustomerID</Text>
             </DataTable.Title>
-            <DataTable.Title style={[styles.columnHeader]}>
+            <DataTable.Title style={[styles.columnHeader, {width: 200}]}>
               <Text style={styles.tableTitle}>Name</Text>
             </DataTable.Title>
-            <DataTable.Title style={[styles.columnHeader]}>
+            <DataTable.Title style={[styles.columnHeader, {width: 120}]}>
               <Text style={styles.tableTitle}>Mobile Number</Text>
             </DataTable.Title>
-            <DataTable.Title style={[styles.columnHeader]}>
+            <DataTable.Title style={[styles.columnHeader, {width: 200}]}>
               <Text style={styles.tableTitle}>EmailID</Text>
             </DataTable.Title>
-            <DataTable.Title style={[styles.columnHeader]}>
+            <DataTable.Title style={[styles.columnHeader, {width: 60}]}>
               <Text style={styles.tableTitle}>Gender</Text>
             </DataTable.Title>
-            <DataTable.Title style={[styles.columnHeader]}>
+            <DataTable.Title style={[styles.columnHeader, {width: 200}]}>
               <Text style={styles.tableTitle}>Action</Text>
             </DataTable.Title>
           </DataTable.Header>
@@ -72,25 +72,25 @@ const AllCustomer = ({customer, query}) => {
               ) {
                 return (
                   <DataTable.Row key={index}>
-                    <DataTable.Cell>
+                    <DataTable.Cell style={[styles.tableCell, {width: 30}]}>
                       {(currentPage - 1) * numberOfCustomersPerPage + index + 1}
                     </DataTable.Cell>
-                    <DataTable.Cell style={styles.tableCell}>
+                    <DataTable.Cell style={[styles.tableCell, {width: 120}]}>
                       {item?.externalCustomerId}
                     </DataTable.Cell>
-                    <DataTable.Cell style={styles.tableCell}>
+                    <DataTable.Cell style={[styles.tableCell, {width: 200}]}>
                       {item?.customerName}
                     </DataTable.Cell>
-                    <DataTable.Cell style={styles.tableCell}>
+                    <DataTable.Cell style={[styles.tableCell, {width: 120}]}>
                       {item?.mobileNumber}
                     </DataTable.Cell>
-                    <DataTable.Cell style={styles.tableCell}>
+                    <DataTable.Cell style={[styles.tableCell, {width: 200}]}>
                       {item?.email}
                     </DataTable.Cell>
-                    <DataTable.Cell style={styles.tableCell}>
+                    <DataTable.Cell style={[styles.tableCell, {width: 60}]}>
                       {item?.gender}
                     </DataTable.Cell>
-                    <DataTable.Cell style={styles.tableCell}>
+                    <DataTable.Cell style={[styles.tableCell, {width: 200}]}>
                       <Button
                         onPress={() => handleDetails(item?.id)}
                         style={styles.actionButton}
@@ -99,8 +99,6 @@ const AllCustomer = ({customer, query}) => {
                         textColor="white">
                         View
                       </Button>
-                    </DataTable.Cell>
-                    <DataTable.Cell style={styles.tableCell} width={100}>
                       <Button
                         onPress={() => DropdownhandleDelete(item)}
                         style={styles.actionButton}
@@ -125,39 +123,27 @@ const AllCustomer = ({customer, query}) => {
 };
 
 const styles = StyleSheet.create({
-  button: {
+  container: {
     flex: 1,
-    fontSize: 16,
-    borderRadius: 0,
-    backgroundColor: 'green',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 5,
+    marginTop: 20,
   },
   tableHeader: {
     backgroundColor: '#ecf9ec',
-    marginTop: 10,
   },
   columnHeader: {
     justifyContent: 'center',
-    width: 120,
   },
   tableTitle: {
     fontWeight: 'bold',
     fontSize: 16,
+    width: 'auto',
   },
   tableCell: {
     justifyContent: 'center',
-    width: 80,
   },
   actionButton: {
     backgroundColor: 'green',
     borderRadius: 0,
-    fontSize: 16,
-    justifyContent: 'center',
-    padding: '2px',
-    columnGap: 10,
-    marginRight: 10,
     color: 'white',
   },
 });

@@ -300,7 +300,7 @@ const LeftSideDrawer = ({navigation}) => {
               return (
                 <>
                   <CollapsibleComponent
-                    key={index}
+                    key=""
                     title={item?.title}
                     id={item?.id}
                     isOpen={openId === item?.id}

@@ -20,10 +20,10 @@ const AllLoan = ({filteredLoans, customers}) => {
     <>
       <View style={style.table}>
         <ScrollView horizontal>
-          <DataTable>
+          <DataTable key="">
             {/* Table Header */}
             <DataTable.Header style={style.tableHeader}>
-              <DataTable.Title style={style.columnHeader} width={15}>
+              <DataTable.Title style={style.columnHeader} width={25}>
                 <Text style={style.tableTitle}>ID</Text>
               </DataTable.Title>
               <DataTable.Title style={style.columnHeader} width={150}>
@@ -45,17 +45,23 @@ const AllLoan = ({filteredLoans, customers}) => {
               data={filteredLoans}
               renderItem={({item, index}) => (
                 <DataTable.Row style={style.tableRow}>
-                  <DataTable.Cell style={style.tableCell} width={15}>
-                    {index + 1}
+                  <DataTable.Cell style={style.tableCell} width={25}>
+                    <Text style={style.tableData}>{index + 1}</Text>
                   </DataTable.Cell>
                   <DataTable.Cell style={style.tableCell} width={150}>
-                    {item?.response?.virefno}
+                    <Text style={style.tableData}>
+                      {item?.response?.virefno}
+                    </Text>
                   </DataTable.Cell>
                   <DataTable.Cell style={style.tableCell} width={100}>
-                    {item?.response?.loanTypeId}
+                    <Text style={style.tableData}>
+                      {item?.response?.loanTypeId}
+                    </Text>
                   </DataTable.Cell>
                   <DataTable.Cell style={style.tableCell} width={200}>
-                    {item?.response?.loanAmount}
+                    <Text style={style.tableData}>
+                      {item?.response?.loanAmount}
+                    </Text>
                   </DataTable.Cell>
                   <DataTable.Cell style={style.tableCell} width={100}>
                     <Button
@@ -109,6 +115,10 @@ const style = StyleSheet.create({
   tableTitle: {
     fontWeight: 'bold',
     fontSize: 16,
+    color: 'black',
+  },
+  tableData: {
+    color: 'black',
   },
   tableRow: {
     borderBottomWidth: 1,

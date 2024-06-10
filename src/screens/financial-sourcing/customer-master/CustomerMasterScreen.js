@@ -178,6 +178,9 @@ const CustomerMasterScreen = () => {
               // inputStyle={{color: 'white'}}
               // rippleColor='red'
               // searchAccessibilityLabel="Search Customer"
+              iconColor="white"
+              placeholderTextColor="white"
+              fontWeight="bold"
             />
 
             <AllCustomer customer={customer?.customers} query={searchQuery} />

@@ -1,5 +1,13 @@
 import React, {useEffect} from 'react';
-import {View, Text, Image, StyleSheet, Alert, SafeAreaView} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Alert,
+  SafeAreaView,
+  FlatList,
+} from 'react-native';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5.js';
 import {
@@ -9,7 +17,6 @@ import {
   PaperProvider,
   Divider,
   ActivityIndicator,
-  MD2Colors,
 } from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import {userLogout} from '../../features/auth/authThunks';
@@ -27,7 +34,7 @@ const Profile = ({navigation}) => {
     padding: 20,
     alignItems: 'center',
   };
-  const {userByScpDetails} = useSelector(state => state.scpUser);
+  const {userByScpDetails, isLoading} = useSelector(state => state.scpUser);
 
   const title = userByScpDetails?.scpDetail?.title;
   const name = userByScpDetails?.scpDetail?.name;
@@ -41,6 +48,107 @@ const Profile = ({navigation}) => {
 
     scpUserHandler();
   }, [dispatch]);
+
+  const acinfo = [
+    {
+      id: 1,
+      key: 'Gender',
+      value: userByScpDetails?.scpDetail?.gender,
+    },
+    {
+      id: 2,
+      key: 'Address',
+      value: userByScpDetails?.scpDetail?.residentialAddress,
+    },
+    {
+      id: 3,
+      key: 'Pin Code',
+      value: userByScpDetails?.scpDetail?.pinCode,
+    },
+    {
+      id: 4,
+      key: 'Mobile',
+      value: userByScpDetails?.scpDetail?.mobile,
+    },
+    {
+      id: 5,
+      key: 'Alt. Mobile',
+      value: userByScpDetails?.scpDetail?.alternateMobile,
+    },
+    {
+      id: 6,
+      key: 'Mail',
+      value: userByScpDetails?.scpDetail?.email,
+    },
+    {
+      id: 7,
+      key: 'PAN No.',
+      value: userByScpDetails?.documents[2]?.docNumber,
+    },
+    {
+      id: 8,
+      key: 'Education',
+      value: userByScpDetails?.scpDetail?.education,
+    },
+    {
+      id: 9,
+      key: 'Occupation',
+      value: userByScpDetails?.scpDetail?.occupation,
+    },
+    {
+      id: 9,
+      key: 'PVC Cert. No.',
+      value: userByScpDetails?.documents[4]?.docNumber,
+    },
+    {
+      id: 9,
+      key: 'IIBF Cert. No.',
+      value: userByScpDetails?.documents[5]?.docNumber,
+    },
+    {
+      id: 9,
+      key: 'DRA No.',
+      value: userByScpDetails?.documents[6]?.docNumber,
+    },
+    {
+      id: 9,
+      key: 'BCA / FBA',
+      value: userByScpDetails?.scpDetail?.bcaFbc,
+    },
+    {
+      id: 9,
+      key: 'BCA Bank',
+      value: userByScpDetails?.scpDetail?.bcaBankName,
+    },
+  ];
+
+  const bankpayment = [
+    {
+      id: 9,
+      key: 'BCA Bank',
+      value: userByScpDetails?.scpDetail?.bcaBankName,
+    },
+    {
+      id: 9,
+      key: 'BCA Bank',
+      value: userByScpDetails?.scpDetail?.bcaBankName,
+    },
+    {
+      id: 9,
+      key: 'BCA Bank',
+      value: userByScpDetails?.scpDetail?.bcaBankName,
+    },
+    {
+      id: 9,
+      key: 'BCA Bank',
+      value: userByScpDetails?.scpDetail?.bcaBankName,
+    },
+    {
+      id: 9,
+      key: 'BCA Bank',
+      value: userByScpDetails?.scpDetail?.bcaBankName,
+    },
+  ];
 
   const handleLogout = () => {
     Alert.alert(
@@ -65,13 +173,13 @@ const Profile = ({navigation}) => {
   return (
     <>
       <SafeAreaView style={style.container}>
-        {userByScpDetails?.isLoading ? (
+        {isLoading ? (
           <>
             <ActivityIndicator
               animating={true}
-              color={MD2Colors.green800}
               size="large"
               style={{flex: 1, backgroundColor: 'white'}}
+              color="green"
             />
           </>
         ) : (
@@ -133,8 +241,7 @@ const Profile = ({navigation}) => {
 
                     <View style={style.info}>
                       <Text style={style.AC_Info}>Account Info</Text>
-
-                      <View style={style.infoData}>
+                      {/* <View style={style.infoData}>
                         <View style={style.row}>
                           <View style={style.widthFifty}>
                             <Text style={style.lebel}>Gender</Text>
@@ -264,7 +371,19 @@ const Profile = ({navigation}) => {
                             </Text>
                           </View>
                         )}
-                      </View>
+                      </View> */}
+                      <FlatList
+                        scrollEnabled={false}
+                        data={acinfo}
+                        renderItem={({item}) => (
+                          <View style={style.itemContainer}>
+                            <Text style={style.label}>{item.key}</Text>
+
+                            <Text style={style.textValue}>{item.value}</Text>
+                          </View>
+                        )}
+                        keyExtractor={(item, index) => `${item.key}-${index}`}
+                      />
                     </View>
 
                     <Divider bold={true} />
@@ -274,7 +393,7 @@ const Profile = ({navigation}) => {
                         Bank & Payment Details
                       </Text>
 
-                      <View style={style.infoData}>
+                      {/* <View style={style.infoData}>
                         <View style={[style.row]}>
                           <View style={style.widthFifty}>
                             <Text style={style.lebel}>Bank Name </Text>
@@ -330,7 +449,19 @@ const Profile = ({navigation}) => {
                             </Text>
                           </View>
                         </View>
-                      </View>
+                      </View> */}
+                      <FlatList
+                        scrollEnabled={false}
+                        data={bankpayment}
+                        renderItem={({item}) => (
+                          <View style={style.itemContainer}>
+                            <Text style={style.label}>{item.key}</Text>
+
+                            <Text style={style.textValue}>{item.value}</Text>
+                          </View>
+                        )}
+                        keyExtractor={(item, index) => `${item.key}-${index}`}
+                      />
                     </View>
                   </View>
                 </View>
@@ -450,6 +581,30 @@ const style = StyleSheet.create({
   widthFifty: {
     width: '50%',
   },
+
+  itemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    backgroundColor: '#f0f0f0',
+    // backgroundColor: '#ecf9ec',
+    borderRadius: 8,
+  },
+  label: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    flex: 1,
+    color: 'black',
+  },
+  textValue: {
+    fontSize: 16,
+    flex: 2,
+    marginLeft: 10,
+    color: 'black',
+  },
 });
 
 const ProfileScreen = () => {
@@ -457,8 +612,6 @@ const ProfileScreen = () => {
 };
 
 export default ProfileScreen;
-
-
 
 // import React, {useEffect} from 'react';
 // import {
@@ -574,7 +727,7 @@ export default ProfileScreen;
 //       label: 'BCA Bank:',
 //       value: userByScpDetails?.scpDetail?.bcaBankName || 'NA',
 //     },
-  
+
 //   ];
 
 //   const bankDetailsData = [
@@ -599,7 +752,7 @@ export default ProfileScreen;
 //       label: 'Payment Received Amount:',
 //       value: userByScpDetails?.scpDetail?.amount || 'NA',
 //     },
-    
+
 //   ];
 
 //   return (
@@ -925,7 +1078,7 @@ export default ProfileScreen;
 //           label: 'Payment Received Amount:',
 //           value: userByScpDetails?.scpDetail?.amount || 'NA',
 //         },
-        
+
 //       ];
 
 //   return (
@@ -1001,7 +1154,6 @@ export default ProfileScreen;
 
 //               <Divider />
 
-              
 //                {/* Render Bank Details */}
 //                <Text style={styles.AC_Info}>Bank And Payment Information</Text>
 //                <FlatList
@@ -1106,4 +1258,3 @@ export default ProfileScreen;
 // });
 
 // export default Profile;
-

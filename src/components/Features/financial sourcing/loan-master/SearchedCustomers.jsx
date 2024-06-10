@@ -13,7 +13,7 @@ const SearchedCustomers = ({customers}) => {
   return (
     <>
       <ScrollView horizontal>
-        <DataTable>
+        <DataTable key="">
           <DataTable.Header style={style.tableHeader}>
             <DataTable.Title style={style.columnHeader} width={30}>
               <Text style={style.tableTitle}>Id.</Text>

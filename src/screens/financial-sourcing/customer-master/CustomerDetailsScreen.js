@@ -30,9 +30,7 @@ const CustomerDetailsScreen = () => {
           />
         ) : (
           <>
-            <ScrollView style={styles.scrollview}>
-              <CustomerDetails customerDetails={customerDetails} />
-            </ScrollView>
+            <CustomerDetails customerDetails={customerDetails} />
           </>
         )}
       </SafeAreaView>
@@ -44,13 +42,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-  },
-  scrollview: {
+    flexGrow: 1,
     padding: 10,
   },
   loadingIndicator: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'rgba(255,255,255,0.5)',
   },
 });
 export default CustomerDetailsScreen;
