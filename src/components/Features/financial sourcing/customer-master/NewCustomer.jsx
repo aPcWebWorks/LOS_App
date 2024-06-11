@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 // import RNFetchBlob from 'rn-fetch-blob';
 import {View, Text, StyleSheet, SafeAreaView} from 'react-native';
 import {TextInput, RadioButton, Button, useTheme} from 'react-native-paper';
@@ -6,6 +6,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {postCustomerCredentials} from '../../../../features/customer-master/customerMasterSlice.js';
 import {Dropdown} from 'react-native-element-dropdown';
 import CustomDocumentPicker from '../../../Common/document-picker/DocumentPicker.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const title = [
   {label: 'Mr', value: 'mr'},
@@ -25,13 +26,18 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
   // commom state.
   const theme = useTheme();
   const styles = getStyles(theme);
+  const {userByScpNumber, userByScpDetails} = useSelector(
+    state => state.scpUser,
+  );
 
+  // console.log('User By Scp Details', userByScpDetails?.scpDetail?.id);
   // redux toolkit.
   const dispatch = useDispatch();
   // const credentials = useSelector(state => state.customer);
 
   // component state.
   const [isFocus, setIsFocus] = useState(false);
+  const [scpId, setScpId] = useState(null);
 
   // const [toggleContent, setToggleContent] = useState(false);
   const [credentials, setCredentials] = useState({
@@ -39,7 +45,7 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
     panCard: null,
     aadhaarCard: null,
     customer: {
-      scpId: '',
+      scpId: '40f2a019-30b6-4604-bb61-0645df7abc02',
       title: '',
       customerName: '',
       gender: '',
@@ -54,6 +60,17 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
     },
   });
 
+  useEffect(() => {
+    scpidHandler();
+  });
+
+  async function scpidHandler() {
+    const ID = await AsyncStorage.getItem('scpId');
+    setScpId(ID);
+    // console.log(scpId);
+  }
+
+  // console.log(credentials)
   const handleChange = (name, value) => {
     if (name === 'idDocument' || name === 'panCard' || name === 'aadhaarCard') {
       setCredentials(prevState => ({
@@ -83,14 +100,15 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
       formData.append('panCard', credentials?.panCard);
       formData.append('aadhaarCard', credentials?.aadhaarCard);
       formData.append('customer', customerBlob._data, 'customer.json');
-      console.log('credentials.idDocument.name', credentials.idDocument.name);
-      dispatch(postCustomerCredentials(formData._parts));
+      // console.log('credentials.idDocument.name', credentials.idDocument.name);
+      dispatch(postCustomerCredentials(formData));
       // console.log('formData _parts', customerBlob);
       // console.log('formData _parts', customerBlob._data);
       // navigation.navigate('/Customer Master')
     } catch (error) {
       console.log('Error', error);
     }
+    console.log('credentials', credentials.customer, scpId);
   };
 
   const handleFilterChange = filter => {
@@ -106,8 +124,10 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
     <>
       <SafeAreaView style={styles.container}>
         <View style={styles.scpId}>
-          <Text style={styles.label}>SCP Id : </Text>
-          <Text>SCP000300</Text>
+          <Text style={styles.label}>SCP Number : </Text>
+          <Text style={{color: 'black'}}>
+            {userByScpNumber?.scpDetail?.scpNo}
+          </Text>
         </View>
 
         <View style={styles.customerTitle}>
@@ -365,7 +385,7 @@ function getStyles(theme) {
       justifyContent: 'center',
       paddingVertical: 20,
     },
-    
+
     customerTitle: {
       flexDirection: 'row',
       columnGap: 4,

@@ -13,9 +13,11 @@ const CustomerDetails = ({customerDetails}) => {
         data={data}
         renderItem={({item}) => (
           <>
-            <View style={styles.detailRow}>
-              <Text style={styles.label}>{item.label}</Text>
-              <Text style={styles.value}>{item.value}</Text>
+            <View style={styles.itemContainer}>
+              <Text style={styles.label}>
+                {item.label.split(/(?=[A-Z])/).join(' ')} :
+              </Text>
+              <Text style={styles.textValue}>{item.value}</Text>
             </View>
           </>
         )}
@@ -26,22 +28,27 @@ const CustomerDetails = ({customerDetails}) => {
 };
 
 const styles = StyleSheet.create({
-  detailRow: {
+  itemContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 10,
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    // backgroundColor: '#ecf9ec',
+    borderRadius: 8,
   },
   label: {
     fontWeight: 'bold',
     fontSize: 16,
     flex: 1,
-    marginRight: 15,
-    marginLeft: 10,
+    color: 'black',
   },
-  value: {
+  textValue: {
     fontSize: 16,
     flex: 2,
+    marginLeft: 10,
+    color: 'black',
   },
 });
 

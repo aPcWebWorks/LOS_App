@@ -1,33 +1,33 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import axiosInstance from '../../api/axiosInstence.js';
+// import axiosInstance from '../../api/axiosInstence.js';
 import {
   customerMasterHandler,
   getCustomerWithId,
   searchCustomerHandler,
 } from './customerMasterThunk.js';
 
-export const postCustomerCredentials = createAsyncThunk(
-  'customer/postCustomerCredentials',
-  async (credentials, thunkAPI) => {
-    // console.log('postCustomerCredentials', credentials);
-    try {
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      };
-      const response = await axiosInstance.post(
-        '/customer',
-        credentials,
-        config,
-      );
-      return response.data;
-    } catch (error) {
-      console.error(error);
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  },
-);
+// export const postCustomerCredentials = createAsyncThunk(
+//   'customer/postCustomerCredentials',
+//   async (credentials, thunkAPI) => {
+//     // console.log('postCustomerCredentials', credentials);
+//     try {
+//       const config = {
+//         headers: {
+//           'Content-Type': 'multipart/form-data',
+//         },
+//       };
+//       const response = await axiosInstance.post(
+//         '/customer',
+//         credentials,
+//         config,
+//       );
+//       return response.data;
+//     } catch (error) {
+//       console.error(error);
+//       return thunkAPI.rejectWithValue(error.response.data);
+//     }
+//   },
+// );
 
 const initialState = {
   isLoading: false,

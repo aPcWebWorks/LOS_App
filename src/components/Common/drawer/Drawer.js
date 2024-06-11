@@ -254,9 +254,7 @@ const LeftSideDrawer = ({navigation}) => {
               {userByScpNumber?.scpDetail?.name}
             </Text>
             <View style={style.profileRoleSection}>
-              <Text style={style.profileRole}>
-                {userByScpNumber?.scpDetail?.scpNo}
-              </Text>
+              <Text style={style.SCP}>{userByScpNumber?.scpDetail?.scpNo}</Text>
               <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
                 <Icon name="facebook" size={30} color="#900" />
               </TouchableOpacity>
@@ -374,7 +372,9 @@ const getStyle = () => {
       fontSize: 22,
       color: 'black',
     },
-
+    SCP: {
+      color: 'black',
+    },
     profileRoleSection: {
       flexDirection: 'row',
       justifyContent: 'space-between',
