@@ -1,22 +1,29 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import CustomerDetails from '../../../components/Features/financial sourcing/customer-master/CustomerDetails';
 import {SafeAreaView, ScrollView, StyleSheet} from 'react-native';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {ActivityIndicator} from 'react-native-paper';
+import {getCustomerWithId} from '../../../features/customer-master/customerMasterThunk';
 
-const CustomerDetailsScreen = () => {
+const CustomerDetailsScreen = ({route}) => {
+  const dispatch = useDispatch();
   const {customer, isLoading} = useSelector(state => state.getCustomerById);
+  const {id} = route.params;
+
+  useEffect(() => {
+    dispatch(getCustomerWithId(id));
+  }, [dispatch]);
 
   const customerDetails = {
-    Id: customer.externalCustomerId,
-    Name: `${customer.title}. ${customer.customerName}`,
-    Gender: customer.gender,
-    Address: customer.residentialAddress,
-    Pincode: customer.pinCode,
-    Email: customer.email,
-    MobileNumber: customer.mobileNumber,
-    AadharCardNumber: customer.aadhaarNumber,
-    PanCardNumber: customer.panCardNumber,
+    Id: customer?.externalCustomerId,
+    Name: `${customer?.title}. ${customer?.customerName}`,
+    Gender: customer?.gender,
+    Address: customer?.residentialAddress,
+    Pincode: customer?.pinCode,
+    Email: customer?.email,
+    MobileNumber: customer?.mobileNumber,
+    AadharCardNumber: customer?.aadhaarNumber,
+    PanCardNumber: customer?.panCardNumber,
   };
 
   return (

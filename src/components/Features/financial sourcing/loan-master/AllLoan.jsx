@@ -1,8 +1,10 @@
 import React, {useEffect} from 'react';
 import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {Button, DataTable} from 'react-native-paper';
+import {useNavigation} from '@react-navigation/native';
 
 const AllLoan = ({filteredLoans, customers}) => {
+  const navigation = useNavigation();
   const numberOfCustomersPerPageList = [2, 3, 4];
 
   const [page, setPage] = React.useState(0);
@@ -16,6 +18,12 @@ const AllLoan = ({filteredLoans, customers}) => {
     setPage(0);
   }, [numberOfCustomersPerPage]);
 
+  const loanDetailsHandler = _id => {
+    if (_id) {
+      navigation.navigate('Loan Details', {id: _id});
+    }
+    console.log(_id);
+  };
   return (
     <>
       <View style={style.table}>
@@ -35,7 +43,7 @@ const AllLoan = ({filteredLoans, customers}) => {
               <DataTable.Title style={style.columnHeader} width={200}>
                 <Text style={style.tableTitle}>Loan Amount</Text>
               </DataTable.Title>
-              <DataTable.Title style={style.columnHeader} width={100}>
+              <DataTable.Title style={style.columnHeader} width={200}>
                 <Text style={style.tableTitle}>Action</Text>
               </DataTable.Title>
             </DataTable.Header>
@@ -63,7 +71,19 @@ const AllLoan = ({filteredLoans, customers}) => {
                       {item?.response?.loanAmount}
                     </Text>
                   </DataTable.Cell>
-                  <DataTable.Cell style={style.tableCell} width={100}>
+                  <DataTable.Cell style={style.tableCell} width={200}>
+                    <Button
+                      style={style.button}
+                      mode="contained"
+                      dark={true}
+                      textColor="white"
+                      onPress={() =>
+                        navigation.navigate('Loan Details', {
+                          id: item?.response?.id,
+                        })
+                      }>
+                      View
+                    </Button>
                     <Button
                       style={style.button}
                       mode="contained"

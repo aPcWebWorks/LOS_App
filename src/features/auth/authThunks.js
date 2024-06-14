@@ -13,10 +13,11 @@ const userLogin = createAsyncThunk(
         credentials,
       );
       if (status === 200) {
-        // const _token = ['token', data.token];
-        // const _id = ['id', data.id];
-        // await AsyncStorage.multiSet([_token, _id]);
-        await AsyncStorage.setItem('token', data.token);
+        const _token = ['token', data.token];
+        const _id = ['userid', data.id];
+        await AsyncStorage.multiSet([_token, _id]);
+        // await AsyncStorage.setItem('token', data.token);
+        // console.log('Login', data.id);
         return data;
       } else {
         return rejectWithValue(data);

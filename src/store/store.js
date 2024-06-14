@@ -10,17 +10,21 @@ import customerMasterReducer, {
 } from '../features/customer-master/customerMasterSlice.js';
 import scpUserReducer from '../features/scp-user/scpUserSlice.js';
 import {thunk} from 'redux-thunk';
-import loanMasterReducer from '../features/loan-master/loanMasterSlice.js';
+import loanMasterReducer, {
+  loanDetailsSlice,
+} from '../features/loan-master/loanMasterSlice.js';
 import documentSlice from '../features/documents/documentSlice.js';
-
+import bankMasterReducer from '../features/loan-master/bank-master/bankMasterSlice.js';
 // Combine your reducers
 const rootReducer = combineReducers({
   auth: authReducer,
   customerMaster: customerMasterReducer,
-  scpUser: scpUserReducer,
-  loanMaster: loanMasterReducer,
   searchedCustomer: searchedCustomerSlice.reducer,
   getCustomerById: getCustomerWithIdSlice.reducer,
+  scpUser: scpUserReducer,
+  loanMaster: loanMasterReducer,
+  loanDetails: loanDetailsSlice.reducer,
+  bankMaster: bankMasterReducer,
   document: documentSlice,
 });
 

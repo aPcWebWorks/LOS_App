@@ -21,6 +21,7 @@ import LoanSearchedCustomerScreen from '../screens/financial-sourcing/loan-maste
 import LoanGenerationScreen from '../screens/financial-sourcing/loan-master/LoanGenerationScreen.js';
 import CustomerDetailsScreen from '../screens/financial-sourcing/customer-master/CustomerDetailsScreen.js';
 import LoanStatusScreen from '../screens/financial-sourcing/loan-status/LoanStatusScreen.js';
+import LoanDetailsScreen from '../screens/financial-sourcing/loan-master/LoanDetailsScreen.js';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -71,17 +72,24 @@ function StackNavigator() {
             name="Customer Master"
             component={CustomerMasterScreen}
           />
+          <Stack.Screen
+            name="Customer Details"
+            component={CustomerDetailsScreen}
+          />
+
           <Stack.Screen name="Loan Master" component={LoanMasterScreen} />
+          <Stack.Screen name="Loan Details" component={LoanDetailsScreen} />
           <Stack.Screen name="Loan Status" component={LoanStatusScreen} />
           <Stack.Screen
             name="Searched Customer"
             component={LoanSearchedCustomerScreen}
           />
-          <Stack.Screen name="All Types Reports" component={ReportsScreen} />
           <Stack.Screen
             name="Loan Generation"
             component={LoanGenerationScreen}
           />
+
+          <Stack.Screen name="All Types Reports" component={ReportsScreen} />
         </>
       ) : (
         <Stack.Screen
@@ -90,7 +98,6 @@ function StackNavigator() {
           options={{headerShown: false}}
         />
       )}
-      <Stack.Screen name="Customer Details" component={CustomerDetailsScreen} />
     </Stack.Navigator>
   );
 }

@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {loanMasterHandler} from './loanMasterThunk';
+import {loanDetailsHandler, loanMasterHandler} from './loanMasterThunk';
 
 const initialState = {
   isLoading: false,
@@ -11,7 +11,7 @@ const loanMasterSlice = createSlice({
   name: 'loan-Master',
   initialState,
   reducers: {},
-  
+
   extraReducers: builder => {
     builder
       .addCase(loanMasterHandler.pending, state => {
@@ -29,4 +29,28 @@ const loanMasterSlice = createSlice({
   },
 });
 
+const loanDetailsSlice = createSlice({
+  name: 'loan-Master',
+  initialState: {isLoading: null, loanDetails: null, isError: null},
+  reducers: {},
+
+  extraReducers: builder => {
+    builder
+      .addCase(loanDetailsHandler.pending, state => {
+        state.isLoading = true;
+        state.isError = null;
+      })
+      .addCase(loanDetailsHandler.fulfilled, (state, {payload}) => {
+        // state.loanDetails = payload?.records?.record;
+        state.loanDetails = payload;
+        state.isLoading = false;
+        state.isError = null;
+      })
+      .addCase(loanDetailsHandler.rejected, (state, {payload}) => {
+        state.isError = payload;
+      });
+  },
+});
+
+export {loanDetailsSlice};
 export default loanMasterSlice.reducer;

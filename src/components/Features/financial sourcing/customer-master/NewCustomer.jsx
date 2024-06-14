@@ -3,10 +3,10 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, SafeAreaView} from 'react-native';
 import {TextInput, RadioButton, Button, useTheme} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
-import {postCustomerCredentials} from '../../../../features/customer-master/customerMasterSlice.js';
 import {Dropdown} from 'react-native-element-dropdown';
 import CustomDocumentPicker from '../../../Common/document-picker/DocumentPicker.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {addcustomer} from '../../../../features/customer-master/customerMasterThunk.js';
 
 const title = [
   {label: 'Mr', value: 'mr'},
@@ -37,7 +37,6 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
 
   // component state.
   const [isFocus, setIsFocus] = useState(false);
-  const [scpId, setScpId] = useState(null);
 
   // const [toggleContent, setToggleContent] = useState(false);
   const [credentials, setCredentials] = useState({
@@ -45,11 +44,11 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
     panCard: null,
     aadhaarCard: null,
     customer: {
-      scpId: '40f2a019-30b6-4604-bb61-0645df7abc02',
+      scpNo: '',
       title: '',
       customerName: '',
       gender: '',
-      recidentialAddress: '',
+      residentialAddress: '',
       email: '',
       pinCode: '',
       mobileNumber: '',
@@ -64,13 +63,6 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
     scpidHandler();
   });
 
-  async function scpidHandler() {
-    const ID = await AsyncStorage.getItem('scpId');
-    setScpId(ID);
-    // console.log(scpId);
-  }
-
-  // console.log(credentials)
   const handleChange = (name, value) => {
     if (name === 'idDocument' || name === 'panCard' || name === 'aadhaarCard') {
       setCredentials(prevState => ({
@@ -88,33 +80,57 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
     }
   };
 
+  async function scpidHandler() {
+    const ID = await AsyncStorage.getItem('userid');
+    credentials.customer.scpNo = ID;
+  }
+  // const handleFormCredential = e => {
+  //   e.preventDefault();
+  //   try {
+  //     const formData = new FormData();
+  //     const customerBlob = new Blob([JSON.stringify(credentials.customer)], {
+  //       type: 'application/json',
+  //     });
+
+  //     formData.append('idDocument', credentials?.idDocument);
+  //     formData.append('panCard', credentials?.panCard);
+  //     formData.append('aadhaarCard', credentials?.aadhaarCard);
+  //     formData.append('customer', customerBlob._data, 'customer.json');
+  //     // console.log('credentials.idDocument.name', credentials.idDocument.name);
+  //     dispatch(addcustomer(formData._parts));
+  //     // console.log('formData _parts', customerBlob);
+  //     // console.log('formData _parts', customerBlob._data);
+  //     // navigation.navigate('/Customer Master')
+  //   } catch (error) {
+  //     console.log('Error', error);
+  //   }
+  //   console.log('credentials', credentials.customer);
+  // };
+
   const handleFormCredential = e => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      const customerBlob = new Blob([JSON.stringify(credentials.customer)], {
+      const blob = new Blob([JSON.stringify(credentials.customer)], {
         type: 'application/json',
       });
 
       formData.append('idDocument', credentials?.idDocument);
       formData.append('panCard', credentials?.panCard);
       formData.append('aadhaarCard', credentials?.aadhaarCard);
-      formData.append('customer', customerBlob._data, 'customer.json');
-      // console.log('credentials.idDocument.name', credentials.idDocument.name);
-      dispatch(postCustomerCredentials(formData));
-      // console.log('formData _parts', customerBlob);
-      // console.log('formData _parts', customerBlob._data);
-      // navigation.navigate('/Customer Master')
+      formData.append('customer', blob, 'customer.json');
+
+      dispatch(addcustomer(formData));
     } catch (error) {
       console.log('Error', error);
     }
-    console.log('credentials', credentials.customer, scpId);
+    // console.log('credentials', credentials.customer);
   };
 
-  const handleFilterChange = filter => {
-    setSelectedFilter(filter);
-    setSearchQuery('');
-  };
+  // const handleFilterChange = filter => {
+  //   setSelectedFilter(filter);
+  //   setSearchQuery('');
+  // };
 
   // const ToggleContentHandler = () => {
   //   setToggleContent(!toggleContent);

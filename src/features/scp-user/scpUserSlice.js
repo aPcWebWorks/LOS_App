@@ -27,17 +27,17 @@ const scpUserSlice = createSlice({
       })
       .addCase(scpUserDetailsHandler.rejected, (state, {payload}) => {
         state.error = payload;
-      });
+      })
 
-    // // Get With SCP Number Handler
-    // .addCase(getWithSCPNumberHandler.fulfilled, (state, {payload}) => {
-    //   const ID = payload?.scpDetail?.id;
-    //   AsyncStorage.setItem('scpId', ID);
-    //   state.userByScpNumber = payload;
-    // })
-    // .addCase(getWithSCPNumberHandler.rejected, (state, {payload}) => {
-    //   state.error = action.error.message;
-    // });
+      // Get With SCP Number Handler
+      .addCase(getWithSCPNumberHandler.fulfilled, (state, {payload}) => {
+        const ID = payload?.scpDetail?.id;
+        // AsyncStorage.setItem('scpId', ID);
+        state.userByScpNumber = payload;
+      })
+      .addCase(getWithSCPNumberHandler.rejected, (state, {payload}) => {
+        state.error = action.error.message;
+      });
   },
 });
 

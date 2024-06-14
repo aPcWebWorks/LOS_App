@@ -4,22 +4,21 @@ import {Button, DataTable} from 'react-native-paper';
 import {FlatList} from 'react-native-gesture-handler';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
-import {getCustomerWithId} from '../../../../features/customer-master/customerMasterThunk';
+// import {getCustomerWithId} from '../../../../features/customer-master/customerMasterThunk';
 
 const AllCustomer = ({customer, query}) => {
-  const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [numberOfCustomersPerPage, setNumberOfCustomersPerPage] = useState(10);
 
-  const handleDetails = id => {
-    if (id) {
-      dispatch(getCustomerWithId(id));
-      navigation.navigate('Customer Details', {id});
-    }
-    return;
-  };
+  // const handleDetails = id => {
+  //   if (id) {
+  //     // dispatch(getCustomerWithId(id));
+  //     navigation.navigate('Customer Details', {id});
+  //   }
+  //   return;
+  // };
 
   return (
     <>
@@ -92,7 +91,11 @@ const AllCustomer = ({customer, query}) => {
                     </DataTable.Cell>
                     <DataTable.Cell style={[styles.tableCell, {width: 200}]}>
                       <Button
-                        onPress={() => handleDetails(item?.id)}
+                        onPress={() =>
+                          navigation.navigate('Customer Details', {
+                            id: item?.id,
+                          })
+                        }
                         style={styles.actionButton}
                         mode="contained"
                         dark={true}
