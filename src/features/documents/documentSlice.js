@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {documentHandler} from './documentThunk';
+import documentHandler from './documentThunk';
 
 const initialState = {
   isLoading: false,

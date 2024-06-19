@@ -9,7 +9,7 @@ import {useSelector} from 'react-redux';
 import SearchedCustomers from '../../../components/Features/financial sourcing/loan-master/SearchedCustomers';
 
 const SearchedCustomer = () => {
-  const {customers, isLoading} = useSelector(state => state.searchedCustomer);
+  const {customers, isLoading} = useSelector(state => state.searchCustomerByParameter);
 
   return (
     <>

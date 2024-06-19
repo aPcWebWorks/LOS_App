@@ -6,8 +6,8 @@ import {useNavigation} from '@react-navigation/native';
 const SearchedCustomers = ({customers}) => {
   const navigation = useNavigation();
 
-  const selectHandler = id => {
-    navigation.navigate('Loan Generation', {id});
+  const selectHandler = selectedCustomer => {
+    navigation.navigate('Loan Generation', {selectedCustomer});
   };
 
   return (
@@ -90,7 +90,7 @@ const SearchedCustomers = ({customers}) => {
                     mode="contained"
                     dark={true}
                     textColor="white"
-                    onPress={() => selectHandler(item?.id)}>
+                    onPress={() => selectHandler(item)}>
                     Select
                   </Button>
                 </DataTable.Cell>

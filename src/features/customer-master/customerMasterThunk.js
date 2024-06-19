@@ -93,7 +93,7 @@ const getCustomerWithId = createAsyncThunk(
   },
 );
 
-const searchCustomerHandler = createAsyncThunk(
+const searchCustomerByParameter = createAsyncThunk(
   'customer-master/searchByCustomerUrlParamsHandler',
   async ({criteriaType, criteriaValue}, {rejectWithValue}) => {
     try {
@@ -130,6 +130,6 @@ const searchCustomerHandler = createAsyncThunk(
 export {
   customerMasterHandler,
   getCustomerWithId,
-  searchCustomerHandler,
+  searchCustomerByParameter,
   addcustomer,
 };

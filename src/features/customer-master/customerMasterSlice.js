@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit';
 import {
   customerMasterHandler,
   getCustomerWithId,
-  searchCustomerHandler,
+  searchCustomerByParameter,
 } from './customerMasterThunk.js';
 
 const initialState = {
@@ -65,7 +65,7 @@ const getCustomerWithIdSlice = createSlice({
   },
 });
 
-const searchedCustomerSlice = createSlice({
+const searchCustomerByParameterSlice = createSlice({
   name: 'initialParamsState',
   initialState: {isLoading: false, customers: null, error: null},
   reducers: {
@@ -76,23 +76,23 @@ const searchedCustomerSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(searchCustomerHandler.pending, state => {
+      .addCase(searchCustomerByParameter.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
 
-      .addCase(searchCustomerHandler.fulfilled, (state, {payload}) => {
+      .addCase(searchCustomerByParameter.fulfilled, (state, {payload}) => {
         state.isLoading = false;
         state.customers = payload;
       })
 
-      .addCase(searchCustomerHandler.rejected, (state, {payload}) => {
+      .addCase(searchCustomerByParameter.rejected, (state, {payload}) => {
         state.isLoading = false;
         state.error = payload;
       });
   },
 });
 
-export const {customerParamsClearState} = searchedCustomerSlice.actions;
-export {searchedCustomerSlice, getCustomerWithIdSlice};
+export const {customerParamsClearState} = searchCustomerByParameterSlice.actions;
+export {searchCustomerByParameterSlice, getCustomerWithIdSlice};
 export default customerMasterSlice.reducer;

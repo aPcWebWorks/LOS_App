@@ -11,7 +11,7 @@ import {
 import {Dropdown} from 'react-native-element-dropdown';
 import {useDispatch, useSelector} from 'react-redux';
 import {loanMasterHandler} from '../../../features/loan-master/loanMasterThunk';
-import {searchCustomerHandler} from '../../../features/customer-master/customerMasterThunk';
+import {searchCustomerByParameter} from '../../../features/customer-master/customerMasterThunk';
 import AllLoan from '../../../components/Features/financial sourcing/loan-master/AllLoan';
 
 const Data = [
@@ -67,7 +67,7 @@ const LoanMasterScreen = ({navigation}) => {
 
     if (selectQuery.value && modalSearchQuery) {
       dispatch(
-        searchCustomerHandler({
+        searchCustomerByParameter({
           criteriaType: selectQuery.value,
           criteriaValue: modalSearchQuery,
         }),
