@@ -4,8 +4,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ActivityIndicator} from 'react-native-paper';
 import {loanDetailsHandler} from '../../../features/loan-master/loanMasterThunk';
 import LoanDetails from '../../../components/Features/financial sourcing/loan-master/LoanDetails';
-import {getCustomerWithId} from '../../../features/customer-master/customerMasterThunk';
-import bankMasterHandler from '../../../features/loan-master/bank-master/bankMasterThunk';
 
 const LoanDetailsScreen = ({route}) => {
   const dispatch = useDispatch();
@@ -17,14 +15,8 @@ const LoanDetailsScreen = ({route}) => {
   const {id} = route.params;
 
   useEffect(() => {
-    dispatchHandler();
+    dispatch(loanDetailsHandler(id));
   }, [dispatch]);
-
-  const dispatchHandler = async () => {
-    await dispatch(loanDetailsHandler(id));
-    await dispatch(getCustomerWithId(loanDetails?.customerId));
-    dispatch(bankMasterHandler(loanDetails?.bankId));
-  };
 
   const singalLoanDetails = {
     ScpNo: userByScpNumber?.scpDetail?.scpNo,

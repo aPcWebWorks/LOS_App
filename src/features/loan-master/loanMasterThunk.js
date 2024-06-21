@@ -1,6 +1,9 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import axiosInstance from '../../api/axiosInstence.js';
 import {LOANDETAILS_ENDPOINT} from '../../api/endpoints.js';
+import {store} from '../../store/store.js';
+import {getCustomerWithId} from '../customer-master/customerMasterThunk.js';
+import bankMasterHandler from './bank-master/bankMasterThunk.js';
 
 const loanMasterHandler = createAsyncThunk(
   'loan-Master/getAllLoan',
@@ -31,7 +34,12 @@ const loanDetailsHandler = createAsyncThunk(
       const {data} = await axiosInstance.get(
         `${LOANDETAILS_ENDPOINT}/${_id}/master`,
       );
-      console.log('singal loan details', data);
+
+      if (data) {
+        await store.dispatch(getCustomerWithId(data?.customerId));
+        await store.dispatch(bankMasterHandler(data?.bankId));
+      }
+
       return data;
     } catch (error) {
       if (error.response && error.response.data.message) {
