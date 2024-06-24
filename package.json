@@ -20,6 +20,7 @@
     "@react-navigation/stack": "^6.3.20",
     "@reduxjs/toolkit": "^2.0.1",
     "axios": "^1.6.7",
+    "formik": "^2.4.6",
     "js-base64": "^3.7.7",
     "react": "18.2.0",
     "react-native": "0.72.7",
@@ -36,7 +37,8 @@
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^3.1.0",
-    "rn-fetch-blob": "^0.12.0"
+    "rn-fetch-blob": "^0.12.0",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

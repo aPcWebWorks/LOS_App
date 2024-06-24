@@ -47,9 +47,9 @@ const CustomerMasterScreen = () => {
     dispatch(customerMasterHandler());
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   console.log('Customer data:', customer);
-  // }, [customer]);
+   useEffect(() => {
+   console.log('Customer data:', customer);
+ }, [customer]);
 
   const toggleExpand = () => {
     if (expanded) {
