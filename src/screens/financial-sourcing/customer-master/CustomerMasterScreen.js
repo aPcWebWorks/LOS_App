@@ -18,10 +18,10 @@ import NewCustomer from '../../../components/Features/financial sourcing/custome
 import AllCustomer from '../../../components/Features/financial sourcing/customer-master/AllCustomer';
 
 const data = [
-  {label: 'Name', value: 'customername'},
-  {label: 'CustomerId', value: 'customerid'},
-  {label: 'Mobile Number', value: 'mobile number'},
-  {label: 'Email', value: 'emailid'},
+  {label: 'Name', value: 'customerName'},
+  {label: 'CustomerId', value: 'customerId'},
+  {label: 'Mobile Number', value: 'mobileNumber'},
+  {label: 'Email', value: 'emailId'},
 ];
 
 const CustomerMasterScreen = () => {
@@ -30,26 +30,16 @@ const CustomerMasterScreen = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
 
+  const [isFocus, setIsFocus] = useState(false);
+  const [dropdownQuery, setDropdownQuery] = useState('');
+
   const [expanded, setExpanded] = useState(false);
   const animationHeight = useRef(new Animated.Value(0)).current;
   const rotateValue = useRef(new Animated.Value(0)).current;
 
-  const [isFocus, setIsFocus] = useState(false);
-
-  const [selectedFilter, setSelectedFilter] = useState(
-    'customerName',
-    'mobilenumber',
-    'email',
-    'customerid',
-  );
-
   useEffect(() => {
     dispatch(customerMasterHandler());
   }, [dispatch]);
-
-   useEffect(() => {
-   console.log('Customer data:', customer);
- }, [customer]);
 
   const toggleExpand = () => {
     if (expanded) {
@@ -69,7 +59,7 @@ const CustomerMasterScreen = () => {
       setExpanded(true);
       Animated.parallel([
         Animated.timing(animationHeight, {
-          toValue: 1180, // adjust this value to the height of your content
+          toValue: 1180,
           duration: 300,
           useNativeDriver: false,
         }),
@@ -87,42 +77,29 @@ const CustomerMasterScreen = () => {
     outputRange: ['0deg', '180deg'],
   });
 
-  // const handleDropdownChange = selectedValue => {
-  //   onChangeText(selectedValue);
-  // };
-
-  const handleFilterChange = filter => {
-    setSelectedFilter(filter);
-    setSearchQuery('');
-  };
-
   const handleSearch = query => {
-    let filteredQuery = query;
+    if (!dropdownQuery) return false;
 
-    switch (selectedFilter) {
+    let filteredQuery;
+
+    switch (dropdownQuery) {
       case 'customerName':
         filteredQuery = query.replace(/[^a-zA-Z\s]/g, '');
         break;
-      case 'customerid':
+      case 'customerId':
+      case 'mobileNumber':
         filteredQuery = query.replace(/\D/g, '');
         break;
-      case 'mobilenumber':
-        filteredQuery = query.replace(/\D/g, '');
-        break;
-      case 'email':
+      case 'emailId':
         filteredQuery = query.replace(/[^a-zA-Z@._]/g, '');
         break;
       default:
-        filteredQuery = query;
-        break;
+        console.log('Please select the right value');
+        return;
     }
 
     setSearchQuery(filteredQuery);
   };
-
-  // const handleDelete = customer => {
-  //   console.log('Delete customer:', customer);
-  // };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -157,15 +134,17 @@ const CustomerMasterScreen = () => {
               mode="default"
               labelField="label"
               valueField="value"
+              selectedTextStyle={{color: 'white', fontWeight: 'bold'}}
               placeholder={
                 <Text style={{color: 'white', fontSize: 16, fontWeight: '700'}}>
                   Select
                 </Text>
               }
-              // value={value}
               onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
-              onChange={handleFilterChange}
+              onChange={item => {
+                setDropdownQuery(item.value);
+                setIsFocus(false);
+              }}
               iconColor="white"
             />
 
@@ -175,7 +154,7 @@ const CustomerMasterScreen = () => {
               onChangeText={item => handleSearch(item)}
               value={searchQuery}
               mode="bar"
-              // inputStyle={{color: 'white'}}
+              inputStyle={{color: 'white'}}
               // rippleColor='red'
               // searchAccessibilityLabel="Search Customer"
               iconColor="white"
