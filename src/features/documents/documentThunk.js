@@ -6,17 +6,24 @@ const documentHandler = createAsyncThunk(
   'document/fetch',
   async (_id, {rejectWithValue}) => {
     try {
-      const {data} = await axiosInstance.get(`${DOCUMENT_ENDPOINT}/${_id}`, {
-        responseType: 'arraybuffer',
+      const response = await axiosInstance.get(`${DOCUMENT_ENDPOINT}/${_id}`, {
+        responseType: 'blob',
       });
 
-      const uint8Array = new Uint8Array(data);
-      const blob = new Blob([data], {type: 'image/jpeg'});
-      const imageUrl = URL.createObjectURL(blob);
+      const blob = new Blob([await response.data], {
+        type: 'image/jpg',
+      });
 
-      console.log('imageUrl', blob);
-      // console.log(data);
-      return {imageUrl, data: response.data};
+      const base64Str = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          resolve(reader.result);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+
+      return base64Str;
     } catch (error) {
       console.log(error);
     }

@@ -8,9 +8,16 @@ const initialState = {
 };
 
 const documentSlice = createSlice({
-  name: 'loan-Master',
+  name: 'loanMaster',
   initialState,
-  reducers: {},
+  reducers: {
+    resetDocumentState: state => {
+      state.document = null;
+      state.isLoading = false;
+      state.error = null;
+      // console.log('reset state');
+    },
+  },
   extraReducers: builder => {
     builder
       .addCase(documentHandler.pending, state => {
@@ -20,11 +27,15 @@ const documentSlice = createSlice({
       .addCase(documentHandler.fulfilled, (state, {payload}) => {
         state.document = payload;
         state.isLoading = false;
+        // console.log('payload Ids', payload);
       })
-      .addCase(documentHandler.rejected, (state, {payload}) => {
-        state.error = payload;
+      .addCase(documentHandler.rejected, (state, {error}) => {
+        // Use error instead of payload for rejected case
+        state.error = error.message;
+        state.isLoading = false;
       });
   },
 });
 
+export const {resetDocumentState} = documentSlice.actions;
 export default documentSlice.reducer;
