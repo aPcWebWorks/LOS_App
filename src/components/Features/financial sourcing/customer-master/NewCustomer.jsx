@@ -520,6 +520,8 @@ const occupation = [
   {label: 'Seller', value: 'seller'},
 ];
 
+const FormData = global.FormData;
+
 // Validation Schema using Yup
 const validationSchema = Yup.object().shape({
   customer: Yup.object().shape({
@@ -567,7 +569,7 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
 
   const scpidHandler = async () => {
     const ID = await AsyncStorage.getItem('userid');
-    setFieldValue('customer.scpNo', ID);
+    // setFieldValue('customer.scpNo', ID);
   };
 
   const handleFormCredential = (values, {resetForm}) => {
@@ -582,14 +584,17 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
     formData.append('customer', blob, 'customer.json');
 
     dispatch(addcustomer(formData));
-    
+
     resetForm();
-  
-   // Log the form data to console
-   console.log('Form Data:', values);
- 
-   // Optionally, show an alert or navigate to another screen
-   Alert.alert('Form Submitted', 'Customer data has been submitted successfully.');
+
+    // Log the form data to console
+    console.log('Form Data:', values);
+
+    // Optionally, show an alert or navigate to another screen
+    Alert.alert(
+      'Form Submitted',
+      'Customer data has been submitted successfully.',
+    );
   };
 
   return (
@@ -872,7 +877,6 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
             />
           </View>
 
-          
           <CustomDocumentPicker
             label="Id Size Photo*"
             file={values.idDocument}
@@ -1006,6 +1010,8 @@ const getStyles = theme =>
       borderRadius: 4,
     },
     errorText: {
+      position: 'absolute',
+      top: 65,
       fontSize: 12,
       color: 'red',
       marginTop: 4,

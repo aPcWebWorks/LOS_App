@@ -34,6 +34,7 @@ const addcustomer = createAsyncThunk(
       const config = {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Accept: 'application/json',
         },
       };
 
@@ -79,7 +80,7 @@ const getCustomerWithId = createAsyncThunk(
       const {data} = await axiosInstance.get(
         `${CUSTOMERMASTER_ENDPOINT}/${_id}`,
       );
-      console.log("singal Customer thunk document", data)
+      // console.log("singal Customer thunk document", data)
       return data;
     } catch (error) {
       if (error.response && error.response.data.message) {
@@ -127,9 +128,26 @@ const searchCustomerByParameter = createAsyncThunk(
     }
   },
 );
+
+const patchCustomerHandler = createAsyncThunk(
+  'customer/update-customer',
+  async ({id, credentials}, thunkAPI) => {
+    // console.log('addcustomer', credentials);
+    try {
+      const {data} = await axiosInstance.patch(`/customer/${id}`, credentials);
+      console.log('data', data);
+      return data;
+    } catch (error) {
+      console.error('Thunk Error', error);
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
+    }
+  },
+);
+
 export {
   customerMasterHandler,
   getCustomerWithId,
   searchCustomerByParameter,
   addcustomer,
+  patchCustomerHandler,
 };

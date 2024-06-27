@@ -103,12 +103,16 @@ const AllCustomer = ({customer, query}) => {
                         View
                       </Button>
                       <Button
-                        onPress={() => DropdownhandleDelete(item)}
+                        onPress={() =>
+                          navigation.navigate('Customer Update', {
+                            id: item?.id,
+                          })
+                        }
                         style={styles.actionButton}
                         mode="contained"
                         dark={true}
                         textColor="white">
-                        Edit
+                        Update
                       </Button>
                     </DataTable.Cell>
                   </DataTable.Row>

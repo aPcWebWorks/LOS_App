@@ -340,8 +340,8 @@ const LoanGenerationScreen = ({navigation, route}) => {
   // }, []);
 
   const getDocumentHandler = async docs => {
-    for (let i = 0; i < 1; i++) {
-      await dispatch(documentHandler(docs[2].id));
+    for (let i = 0; i < docs.length; i++) {
+      await dispatch(documentHandler(docs[i].id));
     }
     dispatch(resetDocumentState());
     return;
