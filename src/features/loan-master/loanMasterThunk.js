@@ -53,4 +53,23 @@ const loanDetailsHandler = createAsyncThunk(
   },
 );
 
-export {loanMasterHandler, loanDetailsHandler};
+
+const getAllLoanHandler = createAsyncThunk(
+  'loan-Master/get-all-loan',
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axiosInstance.get
+      ('http://192.168.29.113:8589/api/v1/los/loan/type?pageNumber=0&pageSize=2000');
+      // console.log('API Response:', data); 
+      return data.records.record; 
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+export {loanMasterHandler, loanDetailsHandler,getAllLoanHandler};

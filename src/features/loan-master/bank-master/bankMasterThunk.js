@@ -22,4 +22,21 @@ const bankMasterHandler = createAsyncThunk(
   },
 );
 
+const getAllBankHandller = createAsyncThunk(
+  'bank-Master/getAllBank',
+  async (_, {rejectWithValue}) => {
+    try {
+      const {data} = await axiosInstance.get
+        // `${BANKMASTER_ENDPOINT}/?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+        ('http://192.168.29.113:8589/api/v1/los/bank?pageNumber=0&pageSize=2000');
+        // console.log('API Response:', data); 
+      return data.records.record;
+    } catch (error) {
+      console.log(error);
+      await rejectWithValue(error);
+    }
+  },
+);
+
+export {getAllBankHandller};
 export default bankMasterHandler;

@@ -6,7 +6,8 @@ import customSnackbar from '../components/Common/snackbar/Snackbar';
 
 // Axios Instance.
 const axiosInstance = axios.create({
-  baseURL: 'http://192.168.29.113:8589/api/v1/los',
+  // baseURL: 'http://192.168.33.16:8589/api/v1/los',
+  baseURL:'http://192.168.29.113:8589/api/v1/los',
   headers: {
     'Content-Type': 'application/json',
   },

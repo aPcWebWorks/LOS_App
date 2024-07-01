@@ -1,5 +1,9 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {loanDetailsHandler, loanMasterHandler} from './loanMasterThunk';
+import {
+  loanDetailsHandler,
+  loanMasterHandler,
+  getAllLoanHandler,
+} from './loanMasterThunk';
 
 const initialState = {
   isLoading: false,
@@ -52,5 +56,29 @@ const loanDetailsSlice = createSlice({
   },
 });
 
-export {loanDetailsSlice};
+
+const ProductSlice = createSlice({
+  name: 'loanMaster',
+  initialState: {
+    allproducts: [],
+    isLoading: false,
+    error: null,
+  },
+  reducers: {},
+  extraReducers: builder => {
+    builder
+      .addCase(getAllLoanHandler.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(getAllLoanHandler.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.allproducts = action.payload;
+      })
+      .addCase(getAllLoanHandler.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      });
+  },
+});
+export {loanDetailsSlice, ProductSlice};
 export default loanMasterSlice.reducer;

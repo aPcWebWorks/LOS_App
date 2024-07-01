@@ -11,10 +11,14 @@ import customerMasterReducer, {
 import scpUserReducer from '../features/scp-user/scpUserSlice.js';
 import {thunk} from 'redux-thunk';
 import loanMasterReducer, {
+  ProductSlice,
   loanDetailsSlice,
 } from '../features/loan-master/loanMasterSlice.js';
 import documentSlice from '../features/documents/documentSlice.js';
-import bankMasterReducer from '../features/loan-master/bank-master/bankMasterSlice.js';
+import bankMasterReducer, {
+  getBanksSlice,
+} from '../features/loan-master/bank-master/bankMasterSlice.js';
+import { getAllLoanHandler } from '../features/loan-master/loanMasterThunk.js';
 // Combine your reducers
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -26,6 +30,8 @@ const rootReducer = combineReducers({
   loanDetails: loanDetailsSlice.reducer,
   bankMaster: bankMasterReducer,
   document: documentSlice,
+  banks: getBanksSlice.reducer,
+  products: ProductSlice.reducer,
 });
 
 // Configuration for redux-persist
