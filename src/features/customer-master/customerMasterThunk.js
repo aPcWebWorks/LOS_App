@@ -31,18 +31,12 @@ const addcustomer = createAsyncThunk(
   async (credentials, thunkAPI) => {
     // console.log('addcustomer', credentials);
     try {
-      const config = {
+      const response = await axiosInstance.post('/customer', credentials, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Accept: 'application/json',
         },
-      };
-
-      const response = await axiosInstance.post(
-        '/customer',
-        credentials,
-        config,
-      );
+      });
       // console.log('data', response);
       return response;
     } catch (error) {
@@ -132,11 +126,22 @@ const searchCustomerByParameter = createAsyncThunk(
 const patchCustomerHandler = createAsyncThunk(
   'customer/update-customer',
   async ({id, credentials}, thunkAPI) => {
-    // console.log('addcustomer', credentials);
+    console.log('addcustomer', credentials);
     try {
-      const {data} = await axiosInstance.patch(`/customer/${id}`, credentials);
-      console.log('data', data);
-      return data;
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      };
+
+      const response = await axiosInstance.patch(
+        `/customer/${id}`,
+        credentials,
+        config,
+      );
+
+      console.log('data', response.data);
+      return response;
     } catch (error) {
       console.error('Thunk Error', error);
       return thunkAPI.rejectWithValue(error.response?.data || error.message);

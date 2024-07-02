@@ -229,7 +229,7 @@ const LeftSideDrawer = ({navigation}) => {
   const [active, setActive] = useState('');
   const [openId, setOpenId] = useState(null);
 
-  const {userByScpNumber} = useSelector(state => state.scpUser);
+  const {user} = useSelector(state => state.auth);
 
   const handleDrawerItemClick = (active, screen) => {
     // Keyboard.dismiss();
@@ -250,11 +250,10 @@ const LeftSideDrawer = ({navigation}) => {
             style={style.profileAvatar}
           />
           <View style={style.profileInfo}>
-            <Text style={style.profileName}>
-              {userByScpNumber?.scpDetail?.name}
-            </Text>
+            <Text style={style.profileName}>{user?.userName}</Text>
             <View style={style.profileRoleSection}>
-              <Text style={style.SCP}>{userByScpNumber?.scpDetail?.scpNo}</Text>
+              <Text style={style.SCP}>{user?.designation}</Text>
+              <Text style={style.SCP}>{user?.loginId}</Text>
               <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
                 <Icon name="facebook" size={30} color="#900" />
               </TouchableOpacity>

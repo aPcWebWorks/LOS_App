@@ -4,21 +4,19 @@ import {SCP_ENDPOINT} from '../../api/endpoints.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const getWithSCPNumberHandler = createAsyncThunk(
-  'scp/getWith_scpNumber',
-  async (_id, {rejectWithValue}) => {
+  'scp/get-scp',
+  async (scpnumber, {rejectWithValue}) => {
     try {
-      const {data} = await axiosInstance.get(`${SCP_ENDPOINT}/${_id}`);
-      const ID = data?.scpDetail?.id;
-      await AsyncStorage.setItem('scpId', ID);
-      return data;
-    } catch (error) {
-      if (error.response && error.response.data.message) {
-        console.log('error.response.data.message', error.response.data.message);
-        return rejectWithValue(error.response.data.message);
-      } else {
-        console.log('error.message', error.message);
-        return rejectWithValue(error.message);
+      const response = await axiosInstance.get(`${SCP_ENDPOINT}/${scpnumber}`);
+
+      const {status, data} = response;
+      if (status === 200) {
+        const {id} = data.scpDetail;
+        await AsyncStorage.setItem('scpId', id);
+        return;
       }
+    } catch (error) {
+      console.log('scp error', error);
     }
   },
 );

@@ -3,8 +3,8 @@ import {userLogin, userLogout} from './authThunks';
 
 const initialState = {
   isLoading: false,
-  // user: null,
-  error: null,
+  user: null,
+  isError: null,
   success: false,
 };
 
@@ -17,16 +17,17 @@ const authSlice = createSlice({
     builder
       .addCase(userLogin.pending, state => {
         state.isLoading = true;
-        state.error = null;
+        state.isError = null;
       })
       .addCase(userLogin.fulfilled, (state, {payload}) => {
-        // state.user = payload;
         state.isLoading = false;
+        state.user = payload.data;
         state.success = true;
+        // console.log('login payload', payload.data);
       })
       .addCase(userLogin.rejected, (state, {payload}) => {
         state.isLoading = false;
-        state.error = payload;
+        state.isError = payload;
       });
 
     // Logout user
@@ -41,7 +42,7 @@ const authSlice = createSlice({
       })
       .addCase(userLogout.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message;
+        state.isError = action.error.message;
       });
   },
 });

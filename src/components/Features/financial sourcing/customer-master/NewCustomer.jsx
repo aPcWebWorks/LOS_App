@@ -573,36 +573,35 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
   };
 
   const handleFormCredential = (values, {resetForm}) => {
-    const formData = new FormData();
-    const blob = new Blob([JSON.stringify(values.customer)], {
-      type: 'application/json',
-    });
+    // const formData = new FormData();
+    // const blob = new Blob([JSON.stringify(values.customer)], {
+    //   type: 'application/json',
+    // });
 
-    formData.append('idDocument', values?.idDocument);
-    formData.append('panCard', values?.panCard);
-    formData.append('aadhaarCard', values?.aadhaarCard);
-    formData.append('customer', blob, 'customer.json');
+    // formData.append('idDocument', values?.idDocument);
+    // formData.append('panCard', values?.panCard);
+    // formData.append('aadhaarCard', values?.aadhaarCard);
+    // formData.append('customer', blob, 'customer.json');
 
-    dispatch(addcustomer(formData));
+    // dispatch(addcustomer(formData));
 
-    resetForm();
+    // resetForm();
 
-    // Log the form data to console
-    console.log('Form Data:', values);
+    // // Log the form data to console
+    // console.log('Form Data:', values);
 
-    // Optionally, show an alert or navigate to another screen
-    Alert.alert(
-      'Form Submitted',
-      'Customer data has been submitted successfully.',
-    );
+    // // Optionally, show an alert or navigate to another screen
+    // Alert.alert(
+    //   'Form Submitted',
+    //   'Customer data has been submitted successfully.',
+    // );
+
+    console.log("customer values", values)
   };
 
   return (
     <Formik
       initialValues={{
-        idDocument: null,
-        panCard: null,
-        aadhaarCard: null,
         customer: {
           scpNo: '',
           title: '',
