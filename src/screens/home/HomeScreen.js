@@ -12,17 +12,16 @@ const HomeScreen = () => {
   const onToggleSnackBar = () => setVisible(!visible);
 
   const onDismissSnackBar = () => setVisible(false);
-
   return (
     <>
       <SafeAreaView style={styles.container}>
         <Text>Home Screen</Text>
         <Snackbar
-        style={{backgroundColor: 'green'}}
+          style={{backgroundColor: 'green'}}
           visible={visible}
           onDismiss={onDismissSnackBar}
           action={{
-            label: "Close",
+            label: 'Close',
             onPress: () => {
               // Do something
             },

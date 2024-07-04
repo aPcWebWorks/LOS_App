@@ -31,9 +31,8 @@ const scpUserSlice = createSlice({
 
       // Get With SCP Number Handler
       .addCase(getWithSCPNumberHandler.fulfilled, (state, {payload}) => {
-        const ID = payload?.scpDetail?.id;
-        // AsyncStorage.setItem('scpId', ID);
         state.userByScpNumber = payload;
+        console.log('userByScpNumber', payload);
       })
       .addCase(getWithSCPNumberHandler.rejected, (state, {payload}) => {
         state.error = action.error.message;

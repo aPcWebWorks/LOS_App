@@ -1,13 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {userLogout} from '../features/auth/authThunks';
 import {Alert} from 'react-native';
-import customSnackbar from '../components/Common/snackbar/Snackbar';
+import {userLogout} from '../features/auth/authThunks';
+import {store} from '../store/store';
 
 // Axios Instance.
 const axiosInstance = axios.create({
-  // baseURL: 'http://192.168.33.16:8589/api/v1/los',
-  baseURL:'http://192.168.29.113:8589/api/v1/los',
+  baseURL: 'http://192.168.29.113:8589/api/v1/los',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -36,29 +35,52 @@ axiosInstance.interceptors.response.use(
     console.log(
       `Your Session is Expire within a ${available_session_time} Seconds.`,
     );
-    if (available_session_time < 1) {
-      userLogout();
+
+    if (available_session_time <= 40) {
+      setTimeout(() => {
+        Alert.alert(
+          'Session Expiring',
+          `Your session will expire in ${available_session_time} seconds.`,
+          [
+            {
+              text: 'OK',
+              onPress: async () => {
+                await store.userLogout();
+              },
+            },
+          ],
+        );
+      }, 0);
     }
+
     return response;
   },
   async error => {
     if (error.response && error.response.status === 403) {
       try {
-        removeFew = async () => {
-          const keys = ['token', 'id'];
-          try {
-            await AsyncStorage.multiRemove(keys);
-            const tkn = await AsyncStorage.getItem('token');
-            console.log(tkn);
-          } catch (error) {
-            console.log('token remove error', error);
-          }
-        };
-        removeFew();
-        Alert.alert('Your session is expire.');
-        return error;
+        return new Promise((resolve, reject) => {
+          Alert.alert(
+            'Session Expiring',
+            'Your session will expire within a few seconds.',
+            [
+              {
+                text: 'OK',
+                onPress: async () => {
+                  try {
+                    await store.dispatch(userLogout());
+                    resolve(error);
+                  } catch (e) {
+                    console.log('Error removing token from AsyncStorage:', e);
+                    reject(error);
+                  }
+                },
+              },
+            ],
+            {cancelable: false},
+          );
+        });
       } catch (e) {
-        console.log('Error removing token from AsyncStorage:', e);
+        console.log('Error during logout:', e);
       }
     }
     return Promise.reject(error);

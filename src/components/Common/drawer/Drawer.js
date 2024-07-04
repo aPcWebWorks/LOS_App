@@ -226,19 +226,25 @@ const LeftSideDrawer = ({navigation}) => {
   const theme = useTheme();
   const style = getStyle(theme);
 
-  const [active, setActive] = useState('');
   const [openId, setOpenId] = useState(null);
 
-  const {user} = useSelector(state => state.auth);
+  const {userByScpNumber} = useSelector(state => state.scpUser);
+  const {title, name, scpNo} = userByScpNumber.data.scpDetail ?? {};
 
-  const handleDrawerItemClick = (active, screen) => {
-    // Keyboard.dismiss();
-    setActive(active);
-    navigation.navigate(screen);
-  };
+  // const handleDrawerItemClick = (active, screen) => {
+  //   // Keyboard.dismiss();
+  //   setActive(active);
+  //   navigation.navigate(screen);
+  // };
 
   const toggleCollapse = id => {
     setOpenId(openId === id ? null : id);
+  };
+
+  const capitalizeFirstLetter = str => {
+    if (str) {
+      return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    }
   };
 
   return (
@@ -250,10 +256,11 @@ const LeftSideDrawer = ({navigation}) => {
             style={style.profileAvatar}
           />
           <View style={style.profileInfo}>
-            <Text style={style.profileName}>{user?.userName}</Text>
+            <Text style={style.profileName}>
+              {`${capitalizeFirstLetter(title)}. ${name}`}
+            </Text>
             <View style={style.profileRoleSection}>
-              <Text style={style.SCP}>{user?.designation}</Text>
-              <Text style={style.SCP}>{user?.loginId}</Text>
+              <Text style={style.SCPNumber}>{scpNo}</Text>
               <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
                 <Icon name="facebook" size={30} color="#900" />
               </TouchableOpacity>
@@ -368,11 +375,12 @@ const getStyle = () => {
 
     profileName: {
       fontWeight: 'bold',
-      fontSize: 22,
+      fontSize: 16,
       color: 'black',
     },
-    SCP: {
+    SCPNumber: {
       color: 'black',
+      fontSize: 13,
     },
     profileRoleSection: {
       flexDirection: 'row',

@@ -559,7 +559,7 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
   const {userByScpNumber, userByScpDetails} = useSelector(
     state => state.scpUser,
   );
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const [isFocus, setIsFocus] = useState(false);
 

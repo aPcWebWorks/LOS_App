@@ -29,7 +29,7 @@ const Drawer = createDrawerNavigator();
 
 function StackNavigator() {
   const navigation = useNavigation();
-  const {success} = useSelector(state => state.auth);
+  const {isAuthenticated} = useSelector(state => state.auth);
 
   // useEffect(() => {
   //   (async () => {
@@ -43,6 +43,7 @@ function StackNavigator() {
   //   })();
   // }, [success]);
 
+  console.log("isAuthenticated", isAuthenticated)
   return (
     <Stack.Navigator
       initialRouteName="SignIn"
@@ -65,7 +66,7 @@ function StackNavigator() {
           backgroundColor: '#ecf9ec',
         },
       }}>
-      {success ? (
+      {isAuthenticated ? (
         <>
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="Profile" component={ProfileScreen} />

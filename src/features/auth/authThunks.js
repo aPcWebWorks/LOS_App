@@ -1,24 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createAsyncThunk} from '@reduxjs/toolkit';
-import {Base64} from 'js-base64';
 import axiosInstance from '../../api/axiosInstence.js';
 import {LOGIN_ENDPOINT} from '../../api/endpoints.js';
-import {
-  getWithSCPNumberHandler,
-  scpUserHandler,
-} from '../scp-user/scpUserThunk.js';
+import {getWithSCPNumberHandler} from '../scp-user/scpUserThunk.js';
 import {store} from '../../store/store.js';
-
-// function decodeJWT(token) {
-//   try {
-//     const [payload] = token.split('.');
-//     const decoded = JSON.parse(Base64.decode(payload));
-//     return decoded;
-//   } catch (error) {
-//     console.error('Error decoding token:', error);
-//     return null;
-//   }
-// }
 
 const userLogin = createAsyncThunk(
   'auth/login',
@@ -48,14 +33,35 @@ const userLogin = createAsyncThunk(
   },
 );
 
-const userLogout = createAsyncThunk('auth/logout', async () => {
-  try {
-    await AsyncStorage.clear();
-    delete axiosInstance.defaults.headers.common['Authorization'];
-  } catch (error) {
-    console.error('Error logging out:', error);
-    throw error;
-  }
-});
+const tokenChecker = createAsyncThunk(
+  'auth/token-checker',
+  async (_, {rejectWithValue}) => {
+    try {
+      const token = await AsyncStorage.getItem('token');
 
-export {userLogin, userLogout};
+      if (token) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.log(error);
+      rejectWithValue(error.message);
+    }
+  },
+);
+
+const userLogout = createAsyncThunk(
+  'auth/user-logout',
+  async (_, {rejectWithValue}) => {
+    console.log('user logout succesfully');
+    try {
+      await AsyncStorage.clear();
+      delete axiosInstance.defaults.headers.common['Authorization'];
+      return true;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export {userLogin, tokenChecker, userLogout};

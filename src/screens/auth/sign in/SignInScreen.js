@@ -647,13 +647,11 @@ import {getWithSCPNumberHandler} from '../../../features/scp-user/scpUserThunk.j
 
 const SignInScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  const {isLoading, user, error, success} = useSelector(state => state.auth);
 
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
 
   const [isToggleIcon, setIsToggleIcon] = useState(false);
-  const [loginSuccess, setLoginSuccess] = useState(false);
 
   const iconHandler = () => {
     setIsToggleIcon(!isToggleIcon);
@@ -685,18 +683,10 @@ const SignInScreen = ({navigation}) => {
 
   const handleLogin = async (values, {setSubmitting, setErrors}) => {
     const {username, password} = values;
+
     try {
       if (username && password) {
-        const response = await dispatch(
-          userLogin({loginId: username, password}),
-        );
-
-        const {payload} = response;
-
-        if (payload.status === 200) {
-          await navigation.navigate('Home');
-          return;
-        }
+        await dispatch(userLogin({loginId: username, password}));
       } else {
         setErrors({apiError: 'Invalid username or password.'});
       }
@@ -742,7 +732,7 @@ const SignInScreen = ({navigation}) => {
                     outlineStyle={{
                       borderWidth: 1.5,
                     }}
-                    keyboardType="email-address"
+                    keyboardType="default"
                     outlineColor="gray"
                     value={values.username}
                     onChangeText={handleChange('username')}
@@ -812,14 +802,21 @@ const SignInScreen = ({navigation}) => {
                   style={styles.button}
                   rippleColor="rgba(0, 0, 0, 0.32)"
                   onPress={handleSubmit}
-                  disabled={isSubmitting}>
+                  // disabled={isSubmitting}
+                >
                   <LinearGradient
                     style={{width: '100%', height: '100%'}}
                     colors={['#006600', '#009900']}
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 0}}>
                     <Text style={styles.loginText}>
-                      {isSubmitting ? 'Loading' : 'Login'}
+                      {isSubmitting ? (
+                        <>
+                          <ActivityIndicator color="white" />
+                        </>
+                      ) : (
+                        'Login'
+                      )}
                     </Text>
                   </LinearGradient>
                 </TouchableRipple>
@@ -872,6 +869,8 @@ const styles = StyleSheet.create({
   },
   logo: {
     resizeMode: 'contain',
+    position: 'relative',
+    // top: 40,
   },
   signinText: {
     fontSize: 30,
@@ -928,7 +927,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     marginTop: 10,
-    color: 'gray',
+    color: 'black',
     textAlign: 'center',
   },
 });

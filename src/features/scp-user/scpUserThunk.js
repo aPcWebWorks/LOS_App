@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const getWithSCPNumberHandler = createAsyncThunk(
   'scp/get-scp',
   async (scpnumber, {rejectWithValue}) => {
+    console.log('id', scpnumber);
     try {
       const response = await axiosInstance.get(`${SCP_ENDPOINT}/${scpnumber}`);
 
@@ -13,8 +14,9 @@ const getWithSCPNumberHandler = createAsyncThunk(
       if (status === 200) {
         const {id} = data.scpDetail;
         await AsyncStorage.setItem('scpId', id);
-        return;
+        return response;
       }
+      return;
     } catch (error) {
       console.log('scp error', error);
     }
@@ -29,13 +31,7 @@ const scpUserDetailsHandler = createAsyncThunk(
       // console.log("SCP User Details Data Handler", _id)
       return data;
     } catch (error) {
-      if (error.response && error.response.data.message) {
-        console.log('error.response.data.message', error.response.data.message);
-        return rejectWithValue(error.response.data.message);
-      } else {
-        console.log('error.message', error.message);
-        return rejectWithValue(error.message);
-      }
+      console.log('SCP user error', error);
     }
   },
 );
