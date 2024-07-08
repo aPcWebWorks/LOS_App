@@ -36,7 +36,7 @@ axiosInstance.interceptors.response.use(
       `Your Session is Expire within a ${available_session_time} Seconds.`,
     );
 
-    if (available_session_time <= 40) {
+    if (available_session_time <= 60) {
       setTimeout(() => {
         Alert.alert(
           'Session Expiring',

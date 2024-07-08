@@ -2,14 +2,13 @@ import {createSlice} from '@reduxjs/toolkit';
 import {
   loanDetailsHandler,
   loanMasterHandler,
-  getAllLoanHandler,
+  getAllLoanTypeHandler,
   loanGenerationHandler,
 } from './loanMasterThunk';
 
 const initialState = {
   isLoading: false,
   loan: null,
-  response:null,
   error: null,
 };
 
@@ -25,7 +24,7 @@ const loanMasterSlice = createSlice({
         state.error = null;
       })
       .addCase(loanMasterHandler.fulfilled, (state, {payload}) => {
-        state.loan = payload?.records?.record;
+        state.loan = payload;
         state.isLoading = false;
         state.error = null;
       })
@@ -68,41 +67,41 @@ const loanTypeSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder
-      .addCase(getAllLoanHandler.pending, state => {
+      .addCase(getAllLoanTypeHandler.pending, state => {
         state.isLoading = true;
       })
-      .addCase(getAllLoanHandler.fulfilled, (state, action) => {
+      .addCase(getAllLoanTypeHandler.fulfilled, (state, action) => {
         state.isLoading = false;
         state.loans = action.payload;
       })
-      .addCase(getAllLoanHandler.rejected, (state, action) => {
+      .addCase(getAllLoanTypeHandler.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       });
   },
 });
+
 const loanGenerationSlice = createSlice({
-  name: 'loan-Master',
-  initialState,
+  name: 'loan-generation',
+  initialState: {isLoading: null, generatedLoan: null, isError: null},
   reducers: {},
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      .addCase(loanGenerationHandler.pending, (state) => {
+      .addCase(loanGenerationHandler.pending, state => {
         state.isLoading = true;
-        state.error = null;
+        state.isError = null;
       })
-      .addCase(loanGenerationHandler.fulfilled, (state, { payload }) => {
-        state.response = payload.data; 
+      .addCase(loanGenerationHandler.fulfilled, (state, {payload}) => {
+        state.generatedLoan = payload;
         state.isLoading = false;
-        state.error = null;
+        state.isError = null;
       })
-      .addCase(loanGenerationHandler.rejected, (state, { payload }) => {
-        state.error = payload;
+      .addCase(loanGenerationHandler.rejected, (state, {payload}) => {
+        state.isError = payload;
         state.isLoading = false;
       });
   },
 });
-
 
 export {loanDetailsSlice, loanTypeSlice, loanGenerationSlice};
 export default loanMasterSlice.reducer;

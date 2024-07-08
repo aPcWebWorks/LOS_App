@@ -13,6 +13,7 @@ import {thunk} from 'redux-thunk';
 import loanMasterReducer, {
   loanTypeSlice,
   loanDetailsSlice,
+  loanGenerationSlice,
 } from '../features/loan-master/loanMasterSlice.js';
 import documentSlice from '../features/documents/documentSlice.js';
 import bankMasterReducer, {
@@ -32,6 +33,7 @@ const rootReducer = combineReducers({
   document: documentSlice,
   banks: getBanksSlice.reducer,
   loanType: loanTypeSlice.reducer,
+  loanGeneration: loanGenerationSlice.reducer,
 });
 
 // Configuration for redux-persist

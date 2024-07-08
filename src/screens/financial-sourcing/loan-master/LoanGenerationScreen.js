@@ -312,10 +312,7 @@ import {Dropdown} from 'react-native-element-dropdown';
 import {resetDocumentState} from '../../../features/documents/documentSlice';
 import documentHandler from '../../../features/documents/documentThunk';
 import {getAllBankHandller} from '../../../features/loan-master/bank-master/bankMasterThunk';
-import {
-  getAllLoanHandler,
-  loanGenerationHandler,
-} from '../../../features/loan-master/loanMasterThunk';
+import {loanGenerationHandler} from '../../../features/loan-master/loanMasterThunk';
 import {combineReducers} from 'redux';
 
 const LoanGenerationScreen = ({navigation, route}) => {
@@ -328,6 +325,7 @@ const LoanGenerationScreen = ({navigation, route}) => {
 
   const {allbanks} = useSelector(state => state.banks);
   const {loans} = useSelector(state => state.loanType);
+  const {generatedLoan} = useSelector(state => state.loanGeneration);
 
   // const {allproducts} = useSelector(state => state.products);
   const [selectQuery, setSelectQuery] = useState('');
@@ -336,17 +334,51 @@ const LoanGenerationScreen = ({navigation, route}) => {
   const [fetchedDocuments, setFetchedDocuments] = useState([]);
   const [bankList, setBankList] = useState([]);
   let uri;
-  const [selectedBank, setSelectedBank] = useState(null);
+  const [selectBankQuery, setSelectBankQuery] = useState(null);
   const [branchList, setBranchList] = useState([]);
-  const [selectedBranch, setSelectedBranch] = useState(null);
+  const [selectedBranchQuery, setSelectedBranchQuery] = useState(null);
   const [productList, setProductList] = useState([]);
   const [subProductList, setSubProductList] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectLoanQuery, setSelectLoanQuery] = useState(null);
+  const [selectLoanProductQuery, setSelectLoanProductQuery] = useState('');
   const [selectedSubProduct, setSelectedSubProduct] = useState(null);
-  const [accountNumber, setAccountNumber] = useState('');
-  const [loanAmount, setLoanAmount] = useState('');
+  const [accountNumber, setAccountNumber] = useState(null);
+  const [loanAmount, setLoanAmount] = useState(null);
   const [filteredLoans, setFilteredLoans] = useState([]);
   const [filteredBranches, setFilteredBranches] = useState([]);
+
+  const [formData, setFormData] = useState({
+    bankId: '',
+    customerId: '',
+    existingAccountNumber: '',
+    loanAmount: '',
+    loanTypeId: '',
+    scpId: '',
+  });
+
+  const handleChange = (key, value) => {
+    setFormData(prevState => ({
+      ...prevState,
+      [key]: value,
+    }));
+  };
+
+  useEffect(() => {
+    const fetchScpIdAndSetFormData = async () => {
+      try {
+        const scpId = await AsyncStorage.getItem('scpId');
+        setFormData(prevState => ({
+          ...prevState,
+          customerId: selectedCustomer?.id || '',
+          scpId: scpId || '',
+        }));
+      } catch (error) {
+        console.error('Error retrieving scpId from AsyncStorage:', error);
+      }
+    };
+
+    fetchScpIdAndSetFormData();
+  }, [selectedCustomer]);
 
   // useEffect(() => {
   //   getDocumentHandler(selectedCustomer.documents);
@@ -355,19 +387,6 @@ const LoanGenerationScreen = ({navigation, route}) => {
   useEffect(() => {
     dispatchHandler();
   }, [dispatch]);
-
-  // useEffect(() => {
-  //   if (allbanks && allbanks.length > 0) {
-  //     setBankList(allbanks);
-  //     // console.log('banks from', allbanks);
-  //   }
-  // }, [allbanks]);
-  // useEffect(() => {
-  //   if (allproducts && allproducts.length > 0) {
-  //     setProductList(allproducts);
-  //     // console.log('products from', allproducts);
-  //   }
-  // }, [allproducts]);
 
   useEffect(() => {
     if (selectedCustomer && fetchedDocuments) {
@@ -425,116 +444,58 @@ const LoanGenerationScreen = ({navigation, route}) => {
     dispatch(getAllBankHandller());
   };
 
-  const handleStack = async () => {
-    // Handle submit logic
-    // console.log('fetchedDocuments', fetchedDocuments);
-    console.log('accountNumber:', accountNumber);
-    console.log('loanAmount:', loanAmount);
-    let bankId = null;
-    const bank = allbanks.find(bank => {
-      return (
-        bank.response.bankCode === selectedBank ||
-        bank.response.bankName === selectedBank
-      );
-    });
-
-    if (bank) {
-      bankId = bank.response.id;
-    }
-    console.log('bankId:', bankId);
-
-    let scpID = null;
-    try {
-      scpID = await AsyncStorage.getItem('scpId');
-    } catch (error) {
-      console.error('Error retrieving scpId from AsyncStorage:', error);
-    }
-    console.log('scpID:', scpID);
-
-    let customerID = selectedCustomer?.id;
-    console.log('customerID:', customerID);
-
-    let loanID = null;
-    // console.log('selectedProduct:', selectedProduct);
-
-    const loan = loans.find(loan => {
-      // console.log('loan:', loan);
-      return (
-        loan.response.productCode === selectedProduct ||
-        loan.response.productName === selectedProduct
-      );
-    });
-
-    if (loan) {
-      loanID = loan.response.id;
-    }
-
-    console.log('loanTypeID:', loanID);
-
-    // if (
-    //   selectedBank &&
-    //   selectedBranch &&
-    //   selectedProduct &&
-    //   selectedSubProduct &&
-    //   accountNumber &&
-    //   loanAmount
-    // ) {
-    //   const payload = {
-    //     bankID: bankId,
-    //     customerID: selectedCustomer?.id,
-    //     existingAccountNumber: accountNumber,
-    //     loanAmount: loanAmount,
-    //     loanTypeID: loanTypeId,
-    //     scpID: scpID,
-    //   };
-    //   console.log('payload', payload);
-
-    // } else {
-    //   console.error('Missing required fields for loan generation');
-    //   // Handle missing fields error
-    // }
-  };
-
   const bankChangeHandler = item => {
+    setSelectBankQuery(item.value);
     const newFilteredBranches = allbanks
       .filter(bank => bank.response.bankName === item.label)
       .map(bank => ({
         label: bank.response.branchName,
         value: bank.response.branchName,
       }));
-
+    setFormData(prevState => ({
+      ...prevState,
+      bankId: item.id,
+    }));
     setFilteredBranches(newFilteredBranches);
-    setSelectedBank(item.label);
-    setSelectQuery(item.label);
-    // console.log(filteredBranches);
-    // console.log("Selected Bank:", item);
   };
 
   const loanTypeChangeHandler = item => {
-    console.log('loan type change handler', item);
+    setSelectLoanQuery(item.value);
     const newFliteredLoans = loans
-      // .filter(loan => loan.response.productName === item.label)
-      .filter(loan => {
-        console.log('loan', loan);
-      })
+      .filter(loan => loan.response.productName === item.label)
       .map(loan => ({
         label: loan.response.subProductName,
         value: loan.response.subProductName,
       }));
+    setFormData(prevState => ({
+      ...prevState,
+      loanTypeId: item.id,
+    }));
     setFilteredLoans(newFliteredLoans);
-    // console.log(filteredLoans);
-    // setSelectedProduct(item.value);
-    // console.log("Loans",loans);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      await dispatch(loanGenerationHandler(formData));
+      const {status, data} = generatedLoan;
+
+      if (status === 201) {
+        navigation.navigate('Loan Details', {id: data?.id});
+      } else {
+        console.log(`Unexpected status: ${status}`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleCancel = () => {
     navigation.navigate('Searched Customer');
   };
-
   return (
     <>
       <SafeAreaView style={styles.container}>
-        {isLoading ? (
+        {/* {isLoading ? (
           <>
             <ActivityIndicator
               size="large"
@@ -542,166 +503,141 @@ const LoanGenerationScreen = ({navigation, route}) => {
               style={styles.loadingIndicator}
             />
           </>
-        ) : (
-          <>
-            <ScrollView style={styles.scrollView}>
-              <FlatList
-                scrollEnabled={false}
-                data={obj.concat(image)}
-                renderItem={({item}) => (
-                  <View style={styles.itemContainer}>
-                    <Text style={styles.label}>{item.key}</Text>
-                    {item.key.startsWith('Photo') ? (
-                      <Image source={{uri: uri}} style={styles.photo} />
-                    ) : (
-                      <Text style={styles.textValue}>{item.value}</Text>
-                    )}
-                  </View>
-                )}
-                keyExtractor={(item, index) => `${item.key}-${index}`}
+        ) : ( */}
+        <>
+          <ScrollView style={styles.scrollView}>
+            <FlatList
+              scrollEnabled={false}
+              data={obj.concat(image)}
+              renderItem={({item}) => (
+                <View style={styles.itemContainer}>
+                  <Text style={styles.label}>{item.key}</Text>
+                  {item.key.startsWith('Photo') ? (
+                    <Image source={{uri: uri}} style={styles.photo} />
+                  ) : (
+                    <Text style={styles.textValue}>{item.value}</Text>
+                  )}
+                </View>
+              )}
+              keyExtractor={(item, index) => `${item.key}-${index}`}
+            />
+
+            <View style={styles.dropdownGroup}>
+              <Dropdown
+                style={styles.dropdown}
+                data={
+                  allbanks?.map(item => ({
+                    id: item.response.id,
+                    label: item.response.bankName,
+                    value: item.response.bankName,
+                  })) || []
+                }
+                mode="default"
+                value={selectBankQuery}
+                onChange={item => {
+                  bankChangeHandler(item);
+                }}
+                labelField="label"
+                valueField="value"
+                placeholder={
+                  <Text style={{color: 'black'}}>Select Bank Name</Text>
+                }
+                iconColor="black"
               />
 
-              <View style={styles.dropdownGroup}>
-                {/* {bankList && bankList.length > 0 && ( */}
-                <Dropdown
-                  style={styles.dropdown}
-                  data={
-                    allbanks?.map(item => ({
-                      label: item.response.bankName,
-                      id: item.response.id,
-                    })) || []
-                  }
-                  mode="default"
-                  value={
-                    selectQuery || (selectedBank ? selectedBank.label : '')
-                  }
-                  onChange={item => {
-                    bankChangeHandler(item);
-                    // setSelectedBank(item);
-                    // setSelectQuery(item.label);
-                  }}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={
-                    <Text style={{color: 'black'}}>Select Bank Name</Text>
-                  }
-                  iconColor="black"
-                />
-                {/* )} */}
-                {/* <View style={{marginTop: 10}} /> */}
-                <Dropdown
-                  style={styles.dropdown}
-                  data={filteredBranches}
-                  mode="default"
-                  labelField="label"
-                  valueField="value"
-                  placeholder={
-                    <Text style={{color: 'black'}}>Select Branch Name</Text>
-                  }
-                  onChange={item => {
-                    setSelectedBranch(item.value);
-                    setSelectQuery(item.value);
-                  }}
-                  // onChange={setSelectQuery}
-                  value={selectedBranch}
-                  // value={selectQuery}
-                  iconColor="black"
-                />
+              <Dropdown
+                style={styles.dropdown}
+                data={filteredBranches}
+                mode="default"
+                labelField="label"
+                valueField="value"
+                placeholder={
+                  <Text style={{color: 'black'}}>Select Branch Name</Text>
+                }
+                disable={!filteredBranches.length}
+                onChange={item => {
+                  setSelectedBranchQuery(item.value);
+                }}
+                value={selectedBranchQuery}
+                iconColor="black"
+              />
 
-                {/* <View style={{marginTop: 10}} />  */}
-                {/* {productList && productList.length > 0 && ( */}
-                <Dropdown
-                  style={styles.dropdown}
-                  // data={productList.map(item => ({
-                  //   label: item.response.productName,
-                  //   id: item.response.id,
-                  // }))}
-
-                  data={loans.map(item => ({
-                    label: item.response.productName,
+              <Dropdown
+                style={styles.dropdown}
+                data={
+                  loans.map(item => ({
                     id: item.response.id,
-                  }))}
-                  // data={loans.map(item => {
-                  //   console.log('loans', item);
-                  // })}
-                  mode="default"
-                  labelField="label"
-                  valueField="value"
-                  value={selectedProduct}
-                  // onChange={loanTypeChangeHandler}
-                  onChange={item => {
-                    loanTypeChangeHandler(item);
-                    // setSelectedBank(item);
-                    // setSelectQuery(item.label);
-                  }}
-                  // value={selectQuery}
-                  // onChange={setSelectQuery}
-                  placeholder={
-                    <Text style={{color: 'black'}}>Select product Name</Text>
-                  }
-                  iconColor="black"
-                />
-                {/* )} */}
-                {/* <View style={{marginTop: 10}} /> */}
+                    label: item.response.productName,
+                    value: item.response.productName,
+                  })) || []
+                }
+                mode="default"
+                labelField="label"
+                valueField="value"
+                value={selectLoanQuery}
+                onChange={item => {
+                  loanTypeChangeHandler(item);
+                }}
+                placeholder={
+                  <Text style={{color: 'black'}}>Select product Name</Text>
+                }
+                iconColor="black"
+              />
 
-                <Dropdown
-                  style={styles.dropdown}
-                  data={filteredLoans}
-                  mode="default"
-                  labelField="label"
-                  valueField="value"
-                  placeholder={
-                    <Text style={{color: 'black'}}>
-                      Select Sub product Name
-                    </Text>
-                  }
-                  // onChange={item => setSelectedSubProduct(item.value)}
-                  // value={selectedSubProduct}
-                  onChange={item => {
-                    setSelectedProduct(item.value);
-                    setSelectQuery(item.value);
-                  }}
-                  // onChange={setSelectQuery}
-                  value={selectedProduct}
-                  // value={selectQuery}
-                  // onChange={setSelectQuery}
-                  iconColor="black"
-                />
-                <TextInput
-                  style={styles.dropdown}
-                  placeholder="Existing Account Number"
-                  placeholderTextColor="black"
-                  value={accountNumber}
-                  onChangeText={value => setAccountNumber(value)}
-                />
+              <Dropdown
+                style={styles.dropdown}
+                data={filteredLoans}
+                mode="default"
+                labelField="label"
+                valueField="value"
+                placeholder={
+                  <Text style={{color: 'black'}}>Select Sub product Name</Text>
+                }
+                onChange={item => {
+                  setSelectLoanProductQuery(item.value);
+                }}
+                disable={!filteredLoans.length}
+                value={selectLoanProductQuery}
+                iconColor="black"
+              />
+              <TextInput
+                style={styles.dropdown}
+                placeholder="Existing Account Number"
+                placeholderTextColor="black"
+                value={formData?.existingAccountNumber}
+                // onChangeText={value => setAccountNumber(value)}
+                onChangeText={value =>
+                  handleChange('existingAccountNumber', value)
+                }
+              />
 
-                <TextInput
-                  style={styles.dropdown}
-                  placeholder="Loan Amount"
-                  placeholderTextColor="black"
-                  value={loanAmount}
-                  onChangeText={value => setLoanAmount(value)}
-                />
-              </View>
+              <TextInput
+                style={styles.dropdown}
+                placeholder="Loan Amount"
+                placeholderTextColor="black"
+                value={formData?.loanAmount}
+                onChangeText={value => handleChange('loanAmount', value)}
+              />
+            </View>
 
-              <View style={styles.buttonGroup}>
-                <Button
-                  style={styles.button}
-                  mode="contained"
-                  onPress={handleStack}>
-                  <Text>Submit</Text>
-                </Button>
+            <View style={styles.buttonGroup}>
+              <Button
+                style={styles.button}
+                mode="contained"
+                onPress={handleSubmit}>
+                <Text>Submit</Text>
+              </Button>
 
-                <Button
-                  style={styles.button}
-                  mode="contained"
-                  onPress={handleCancel}>
-                  <Text>Cancel</Text>
-                </Button>
-              </View>
-            </ScrollView>
-          </>
-        )}
+              <Button
+                style={styles.button}
+                mode="contained"
+                onPress={handleCancel}>
+                <Text>Cancel</Text>
+              </Button>
+            </View>
+          </ScrollView>
+        </>
+        {/* )} */}
       </SafeAreaView>
     </>
   );

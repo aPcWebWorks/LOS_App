@@ -2,7 +2,7 @@ import {createAsyncThunk} from '@reduxjs/toolkit';
 import axiosInstance from '../../../api/axiosInstence';
 import {BANKMASTER_ENDPOINT} from '../../../api/endpoints';
 import {store} from '../../../store/store';
-import {getAllLoanHandler} from '../loanMasterThunk';
+import {getAllLoanTypeHandler} from '../loanMasterThunk';
 
 const bankMasterHandler = createAsyncThunk(
   'bank-Master/bank',
@@ -37,7 +37,7 @@ const getAllBankHandller = createAsyncThunk(
       const {record} = data.records;
 
       if (status === 200) {
-        await store.dispatch(getAllLoanHandler());
+        await store.dispatch(getAllLoanTypeHandler());
       }
       return record;
     } catch (error) {
