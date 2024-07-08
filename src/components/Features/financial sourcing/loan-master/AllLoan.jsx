@@ -18,6 +18,7 @@ const AllLoan = ({filteredLoans, customers}) => {
     setPage(0);
   }, [numberOfCustomersPerPage]);
 
+  console.log('filteredLoans', filteredLoans);
   return (
     <>
       <View style={style.table}>
@@ -84,8 +85,8 @@ const AllLoan = ({filteredLoans, customers}) => {
                       dark={true}
                       textColor="white"
                       onPress={() =>
-                        navigation.navigate('Loan Generation', {
-                          id: item?.response?.id,
+                        navigation.navigate('Loan Update', {
+                          loanDetails: item?.response,
                         })
                       }>
                       Update

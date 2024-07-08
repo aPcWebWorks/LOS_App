@@ -23,6 +23,7 @@ import CustomerDetailsScreen from '../screens/financial-sourcing/customer-master
 import LoanStatusScreen from '../screens/financial-sourcing/loan-status/LoanStatusScreen.js';
 import LoanDetailsScreen from '../screens/financial-sourcing/loan-master/LoanDetailsScreen.js';
 import CustomerUpdateScreen from '../screens/financial-sourcing/customer-master/CustomerUpdateScreen.js';
+import LoanUpdateScreen from '../screens/financial-sourcing/loan-master/LoanUpdateScreen.js';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -82,7 +83,10 @@ function StackNavigator() {
             name="Loan Generation"
             component={LoanGenerationScreen}
           />
-
+           <Stack.Screen
+            name="Loan Update"
+            component={LoanUpdateScreen}
+          />
           <Stack.Screen name="All Types Reports" component={ReportsScreen} />
         </>
       ) : (
