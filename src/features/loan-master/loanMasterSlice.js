@@ -3,11 +3,13 @@ import {
   loanDetailsHandler,
   loanMasterHandler,
   getAllLoanHandler,
+  loanGenerationHandler,
 } from './loanMasterThunk';
 
 const initialState = {
   isLoading: false,
   loan: null,
+  response:null,
   error: null,
 };
 
@@ -56,11 +58,10 @@ const loanDetailsSlice = createSlice({
   },
 });
 
-
-const ProductSlice = createSlice({
+const loanTypeSlice = createSlice({
   name: 'loanMaster',
   initialState: {
-    allproducts: [],
+    loans: [],
     isLoading: false,
     error: null,
   },
@@ -72,7 +73,7 @@ const ProductSlice = createSlice({
       })
       .addCase(getAllLoanHandler.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.allproducts = action.payload;
+        state.loans = action.payload;
       })
       .addCase(getAllLoanHandler.rejected, (state, action) => {
         state.isLoading = false;
@@ -80,5 +81,28 @@ const ProductSlice = createSlice({
       });
   },
 });
-export {loanDetailsSlice, ProductSlice};
+const loanGenerationSlice = createSlice({
+  name: 'loan-Master',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(loanGenerationHandler.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(loanGenerationHandler.fulfilled, (state, { payload }) => {
+        state.response = payload.data; 
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(loanGenerationHandler.rejected, (state, { payload }) => {
+        state.error = payload;
+        state.isLoading = false;
+      });
+  },
+});
+
+
+export {loanDetailsSlice, loanTypeSlice, loanGenerationSlice};
 export default loanMasterSlice.reducer;

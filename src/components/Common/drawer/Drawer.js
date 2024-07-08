@@ -229,7 +229,7 @@ const LeftSideDrawer = ({navigation}) => {
   const [openId, setOpenId] = useState(null);
 
   const {userByScpNumber} = useSelector(state => state.scpUser);
-  const {title, name, scpNo} = userByScpNumber.data.scpDetail ?? {};
+  const {title, name, scpNo} = userByScpNumber?.data?.scpDetail ?? {};
 
   // const handleDrawerItemClick = (active, screen) => {
   //   // Keyboard.dismiss();

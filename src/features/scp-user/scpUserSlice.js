@@ -32,7 +32,6 @@ const scpUserSlice = createSlice({
       // Get With SCP Number Handler
       .addCase(getWithSCPNumberHandler.fulfilled, (state, {payload}) => {
         state.userByScpNumber = payload;
-        console.log('userByScpNumber', payload);
       })
       .addCase(getWithSCPNumberHandler.rejected, (state, {payload}) => {
         state.error = action.error.message;

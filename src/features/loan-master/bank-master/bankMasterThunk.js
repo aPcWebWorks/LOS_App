@@ -1,6 +1,8 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import axiosInstance from '../../../api/axiosInstence';
 import {BANKMASTER_ENDPOINT} from '../../../api/endpoints';
+import {store} from '../../../store/store';
+import {getAllLoanHandler} from '../loanMasterThunk';
 
 const bankMasterHandler = createAsyncThunk(
   'bank-Master/bank',
@@ -23,14 +25,21 @@ const bankMasterHandler = createAsyncThunk(
 );
 
 const getAllBankHandller = createAsyncThunk(
-  'bank-Master/getAllBank',
+  'bank-Master/get-all-bank',
   async (_, {rejectWithValue}) => {
     try {
-      const {data} = await axiosInstance.get
-        // `${BANKMASTER_ENDPOINT}/?pageNumber=${pageNumber}&pageSize=${pageSize}`;
-        ('http://192.168.29.113:8589/api/v1/los/bank?pageNumber=0&pageSize=2000');
-        // console.log('API Response:', data); 
-      return data.records.record;
+      const response = await axiosInstance.get(
+        'http://192.168.29.113:8589/api/v1/los/bank?pageNumber=0&pageSize=2000',
+      );
+
+      // const {record} = response.data.records;
+      const {status, data} = response;
+      const {record} = data.records;
+
+      if (status === 200) {
+        await store.dispatch(getAllLoanHandler());
+      }
+      return record;
     } catch (error) {
       console.log(error);
       await rejectWithValue(error);

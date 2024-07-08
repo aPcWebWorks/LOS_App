@@ -31,19 +31,6 @@ function StackNavigator() {
   const navigation = useNavigation();
   const {isAuthenticated} = useSelector(state => state.auth);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const _token = await AsyncStorage.getItem('token');
-  //     if (_token) {
-  //       setIsAuthenticated(true);
-  //     } else {
-  //       setIsAuthenticated(false);
-  //     }
-  //     return;
-  //   })();
-  // }, [success]);
-
-  console.log("isAuthenticated", isAuthenticated)
   return (
     <Stack.Navigator
       initialRouteName="SignIn"

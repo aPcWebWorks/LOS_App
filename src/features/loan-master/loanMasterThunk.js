@@ -53,23 +53,53 @@ const loanDetailsHandler = createAsyncThunk(
   },
 );
 
-
 const getAllLoanHandler = createAsyncThunk(
   'loan-Master/get-all-loan',
-  async (_, { rejectWithValue }) => {
+  async (_, {rejectWithValue}) => {
     try {
-      const { data } = await axiosInstance.get
-      ('http://192.168.29.113:8589/api/v1/los/loan/type?pageNumber=0&pageSize=2000');
-      // console.log('API Response:', data); 
-      return data.records.record; 
+      const response = await axiosInstance.get(
+        'http://192.168.29.113:8589/api/v1/los/loan/type?pageNumber=0&pageSize=2000',
+      );
+      const {status, data} = response;
+      const {record} = data.records;
+// console.log("Loans",response)
+      return record;
+    } catch (error) {
+      console.log('get-all-loan', error);
+    }
+  },
+);
+
+const loanGenerationHandler = createAsyncThunk(
+  'loan-Master/generate-loan',
+  async (payload, {rejectWithValue}) => {
+    try {
+      const response = await axiosInstance.post(
+        
+        'http://192.168.29.113:8589/api/v1/los/loan/master',
+        payload,
+      );
+
+       const {data} = response;
+
+      // console.log('API Response:', response.data);
+      return response.data;
     } catch (error) {
       if (error.response && error.response.data.message) {
+        console.error('Error:', error.response.data.message);
         return rejectWithValue(error.response.data.message);
       } else {
+        console.error('Error:', error.message);
         return rejectWithValue(error.message);
       }
     }
-  }
+  },
 );
 
-export {loanMasterHandler, loanDetailsHandler,getAllLoanHandler};
+
+export {
+  loanMasterHandler,
+  loanDetailsHandler,
+  getAllLoanHandler,
+  loanGenerationHandler,
+};
