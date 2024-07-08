@@ -492,6 +492,8 @@ const LoanGenerationScreen = ({navigation, route}) => {
   const handleCancel = () => {
     navigation.navigate('Searched Customer');
   };
+
+  console.log("selectedCustomer", selectedCustomer)
   return (
     <>
       <SafeAreaView style={styles.container}>

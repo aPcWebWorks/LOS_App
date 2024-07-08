@@ -18,12 +18,6 @@ const AllLoan = ({filteredLoans, customers}) => {
     setPage(0);
   }, [numberOfCustomersPerPage]);
 
-  const loanDetailsHandler = _id => {
-    if (_id) {
-      navigation.navigate('Loan Details', {id: _id});
-    }
-    console.log(_id);
-  };
   return (
     <>
       <View style={style.table}>
@@ -88,7 +82,12 @@ const AllLoan = ({filteredLoans, customers}) => {
                       style={style.button}
                       mode="contained"
                       dark={true}
-                      textColor="white">
+                      textColor="white"
+                      onPress={() =>
+                        navigation.navigate('Loan Generation', {
+                          id: item?.response?.id,
+                        })
+                      }>
                       Update
                     </Button>
                   </DataTable.Cell>
