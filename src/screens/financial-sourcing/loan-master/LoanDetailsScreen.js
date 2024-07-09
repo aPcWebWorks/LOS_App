@@ -7,7 +7,9 @@ import LoanDetails from '../../../components/Features/financial sourcing/loan-ma
 
 const LoanDetailsScreen = ({route}) => {
   const dispatch = useDispatch();
-  const {userByScpNumber} = useSelector(state => state.scpUser);
+  const {user} = useSelector(state => state.auth);
+  const {loginId} = user.data || {};
+
   const {loanDetails, isLoading} = useSelector(state => state.loanDetails);
   const {customer} = useSelector(state => state.getCustomerById);
   const {bank} = useSelector(state => state.bankMaster);
@@ -19,7 +21,7 @@ const LoanDetailsScreen = ({route}) => {
   }, [dispatch]);
 
   const singalLoanDetails = {
-    ScpNo: userByScpNumber?.scpDetail?.scpNo,
+    ScpNo: loginId,
     CustomerId: customer?.externalCustomerId,
     Name: `${customer?.title}. ${customer?.customerName}`,
     Gender: customer?.gender,

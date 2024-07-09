@@ -28,7 +28,9 @@ const LoanMasterScreen = ({navigation}) => {
 
   const dispatch = useDispatch();
   const {loan, isLoading} = useSelector(state => state.loanMaster);
-  const {userByScpNumber} = useSelector(state => state.scpUser);
+  const {user} = useSelector(state => state.auth);
+  const {loginId} = user.data || {};
+
   // const {searchedCustomer} = useSelector(state => state.searchedCustomer);
   const [filteredLoans, setFilteredLoans] = useState(loan);
 
@@ -74,7 +76,6 @@ const LoanMasterScreen = ({navigation}) => {
       );
       navigation.navigate('Searched Customer');
     }
-    // console.log('Please selct option and search your value', customerParams);
   };
 
   return (
@@ -100,9 +101,7 @@ const LoanMasterScreen = ({navigation}) => {
                     // dismissable={false}
                     dismissableBackButton={false}
                     contentContainerStyle={style.modal}>
-                    <Text style={style.modalText}>
-                      SCP No. : {userByScpNumber?.scpDetail?.scpNo}
-                    </Text>
+                    <Text style={style.modalText}>SCP No. : {loginId}</Text>
 
                     <View style={style.modalSection}>
                       <Dropdown

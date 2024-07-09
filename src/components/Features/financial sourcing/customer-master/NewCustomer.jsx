@@ -553,24 +553,25 @@ const validationSchema = Yup.object().shape({
 });
 
 // Main Component
-const NewCustomer = ({navigation, id, isOpen, toggle}) => {
+const NewCustomer = () => {
   const theme = useTheme();
   const styles = getStyles(theme);
-  const {userByScpNumber, userByScpDetails} = useSelector(
-    state => state.scpUser,
-  );
-  // const dispatch = useDispatch();
+  const {user} = useSelector(state => state.auth);
+  const {loginId} = user.data || {};
 
   const [isFocus, setIsFocus] = useState(false);
+  const [scpId, setSCPId] = useState('');
 
   useEffect(() => {
-    scpidHandler();
-  });
+    const scpIdHandler = async () => {
+      const ID = await AsyncStorage.getItem('scpId');
+      if (ID) {
+        setSCPId(ID);
+      }
+    };
 
-  const scpidHandler = async () => {
-    const ID = await AsyncStorage.getItem('userid');
-    // setFieldValue('customer.scpNo', ID);
-  };
+    scpIdHandler();
+  }, []);
 
   const handleFormCredential = (values, {resetForm}) => {
     // const formData = new FormData();
@@ -596,14 +597,14 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
     //   'Customer data has been submitted successfully.',
     // );
 
-    console.log("customer values", values)
+    console.log('customer values', values);
   };
 
   return (
     <Formik
       initialValues={{
         customer: {
-          scpNo: '',
+          scpNo: scpId,
           title: '',
           customerName: '',
           gender: '',
@@ -631,9 +632,7 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
         <SafeAreaView style={styles.container}>
           <View style={styles.scpId}>
             <Text style={styles.label}>SCP Number : </Text>
-            <Text style={{color: 'black'}}>
-              {userByScpNumber?.scpDetail?.scpNo}
-            </Text>
+            <Text style={{color: 'black'}}>{loginId}</Text>
           </View>
 
           <View style={styles.customerTitle}>
@@ -898,7 +897,7 @@ const NewCustomer = ({navigation, id, isOpen, toggle}) => {
             style={styles.submitButton}
             mode="contained"
             buttonColor="green"
-            onPress={handleSubmit}>
+            onPress={handleFormCredential}>
             Submit
           </Button>
         </SafeAreaView>

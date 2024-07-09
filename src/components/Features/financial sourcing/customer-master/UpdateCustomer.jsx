@@ -31,8 +31,8 @@ const UpdateCustomer = ({customer}) => {
 
   // redux toolkit.
   const dispatch = useDispatch();
-  const {userByScpNumber} = useSelector(state => state.scpUser);
-  const {scpNo} = userByScpNumber?.data?.scpDetail ?? {};
+  const {user} = useSelector(state => state.auth);
+  const {loginId} = user.data || {};
   // component state.
   const [isFocus, setIsFocus] = useState(false);
   const [updatedFormData, setUpdatedFormData] = useState({});
@@ -94,7 +94,7 @@ const UpdateCustomer = ({customer}) => {
       <SafeAreaView style={styles.container}>
         <View style={styles.scpId}>
           <Text style={styles.label}>SCP Number : </Text>
-          <Text style={{color: 'black'}}>{scpNo}</Text>
+          <Text style={{color: 'black'}}>{loginId}</Text>
         </View>
 
         <View style={styles.customerTitle}>

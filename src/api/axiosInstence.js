@@ -38,18 +38,14 @@ axiosInstance.interceptors.response.use(
 
     if (available_session_time <= 60) {
       setTimeout(() => {
-        Alert.alert(
-          'Session Expiring',
-          `Your session will expire in ${available_session_time} seconds.`,
-          [
-            {
-              text: 'OK',
-              onPress: async () => {
-                await store.userLogout();
-              },
+        Alert.alert('Session Expiring', `Your session will expire soon`, [
+          {
+            text: 'OK',
+            onPress: async () => {
+              await store.userLogout();
             },
-          ],
-        );
+          },
+        ]);
       }, 0);
     }
 
@@ -61,7 +57,7 @@ axiosInstance.interceptors.response.use(
         return new Promise((resolve, reject) => {
           Alert.alert(
             'Session Expiring',
-            'Your session will expire within a few seconds.',
+            'Your session will expired.',
             [
               {
                 text: 'OK',
