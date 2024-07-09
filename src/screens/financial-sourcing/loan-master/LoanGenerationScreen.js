@@ -493,7 +493,6 @@ const LoanGenerationScreen = ({navigation, route}) => {
     navigation.navigate('Searched Customer');
   };
 
-  console.log("selectedCustomer", selectedCustomer)
   return (
     <>
       <SafeAreaView style={styles.container}>

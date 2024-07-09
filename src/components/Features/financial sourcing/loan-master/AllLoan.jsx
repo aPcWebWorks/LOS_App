@@ -2,11 +2,14 @@ import React, {useEffect} from 'react';
 import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {Button, DataTable} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {loanUpdateHandler} from '../../../../features/loan-master/loanMasterThunk';
 
 const AllLoan = ({filteredLoans, customers}) => {
   const navigation = useNavigation();
   const numberOfCustomersPerPageList = [2, 3, 4];
 
+  const dispatch = useDispatch();
   const [page, setPage] = React.useState(0);
   const [numberOfCustomersPerPage, onCustomersPerPageChange] = React.useState(
     numberOfCustomersPerPageList[0],
@@ -18,7 +21,6 @@ const AllLoan = ({filteredLoans, customers}) => {
     setPage(0);
   }, [numberOfCustomersPerPage]);
 
-  console.log('filteredLoans', filteredLoans);
   return (
     <>
       <View style={style.table}>
@@ -84,11 +86,7 @@ const AllLoan = ({filteredLoans, customers}) => {
                       mode="contained"
                       dark={true}
                       textColor="white"
-                      onPress={() =>
-                        navigation.navigate('Loan Update', {
-                          loanDetails: item?.response,
-                        })
-                      }>
+                      onPress={() => dispatch(loanUpdateHandler(item?.response?.id))}>
                       Update
                     </Button>
                   </DataTable.Cell>

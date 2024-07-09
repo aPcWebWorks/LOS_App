@@ -89,9 +89,29 @@ const loanGenerationHandler = createAsyncThunk(
   },
 );
 
+const loanUpdateHandler = createAsyncThunk(
+  'loan-Master/update-loan',
+  async (id, payload, {rejectWithValue}) => {
+    try {
+      const response = await axiosInstance.put(
+        `http://192.168.29.113:8589/api/v1/los/loan/${id}/master`,
+        payload,
+      );
+
+      const {data} = response;
+
+      console.log('loanUpdateHandler', response);
+      return response;
+    } catch (error) {
+      console.log('generate-loan', error);
+    }
+  },
+);
+
 export {
   loanMasterHandler,
   loanDetailsHandler,
   getAllLoanTypeHandler,
   loanGenerationHandler,
+  loanUpdateHandler,
 };
