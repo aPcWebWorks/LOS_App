@@ -2,12 +2,19 @@ import React from 'react';
 import {FlatList, ScrollView, StyleSheet, Text} from 'react-native';
 import {Button, DataTable} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {getCustomerWithId} from '../../../../features/customer-master/customerMasterThunk';
 
 const SearchedCustomers = ({customers}) => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  // const selectHandler = selectedCustomer => {~
+  //   navigation.navigate('Loan Generation', {selectedCustomer});
+  // };
 
-  const selectHandler = selectedCustomer => {
-    navigation.navigate('Loan Generation', {selectedCustomer});
+  const selectHandler = async id => {
+    await dispatch(getCustomerWithId(id));
+    navigation.navigate('Loan Update');
   };
 
   return (
@@ -90,7 +97,7 @@ const SearchedCustomers = ({customers}) => {
                     mode="contained"
                     dark={true}
                     textColor="white"
-                    onPress={() => selectHandler(item)}>
+                    onPress={() => selectHandler(item.id)}>
                     Select
                   </Button>
                 </DataTable.Cell>

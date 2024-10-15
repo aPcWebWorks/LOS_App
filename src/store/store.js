@@ -14,12 +14,14 @@ import loanMasterReducer, {
   loanTypeSlice,
   loanDetailsSlice,
   loanGenerationSlice,
+  loanGetWithIdSlice,
 } from '../features/loan-master/loanMasterSlice.js';
 import documentSlice from '../features/documents/documentSlice.js';
 import bankMasterReducer, {
   getBanksSlice,
 } from '../features/loan-master/bank-master/bankMasterSlice.js';
 import {getAllLoanHandler} from '../features/loan-master/loanMasterThunk.js';
+
 // Combine your reducers
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -33,6 +35,7 @@ const rootReducer = combineReducers({
   document: documentSlice,
   banks: getBanksSlice.reducer,
   loanType: loanTypeSlice.reducer,
+  loanTypeWithId: loanGetWithIdSlice.reducer,
   loanGeneration: loanGenerationSlice.reducer,
 });
 

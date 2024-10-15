@@ -4,6 +4,7 @@ import {
   loanMasterHandler,
   getAllLoanTypeHandler,
   loanGenerationHandler,
+  getLoanTypeWithIdHandler,
 } from './loanMasterThunk';
 
 const initialState = {
@@ -103,5 +104,32 @@ const loanGenerationSlice = createSlice({
   },
 });
 
-export {loanDetailsSlice, loanTypeSlice, loanGenerationSlice};
+const loanGetWithIdSlice = createSlice({
+  name: 'loan-generation',
+  initialState: {isLoading: null, loanType: null, isError: null},
+  reducers: {},
+  extraReducers: builder => {
+    builder
+      .addCase(getLoanTypeWithIdHandler.pending, state => {
+        state.isLoading = true;
+        state.isError = null;
+      })
+      .addCase(getLoanTypeWithIdHandler.fulfilled, (state, {payload}) => {
+        state.loanType = payload?.data;
+        state.isLoading = false;
+        state.isError = null;
+      })
+      .addCase(getLoanTypeWithIdHandler.rejected, (state, {payload}) => {
+        state.isError = payload;
+        state.isLoading = false;
+      });
+  },
+});
+
+export {
+  loanDetailsSlice,
+  loanTypeSlice,
+  loanGenerationSlice,
+  loanGetWithIdSlice,
+};
 export default loanMasterSlice.reducer;

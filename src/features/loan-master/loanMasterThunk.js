@@ -15,7 +15,7 @@ const loanMasterHandler = createAsyncThunk(
 
       const {status, data} = response;
       const {record} = data.records;
-
+      // console.log("Loan Records",record);
       return record;
     } catch (error) {
       if (error.response && error.response.data.message) {
@@ -36,7 +36,7 @@ const loanDetailsHandler = createAsyncThunk(
       const {data} = await axiosInstance.get(
         `${LOANDETAILS_ENDPOINT}/${_id}/master`,
       );
-
+      //  console.log('Loan Details Response Data:', data);
       if (data) {
         await store.dispatch(getCustomerWithId(data?.customerId));
         await store.dispatch(bankMasterHandler(data?.bankId));
@@ -64,7 +64,7 @@ const getAllLoanTypeHandler = createAsyncThunk(
       );
       const {status, data} = response;
       const {record} = data.records;
-      // console.log("Loans",response)
+      //  console.log("Loans",record)
       return record;
     } catch (error) {
       console.log('get-all-loan', error);
@@ -89,13 +89,32 @@ const loanGenerationHandler = createAsyncThunk(
   },
 );
 
+const getLoanTypeWithIdHandler = createAsyncThunk(
+  'loan-Master/get-loantype-with-id',
+  async (id, {rejectWithValue}) => {
+    try {
+      const response = await axiosInstance.get(
+        `http://192.168.29.113:8589/api/v1/los/loan/type/${id}`,
+      );
+
+      console.log('get-loantype-with-id', response.data);
+      return response;
+    } catch (error) {
+      console.log('get-all-loan', error);
+    }
+  },
+);
+
 const loanUpdateHandler = createAsyncThunk(
   'loan-Master/update-loan',
-  async (id, payload, {rejectWithValue}) => {
+  async (payload, {rejectWithValue}) => {
+    const {id, formData} = payload;
+    
+    console.log('id, payload', formData);
     try {
       const response = await axiosInstance.put(
         `http://192.168.29.113:8589/api/v1/los/loan/${id}/master`,
-        payload,
+        formData,
       );
 
       const {data} = response;
@@ -114,4 +133,5 @@ export {
   getAllLoanTypeHandler,
   loanGenerationHandler,
   loanUpdateHandler,
+  getLoanTypeWithIdHandler,
 };

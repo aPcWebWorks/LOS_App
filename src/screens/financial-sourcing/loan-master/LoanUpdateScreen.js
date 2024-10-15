@@ -76,33 +76,33 @@ import {
   SafeAreaView,
   FlatList,
   Image,
-  ActivityIndicator,
   ScrollView,
   TextInput,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Button} from 'react-native-paper';
+import {Button, Searchbar, Modal, Portal} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
-import {resetDocumentState} from '../../../features/documents/documentSlice';
-import documentHandler from '../../../features/documents/documentThunk';
-import {getAllBankHandller} from '../../../features/loan-master/bank-master/bankMasterThunk';
-import {loanGenerationHandler} from '../../../features/loan-master/loanMasterThunk';
-import {getCustomerWithId} from '../../../features/customer-master/customerMasterThunk';
+import bankMasterHandler, {
+  getAllBankHandller,
+} from '../../../features/loan-master/bank-master/bankMasterThunk';
+import {
+  getLoanTypeWithIdHandler,
+  loanUpdateHandler,
+} from '../../../features/loan-master/loanMasterThunk';
+import {
+  getCustomerWithId,
+  searchCustomerByParameter,
+} from '../../../features/customer-master/customerMasterThunk';
 
 const LoanUpdateScreen = ({navigation, route}) => {
   const dispatch = useDispatch();
-  const {loanDetails} = route.params;
 
-  const {userByScpNumber} = useSelector(state => state.scpUser);
-  const {isLoading} = useSelector(state => state.getCustomerById);
+  const {user} = useSelector(state => state.auth);
+  const {loginId} = user.data || {};
+  const {customer} = useSelector(state => state.getCustomerById);
   const {document} = useSelector(state => state.document);
-
   const {allbanks} = useSelector(state => state.banks);
   const {loans} = useSelector(state => state.loanType);
-  const {generatedLoan} = useSelector(state => state.loanGeneration);
-  const {customer} = useSelector(state => state.getCustomerById);
-
   const [obj, setObj] = useState([]);
   const [image, setImage] = useState([]);
   const [fetchedDocuments, setFetchedDocuments] = useState([]);
@@ -113,57 +113,40 @@ const LoanUpdateScreen = ({navigation, route}) => {
   const [selectLoanProductQuery, setSelectLoanProductQuery] = useState('');
   const [filteredLoans, setFilteredLoans] = useState([]);
   const [filteredBranches, setFilteredBranches] = useState([]);
+  const [modalSearchQuery, setModalSearchQuery] = useState('');
+  const [visible, setVisible] = useState(false);
+  const [selectQuery, setSelectQuery] = useState('');
+
+  const Data = [
+    {label: 'Name', value: 'name'},
+    {label: 'Aadhar or PAN Number', value: 'aadharorpannumber'},
+    {label: 'Customer ID', value: 'customerid'},
+  ];
+
+  const {updatePayload} = route.params || {};
+  const {bank} = useSelector(state => state.bankMaster);
+  const {loanType} = useSelector(state => state.loanTypeWithId);
 
   const [formData, setFormData] = useState({
-    bankId: '',
-    customerId: '',
-    existingAccountNumber: '',
-    loanAmount: '',
-    loanTypeId: '',
-    scpId: '',
+    bankId: updatePayload?.bankId || '',
+    customerId: updatePayload?.customerId || '',
+    loanTypeId: updatePayload?.loanTypeId || '',
+    scpId: updatePayload?.scpId || '',
+    existingAccountNumber: updatePayload?.existingAccountNumber || '',
+    loanAmount: updatePayload?.loanAmount || '',
   });
 
-  const handleChange = (key, value) => {
-    setFormData(prevState => ({
-      ...prevState,
-      [key]: value,
-    }));
-  };
-
-  useEffect(() => {
-    const fetchScpIdAndSetFormData = async () => {
-      try {
-        const scpId = await AsyncStorage.getItem('scpId');
-        setFormData(prevState => ({
-          ...prevState,
-          customerId: customer?.id || '',
-          scpId: scpId || '',
-        }));
-      } catch (error) {
-        console.error('Error retrieving scpId from AsyncStorage:', error);
-      }
-    };
-
-    fetchScpIdAndSetFormData();
-  }, [customer]);
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
 
   // useEffect(() => {
   //   getDocumentHandler(customer.documents);
   // }, []);
 
   useEffect(() => {
-    dispatch(getCustomerWithId(loanDetails.customerId));
-    console.log('customer', customer);
-  }, [dispatch]);
-
-  useEffect(() => {
-    dispatchHandler();
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (customer && fetchedDocuments) {
+    if (customer) {
       const objData = [
-        {key: 'SCP No.', value: userByScpNumber?.scpDetail?.scpNo},
+        {key: 'SCP No.', value: loginId},
         {
           key: 'Customer Name',
           value: `${customer?.title}. ${customer?.customerName}`,
@@ -182,7 +165,7 @@ const LoanUpdateScreen = ({navigation, route}) => {
       ];
       setObj(objData);
     }
-  }, [customer, userByScpNumber]);
+  }, [customer]);
 
   // const getDocumentHandler = async documents => {
   //   await dispatch(documentHandler(documents[0].id));
@@ -196,13 +179,13 @@ const LoanUpdateScreen = ({navigation, route}) => {
   //   // console.log(customer?.documents);
   // }, []);
 
-  const getDocumentHandler = async docs => {
-    for (let i = 0; i < 1; i++) {
-      await dispatch(documentHandler(docs[2].id));
-    }
-    dispatch(resetDocumentState());
-    return;
-  };
+  // const getDocumentHandler = async docs => {
+  //   for (let i = 0; i < 1; i++) {
+  //     await dispatch(documentHandler(docs[2].id));
+  //   }
+  //   dispatch(resetDocumentState());
+  //   return;
+  // };
 
   useEffect(() => {
     if (document) {
@@ -214,6 +197,48 @@ const LoanUpdateScreen = ({navigation, route}) => {
     // await getDocumentHandler(customer.documents);
 
     dispatch(getAllBankHandller());
+  };
+
+  useEffect(() => {
+    bankUpdateHandler();
+  }, [dispatch]);
+
+  const bankUpdateHandler = async () => {
+    await dispatch(getCustomerWithId(formData.customerId));
+    await dispatch(bankMasterHandler(formData.bankId));
+    await dispatch(getLoanTypeWithIdHandler(formData.loanTypeId));
+    await dispatch(getAllBankHandller());
+
+    if (bank) {
+      setSelectBankQuery(bank.bankName);
+      setSelectedBranchQuery(bank.branchName);
+    }
+
+    if (loanType) {
+      setSelectLoanQuery(loanType.productName);
+      setSelectLoanProductQuery(loanType.subProductName);
+    }
+  };
+
+  const handleChange = (key, value) => {
+    setFormData(prevState => ({
+      ...prevState,
+      [key]: value,
+    }));
+  };
+
+  const handleSearchCustomer = () => {
+    if (selectQuery.value && modalSearchQuery) {
+      dispatch(
+        searchCustomerByParameter({
+          criteriaType: selectQuery.value,
+          criteriaValue: modalSearchQuery,
+        }),
+      );
+      setVisible(false);
+      navigation.navigate('Searched Customer');
+    }
+    return;
   };
 
   const bankChangeHandler = item => {
@@ -246,24 +271,14 @@ const LoanUpdateScreen = ({navigation, route}) => {
     setFilteredLoans(newFliteredLoans);
   };
 
-  const handleSubmit = async () => {
-    try {
-      await dispatch(loanGenerationHandler(formData));
-      const {status, data} = generatedLoan;
-
-      if (status === 201) {
-        navigation.navigate('Loan Details', {id: data?.id});
-      } else {
-        console.log(`Unexpected status: ${status}`);
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  const handleUpdate = async () => {
+    const params = {
+      id: updatePayload?.id,
+      formData,
+    };
+    await dispatch(loanUpdateHandler(params));
   };
 
-  const handleCancel = () => {
-    navigation.navigate('Searched Customer');
-  };
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -278,21 +293,31 @@ const LoanUpdateScreen = ({navigation, route}) => {
         ) : ( */}
         <>
           <ScrollView style={styles.scrollView}>
-            <FlatList
-              scrollEnabled={false}
-              data={obj.concat(image)}
-              renderItem={({item}) => (
-                <View style={styles.itemContainer}>
-                  <Text style={styles.label}>{item.key}</Text>
-                  {item.key.startsWith('Photo') ? (
-                    <Image source={{uri: uri}} style={styles.photo} />
-                  ) : (
-                    <Text style={styles.textValue}>{item.value}</Text>
-                  )}
-                </View>
-              )}
-              keyExtractor={(item, index) => `${item.key}-${index}`}
-            />
+            <View style={{rowGap: 10}}>
+              <Button
+                style={styles.button}
+                mode="contained"
+                onPress={showModal}>
+                Update Customer
+              </Button>
+            </View>
+            <View style={{marginTop: 10}}>
+              <FlatList
+                scrollEnabled={false}
+                data={obj.concat(image)}
+                renderItem={({item}) => (
+                  <View style={styles.itemContainer}>
+                    <Text style={styles.label}>{item.key}</Text>
+                    {item.key.startsWith('Photo') ? (
+                      <Image source={{uri: uri}} style={styles.photo} />
+                    ) : (
+                      <Text style={styles.textValue}>{item.value}</Text>
+                    )}
+                  </View>
+                )}
+                keyExtractor={(item, index) => `${item.key}-${index}`}
+              />
+            </View>
 
             <View style={styles.dropdownGroup}>
               <Dropdown
@@ -326,11 +351,11 @@ const LoanUpdateScreen = ({navigation, route}) => {
                 placeholder={
                   <Text style={{color: 'black'}}>Select Branch Name</Text>
                 }
-                disable={!filteredBranches.length}
+                // disable={!filteredBranches.length}
                 onChange={item => {
                   setSelectedBranchQuery(item.value);
                 }}
-                value={selectedBranchQuery}
+                // value={selectedBranchQuery}
                 iconColor="black"
               />
 
@@ -377,7 +402,6 @@ const LoanUpdateScreen = ({navigation, route}) => {
                 placeholder="Existing Account Number"
                 placeholderTextColor="black"
                 value={formData?.existingAccountNumber}
-                // onChangeText={value => setAccountNumber(value)}
                 onChangeText={value =>
                   handleChange('existingAccountNumber', value)
                 }
@@ -396,17 +420,67 @@ const LoanUpdateScreen = ({navigation, route}) => {
               <Button
                 style={styles.button}
                 mode="contained"
-                onPress={handleSubmit}>
-                <Text>Submit</Text>
+                onPress={handleUpdate}>
+                <Text>Update</Text>
               </Button>
 
               <Button
                 style={styles.button}
                 mode="contained"
-                onPress={handleCancel}>
+                // onPress={handleCancel}
+              >
                 <Text>Cancel</Text>
               </Button>
             </View>
+            <Portal>
+              <Modal
+                // visible={!toggleLoanForm ? visible : hide}
+                visible={visible}
+                onDismiss={hideModal}
+                // dismissable={false}
+                dismissableBackButton={false}
+                contentContainerStyle={styles.modal}>
+                {/* <Text style={styles.modalText}>SCP No. : {loginId}</Text> */}
+
+                <View style={styles.modalSection}>
+                  <Dropdown
+                    style={styles.dropdown}
+                    data={Data}
+                    mode="default"
+                    labelField="label"
+                    valueField="value"
+                    placeholder={
+                      <Text style={{color: 'black'}}>Select Customer</Text>
+                    }
+                    value={selectQuery}
+                    // onFocus={() => setIsFocus(true)}
+                    // onBlur={() => setIsFocus(false)}
+                    onChange={setSelectQuery}
+                    iconColor="black"
+                    placeholderStyle={{color: 'black'}}
+                  />
+
+                  <Searchbar
+                    style={styles.modalSearchBar}
+                    placeholder="Search"
+                    onChangeText={setModalSearchQuery}
+                    value={modalSearchQuery}
+                    mode="bar"
+                    iconColor="black"
+                    placeholderTextColor="black"
+                  />
+
+                  <Button
+                    style={styles.modalButton}
+                    mode="contained"
+                    dark={true}
+                    textColor="white"
+                    onPress={handleSearchCustomer}>
+                    Search Customer
+                  </Button>
+                </View>
+              </Modal>
+            </Portal>
           </ScrollView>
         </>
         {/* )} */}
@@ -423,7 +497,6 @@ const styles = StyleSheet.create({
   scrollView: {
     padding: 10,
   },
-
   itemContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -462,11 +535,31 @@ const styles = StyleSheet.create({
     color: 'black',
     backgroundColor: '#ecf9ec',
   },
+  modalSearchBar: {borderRadius: 4, backgroundColor: '#ecf9ec'},
   buttonGroup: {
     flex: 1,
     marginTop: 40,
     rowGap: 10,
     marginBottom: 20,
+  },
+  modal: {
+    backgroundColor: 'white',
+    paddingHorizontal: 20,
+    paddingVertical: 60,
+    rowGap: 20,
+  },
+  modalSection: {rowGap: 15},
+  modalText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: 'black',
+  },
+  modalButton: {
+    borderRadius: 4,
+    backgroundColor: 'green',
+    height: 55,
+    justifyContent: 'center',
+    marginTop: 20,
   },
   button: {
     height: 45,
