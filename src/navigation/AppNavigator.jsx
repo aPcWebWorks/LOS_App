@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
   NavigationContainer,
   useNavigation,
@@ -7,12 +7,11 @@ import {
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {useSelector} from 'react-redux';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import SignInScreen from '../screens/auth/sign in/SignInScreen.js';
 import Home from '../screens/home/HomeScreen.js';
 import AppDrawer from '../components/Common/drawer/Drawer.js';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {Keyboard, AppState} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons.js';
+import {Keyboard} from 'react-native';
 import ReportsScreen from '../screens/reports/ReportsScreen.js';
 import ProfileScreen from '../screens/profile/ProfileScreen.js';
 import CustomerMasterScreen from '../screens/financial-sourcing/customer-master/CustomerMasterScreen.js';
@@ -38,9 +37,11 @@ function StackNavigator() {
       screenOptions={{
         headerLeft: () => {
           return (
-            <FontAwesome5
-              name={'bars'}
-              style={{fontSize: 25, marginLeft: 20, color: 'black'}}
+            <Icon
+              name="menu"
+              style={{marginLeft: 20}}
+              size={25}
+              color="black"
               onPress={() =>
                 navigation.dispatch(
                   DrawerActions.openDrawer(),
@@ -83,10 +84,7 @@ function StackNavigator() {
             name="Loan Generation"
             component={LoanGenerationScreen}
           />
-           <Stack.Screen
-            name="Loan Update"
-            component={LoanUpdateScreen}
-          />
+          <Stack.Screen name="Loan Update" component={LoanUpdateScreen} />
           <Stack.Screen name="All Types Reports" component={ReportsScreen} />
         </>
       ) : (

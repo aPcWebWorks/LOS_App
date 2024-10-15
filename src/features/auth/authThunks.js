@@ -24,11 +24,12 @@ const userLogin = createAsyncThunk(
         await store.dispatch(getWithSCPNumberHandler(data.loginId));
         return response;
       } else {
-        console.log(error);
         return rejectWithValue(data);
       }
-    } catch (error) {
-      console.log('Login Error', error);
+    } catch (err) {
+      return rejectWithValue(
+        err.response ? err.response.data : 'Network error',
+      );
     }
   },
 );
@@ -43,9 +44,8 @@ const tokenChecker = createAsyncThunk(
         return true;
       }
       return false;
-    } catch (error) {
-      console.log(error);
-      rejectWithValue(error.message);
+    } catch (err) {
+      rejectWithValue(err.response.message);
     }
   },
 );
@@ -58,8 +58,8 @@ const userLogout = createAsyncThunk(
       await AsyncStorage.clear();
       delete axiosInstance.defaults.headers.common['Authorization'];
       return true;
-    } catch (error) {
-      return rejectWithValue(error.message);
+    } catch (err) {
+      return rejectWithValue(err.response.message);
     }
   },
 );

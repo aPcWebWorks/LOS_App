@@ -6,7 +6,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const getWithSCPNumberHandler = createAsyncThunk(
   'scp/get-scp',
   async (scpnumber, {rejectWithValue}) => {
-    console.log('id', scpnumber);
     try {
       const response = await axiosInstance.get(`${SCP_ENDPOINT}/${scpnumber}`);
 

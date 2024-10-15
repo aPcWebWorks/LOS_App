@@ -10,9 +10,11 @@ import {
 } from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useDispatch, useSelector} from 'react-redux';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {loanMasterHandler} from '../../../features/loan-master/loanMasterThunk';
 import {searchCustomerByParameter} from '../../../features/customer-master/customerMasterThunk';
 import AllLoan from '../../../components/Features/financial sourcing/loan-master/AllLoan';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const Data = [
   {label: 'Name', value: 'name'},
@@ -114,8 +116,8 @@ const LoanMasterScreen = ({navigation}) => {
                           <Text style={{color: 'black'}}>Select Customer</Text>
                         }
                         value={selectQuery}
-                        // onFocus={() => setIsFocus(true)}
-                        // onBlur={() => setIsFocus(false)}
+                        onFocus={() => setIsFocus(true)}
+                        onBlur={() => setIsFocus(false)}
                         onChange={setSelectQuery}
                         iconColor="black"
                         placeholderStyle={{color: 'black'}}
@@ -127,7 +129,16 @@ const LoanMasterScreen = ({navigation}) => {
                         onChangeText={setModalSearchQuery}
                         value={modalSearchQuery}
                         mode="bar"
-                        iconColor="black"
+                        icon={() => (
+                          <TouchableOpacity>
+                            <Icon name="search" size={20} color="#000" />
+                          </TouchableOpacity>
+                        )}
+                        clearIcon={() => (
+                          <TouchableOpacity>
+                            <Icon name="close" size={20} color="#000" />
+                          </TouchableOpacity>
+                        )}
                         placeholderTextColor="black"
                       />
 
@@ -148,6 +159,16 @@ const LoanMasterScreen = ({navigation}) => {
                     placeholder="Search"
                     // onChangeText={item => onChangeHandler(item)}
                     onChangeText={setSearchQuery}
+                    icon={() => (
+                      <TouchableOpacity>
+                        <Icon name="search" size={20} color="#000" />
+                      </TouchableOpacity>
+                    )}
+                    clearIcon={() => (
+                      <TouchableOpacity>
+                        <Icon name="close" size={20} color="#000" />
+                      </TouchableOpacity>
+                    )}
                     value={searchQuery}
                     mode="bar"
                   />

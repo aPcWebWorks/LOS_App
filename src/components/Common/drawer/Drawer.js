@@ -1,20 +1,17 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, Fragment} from 'react';
 import {
   StyleSheet,
   Image,
   View,
   Text,
   SafeAreaView,
-  ScrollView,
   Animated,
-  Divider,
   FlatList,
 } from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {Button, Drawer, useTheme} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {Drawer, useTheme} from 'react-native-paper';
 import {useSelector} from 'react-redux';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5.js';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const CollapsibleComponent = ({
   id,
@@ -27,7 +24,7 @@ const CollapsibleComponent = ({
   const style = colapsedGetStyle(isOpen);
   // animations.
   const [height] = useState(new Animated.Value(isOpen ? 2000 : 0));
-  const [rotation] = useState(new Animated.Value(isOpen ? 0 : 1)); // Initial rotation state
+  const [rotation] = useState(new Animated.Value(isOpen ? 0 : 1));
 
   // animation handler
   const toggleCollapse = () => {
@@ -44,7 +41,7 @@ const CollapsibleComponent = ({
         useNativeDriver: false,
       }),
       Animated.timing(rotation, {
-        toValue: isOpen ? 1 : 0, // Toggle between 0 and 1 for rotation
+        toValue: isOpen ? 1 : 0,
         duration: 300,
         useNativeDriver: false,
       }),
@@ -58,7 +55,7 @@ const CollapsibleComponent = ({
 
   const rotateIcon = rotation.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '180deg'], // Rotate from 0 to 180 degrees
+    outputRange: ['0deg', '180deg'],
   });
 
   return (
@@ -72,7 +69,7 @@ const CollapsibleComponent = ({
           <Text style={style.listTitle}>{title}</Text>
         </View>
         <Animated.View style={{transform: [{rotate: rotateIcon}]}}>
-          <FontAwesome5 style={style.listDownArrowIcon} name="angle-down" />
+          <Icon style={style.listDownArrowIcon} name="keyboard-arrow-down" />
         </Animated.View>
       </TouchableOpacity>
 
@@ -262,7 +259,7 @@ const LeftSideDrawer = ({navigation}) => {
             <View style={style.profileRoleSection}>
               <Text style={style.SCPNumber}>{scpNo}</Text>
               <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-                <Icon name="facebook" size={30} color="#900" />
+                <Icon name="arrow-right" size={30} color="black" />
               </TouchableOpacity>
             </View>
             {/* <Button style={style.profileViewButton} mode="contained">Profile</Button> */}
@@ -302,7 +299,7 @@ const LeftSideDrawer = ({navigation}) => {
           <View style={style.menuCollapse}>
             {menu?.map((item, index) => {
               return (
-                <>
+                <Fragment key={index}>
                   <CollapsibleComponent
                     key=""
                     title={item?.title}
@@ -319,7 +316,7 @@ const LeftSideDrawer = ({navigation}) => {
                       />
                     }
                   />
-                </>
+                </Fragment>
               );
             })}
           </View>

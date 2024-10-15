@@ -1,13 +1,9 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5.js';
-import {
-  types,
-  isCancel,
-  isInProgress,
-  pickSingle,
-} from 'react-native-document-picker';
+import {types, isCancel, pickSingle} from 'react-native-document-picker';
 import {ProgressBar, MD3Colors} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const CustomDocumentPicker = ({label, file, onFileChange}) => {
   const pickDocument = async () => {
@@ -35,7 +31,7 @@ const CustomDocumentPicker = ({label, file, onFileChange}) => {
     <>
       <View style={style.container}>
         <Text style={[style.label]}>{label}</Text>
-        <View style={style.fileGroup}> 
+        <View style={style.fileGroup}>
           <TouchableOpacity style={style.fileButton} onPress={pickDocument}>
             {file ? (
               <Image
@@ -45,10 +41,9 @@ const CustomDocumentPicker = ({label, file, onFileChange}) => {
                 style={style.uploadIcon}
               />
             ) : (
-              <FontAwesome5
-                style={[style.textBlack, style.icon]}
-                name="paperclip"
-              />
+              <TouchableOpacity>
+                <Icon name="attach-file" size={20} color="#000" />
+              </TouchableOpacity>
             )}
           </TouchableOpacity>
           <View style={style.fileNameSection}>

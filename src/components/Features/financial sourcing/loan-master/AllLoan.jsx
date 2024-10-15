@@ -1,32 +1,40 @@
 import React, {useEffect} from 'react';
 import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
-import {Button, DataTable} from 'react-native-paper';
+import {DataTable} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {loanUpdateHandler} from '../../../../features/loan-master/loanMasterThunk';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const AllLoan = ({filteredLoans, customers}) => {
-  const navigation = useNavigation();
-  const numberOfCustomersPerPageList = [2, 3, 4];
-
   const dispatch = useDispatch();
-  const [page, setPage] = React.useState(0);
-  const [numberOfCustomersPerPage, onCustomersPerPageChange] = React.useState(
-    numberOfCustomersPerPageList[0],
-  );
-  const from = page * numberOfCustomersPerPage;
-  const to = Math.min((page + 1) * numberOfCustomersPerPage, customers?.length);
+  const navigation = useNavigation();
+  // const numberOfCustomersPerPageList = [2, 3, 4];
 
-  useEffect(() => {
-    setPage(0);
-  }, [numberOfCustomersPerPage]);
+  // const [page, setPage] = React.useState(0);
+  // const [numberOfCustomersPerPage, onCustomersPerPageChange] = React.useState(
+  //   numberOfCustomersPerPageList[0],
+  // );
+  // const from = page * numberOfCustomersPerPage;
+  // const to = Math.min((page + 1) * numberOfCustomersPerPage, customers?.length);
 
+  // useEffect(() => {
+  //   setPage(0);
+  // }, [numberOfCustomersPerPage]);
+
+  const handleUpdate = item => {
+    if (item.response) {
+      navigation.navigate('Loan Update', {updatePayload: item.response});
+    } else {
+      console.log('please select customer');
+    }
+  };
   return (
     <>
       <View style={style.table}>
         <ScrollView horizontal>
           <DataTable key="">
-            {/* Table Header */}
             <DataTable.Header style={style.tableHeader}>
               <DataTable.Title style={style.columnHeader} width={25}>
                 <Text style={style.tableTitle}>ID</Text>
@@ -44,8 +52,6 @@ const AllLoan = ({filteredLoans, customers}) => {
                 <Text style={style.tableTitle}>Action</Text>
               </DataTable.Title>
             </DataTable.Header>
-
-            {/* Table Rows */}
             <FlatList
               data={filteredLoans}
               renderItem={({item, index}) => (
@@ -69,7 +75,7 @@ const AllLoan = ({filteredLoans, customers}) => {
                     </Text>
                   </DataTable.Cell>
                   <DataTable.Cell style={style.tableCell} width={200}>
-                    <Button
+                    {/* <Button
                       style={style.button}
                       mode="contained"
                       dark={true}
@@ -86,9 +92,37 @@ const AllLoan = ({filteredLoans, customers}) => {
                       mode="contained"
                       dark={true}
                       textColor="white"
-                      onPress={() => dispatch(loanUpdateHandler(item?.response?.id))}>
+                      onPress={() =>
+                        dispatch(loanUpdateHandler(item?.response?.id))
+                      }>
                       Update
-                    </Button>
+                    </Button> */}
+                    <View style={{flexDirection: 'row', columnGap: 20}}>
+                      <TouchableOpacity>
+                        <Icon
+                          onPress={() =>
+                            navigation.navigate('Loan Details', {
+                              id: item?.response?.id,
+                            })
+                          }
+                          name="visibility"
+                          size={20}
+                          color="#000"
+                        />
+                      </TouchableOpacity>
+
+                      <TouchableOpacity>
+                        <Icon
+                          // onPress={() =>
+                          //   dispatch(loanUpdateHandler(item?.response?.id))
+                          // }
+                          onPress={() => handleUpdate(item)}
+                          name="edit"
+                          size={20}
+                          color="#000"
+                        />
+                      </TouchableOpacity>
+                    </View>
                   </DataTable.Cell>
                 </DataTable.Row>
               )}
@@ -96,7 +130,7 @@ const AllLoan = ({filteredLoans, customers}) => {
             />
           </DataTable>
         </ScrollView>
-        <DataTable>
+        {/* <DataTable>
           <DataTable.Pagination
             page={page}
             numberOfPages={Math.ceil(
@@ -110,20 +144,13 @@ const AllLoan = ({filteredLoans, customers}) => {
             onItemsPerPageChange={onCustomersPerPageChange}
             selectPageDropdownLabel={'Rows per page'}
           />
-        </DataTable>
+        </DataTable> */}
       </View>
     </>
   );
 };
 
 const style = StyleSheet.create({
-  button: {
-    flex: 1,
-    backgroundColor: 'green',
-    borderRadius: 0,
-    fontSize: 16,
-    justifyContent: 'center',
-  },
   tableHeader: {
     backgroundColor: '#ecf9ec',
   },

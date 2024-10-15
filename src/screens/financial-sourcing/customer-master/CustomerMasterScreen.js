@@ -10,9 +10,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {Searchbar} from 'react-native-paper';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5.js';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useDispatch, useSelector} from 'react-redux';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {customerMasterHandler} from '../../../features/customer-master/customerMasterThunk';
 import NewCustomer from '../../../components/Features/financial sourcing/customer-master/NewCustomer';
 import AllCustomer from '../../../components/Features/financial sourcing/customer-master/AllCustomer';
@@ -119,7 +119,7 @@ const CustomerMasterScreen = () => {
                 <Text style={styles.title}>Add New Customer</Text>
                 <Animated.View
                   style={{transform: [{rotate: rotateInterpolate}]}}>
-                  <FontAwesome5 size={20} color="white" name="angle-down" />
+                  <Icon name="keyboard-arrow-down" size={20} color="#fff" />
                 </Animated.View>
               </TouchableOpacity>
               <Animated.View
@@ -155,9 +155,18 @@ const CustomerMasterScreen = () => {
               value={searchQuery}
               mode="bar"
               inputStyle={{color: 'white'}}
-              // rippleColor='red'
-              // searchAccessibilityLabel="Search Customer"
-              iconColor="white"
+              // rippleColor='green'
+              searchAccessibilityLabel="Search Customer"
+              icon={() => (
+                <TouchableOpacity>
+                  <Icon name="search" size={20} color="#fff" />
+                </TouchableOpacity>
+              )}
+              clearIcon={() => (
+                <TouchableOpacity>
+                  <Icon name="close" size={20} color="#fff" />
+                </TouchableOpacity>
+              )}
               placeholderTextColor="white"
               fontWeight="bold"
             />
@@ -180,11 +189,10 @@ const styles = StyleSheet.create({
   },
   toggleExpand: {
     backgroundColor: 'green',
-    // flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     height: 55,
   },
   title: {
