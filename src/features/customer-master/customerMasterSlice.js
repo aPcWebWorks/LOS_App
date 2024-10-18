@@ -8,6 +8,7 @@ import {
 const initialState = {
   isLoading: false,
   customer: null,
+  isError: false,
   error: null,
 };
 
@@ -29,6 +30,7 @@ const customerMasterSlice = createSlice({
     builder
       .addCase(customerMasterHandler.pending, state => {
         state.isLoading = true;
+        state.isError = false;
         state.error = null;
       })
       .addCase(customerMasterHandler.fulfilled, (state, {payload}) => {
@@ -37,6 +39,7 @@ const customerMasterSlice = createSlice({
       })
       .addCase(customerMasterHandler.rejected, (state, {payload}) => {
         state.isLoading = false;
+        state.isError = true;
         state.error = payload;
       });
   },
@@ -48,7 +51,7 @@ const customerMasterSlice = createSlice({
 
 const getCustomerWithIdSlice = createSlice({
   name: 'getCustomerWithId',
-  initialState: {isLoading: false, isError: null, customer: null},
+  initialState: {isLoading: false, isError: true, error: null, customer: null},
   reducers: {},
   extraReducers: builder => {
     builder
@@ -56,18 +59,25 @@ const getCustomerWithIdSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(getCustomerWithId.fulfilled, (state, {payload}) => {
+        state.customer = payload?.data;
         state.isLoading = false;
-        state.customer = payload;
       })
       .addCase(getCustomerWithId.rejected, (state, {payload}) => {
-        state.isError = payload;
+        state.isError = true;
+        state.error = payload;
+        state.isLoading = false;
       });
   },
 });
 
 const searchCustomerByParameterSlice = createSlice({
   name: 'initialParamsState',
-  initialState: {isLoading: false, customers: null, error: null},
+  initialState: {
+    isLoading: false,
+    customers: null,
+    isError: false,
+    error: null,
+  },
   reducers: {
     customerParamsClearState: state => {
       state.customerParams = null;
@@ -88,11 +98,13 @@ const searchCustomerByParameterSlice = createSlice({
 
       .addCase(searchCustomerByParameter.rejected, (state, {payload}) => {
         state.isLoading = false;
+        state.isError = true;
         state.error = payload;
       });
   },
 });
 
-export const {customerParamsClearState} = searchCustomerByParameterSlice.actions;
+export const {customerParamsClearState} =
+  searchCustomerByParameterSlice.actions;
 export {searchCustomerByParameterSlice, getCustomerWithIdSlice};
 export default customerMasterSlice.reducer;

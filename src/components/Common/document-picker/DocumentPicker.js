@@ -1,11 +1,10 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5.js';
 import {types, isCancel, pickSingle} from 'react-native-document-picker';
 import {ProgressBar, MD3Colors} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const CustomDocumentPicker = ({label, file, onFileChange}) => {
+const DocumentPicker = ({label, file, onFileChange}) => {
   const pickDocument = async () => {
     try {
       const _file = await pickSingle({
@@ -28,53 +27,49 @@ const CustomDocumentPicker = ({label, file, onFileChange}) => {
   };
 
   return (
-    <>
-      <View style={style.container}>
-        <Text style={[style.label]}>{label}</Text>
-        <View style={style.fileGroup}>
-          <TouchableOpacity style={style.fileButton} onPress={pickDocument}>
-            {file ? (
-              <Image
-                source={{
-                  uri: file.fileCopyUri,
-                }}
-                style={style.uploadIcon}
-              />
-            ) : (
-              <TouchableOpacity>
-                <Icon name="attach-file" size={20} color="#000" />
-              </TouchableOpacity>
-            )}
-          </TouchableOpacity>
-          <View style={style.fileNameSection}>
-            <Text style={style.fileName}>
-              {file ? file?.name || 'Untitled file' : 'No file chosen...'}
-            </Text>
-
-            {file && (
-              <View style={style.progress_icon}>
-                <ProgressBar
-                  style={style.progressBar}
-                  progress={1.0}
-                  color={MD3Colors.error50}
-                  indeterminate={true}
-                />
-              </View>
-            )}
-          </View>
+    <View style={styles.container}>
+      <Text style={styles.label}>{label}</Text>
+      <View style={styles.fileGroup}>
+        <TouchableOpacity style={styles.fileButton} onPress={pickDocument}>
+          {file ? (
+            <Image
+              source={{
+                uri: file.fileCopyUri,
+              }}
+              style={styles.uploadIcon}
+            />
+          ) : (
+            <Icon name="attach-file" size={20} color="#000" />
+          )}
+        </TouchableOpacity>
+        <View style={styles.fileNameSection}>
+          <Text style={styles.fileName}>
+            {file ? file?.name || 'Untitled file' : 'No file chosen...'}
+          </Text>
 
           {file && (
-            <TouchableOpacity style={style.closeIcon} onPress={removeFile}>
-              <FontAwesome5 style={style.icon} name="times" />
-            </TouchableOpacity>
+            <View style={styles.progressIcon}>
+              <ProgressBar
+                style={styles.progressBar}
+                progress={1.0}
+                color={MD3Colors.error50}
+                indeterminate={true}
+              />
+            </View>
           )}
         </View>
+
+        {file && (
+          <TouchableOpacity style={styles.closeIcon} onPress={removeFile}>
+            <Icon name="close" size={20} color="#000" />
+          </TouchableOpacity>
+        )}
       </View>
-    </>
+    </View>
   );
 };
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     rowGap: 4,
   },
@@ -88,7 +83,7 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 4,
     borderWidth: 1.5,
-    height: 45,
+    maxHeight: 45,
     alignItems: 'center',
     borderColor: 'gray',
     backgroundColor: 'white',
@@ -103,8 +98,6 @@ const style = StyleSheet.create({
     alignItems: 'center',
   },
 
-  icon: {color: 'black', fontSize: 20},
-
   fileNameSection: {
     flex: 6,
     flexDirection: 'column',
@@ -118,7 +111,7 @@ const style = StyleSheet.create({
     fontWeight: '400',
   },
 
-  progress_icon: {
+  progressIcon: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     backgroundColor: 'gray',
@@ -135,6 +128,13 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
+  uploadIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 4,
+    resizeMode: 'cover',
+  },
 });
 
-export default CustomDocumentPicker;
+export default DocumentPicker;

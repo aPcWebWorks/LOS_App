@@ -8,13 +8,15 @@ import {getCustomerWithId} from '../../../../features/customer-master/customerMa
 const SearchedCustomers = ({customers}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  // const selectHandler = selectedCustomer => {~
-  //   navigation.navigate('Loan Generation', {selectedCustomer});
-  // };
 
   const selectHandler = async id => {
-    await dispatch(getCustomerWithId(id));
-    navigation.navigate('Loan Update');
+    if (!id) return;
+
+    const res = await dispatch(getCustomerWithId(id));
+
+    if (res?.payload?.status) {
+      navigation.navigate('Loan Update');
+    }
   };
 
   return (

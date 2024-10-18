@@ -10,6 +10,7 @@ import {
 const initialState = {
   isLoading: false,
   loan: null,
+  isError: false,
   error: null,
 };
 
@@ -22,15 +23,19 @@ const loanMasterSlice = createSlice({
     builder
       .addCase(loanMasterHandler.pending, state => {
         state.isLoading = true;
+        state.isError = false;
         state.error = null;
+        console.log('pending');
       })
       .addCase(loanMasterHandler.fulfilled, (state, {payload}) => {
         state.loan = payload;
         state.isLoading = false;
-        state.error = null;
       })
       .addCase(loanMasterHandler.rejected, (state, {payload}) => {
+        state.isLoading = false;
+        state.isError = true;
         state.error = payload;
+        console.log('payload', payload);
       });
   },
 });

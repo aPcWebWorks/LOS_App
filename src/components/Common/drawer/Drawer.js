@@ -225,14 +225,8 @@ const LeftSideDrawer = ({navigation}) => {
 
   const [openId, setOpenId] = useState(null);
 
-  const {userByScpNumber} = useSelector(state => state.scpUser);
-  const {title, name, scpNo} = userByScpNumber?.data?.scpDetail ?? {};
-
-  // const handleDrawerItemClick = (active, screen) => {
-  //   // Keyboard.dismiss();
-  //   setActive(active);
-  //   navigation.navigate(screen);
-  // };
+  const {scpUser} = useSelector(state => state.scpUser);
+  const {title, name, scpNo} = scpUser?.scpDetail ?? {};
 
   const toggleCollapse = id => {
     setOpenId(openId === id ? null : id);

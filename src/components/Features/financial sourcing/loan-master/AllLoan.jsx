@@ -1,10 +1,9 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {DataTable} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {loanUpdateHandler} from '../../../../features/loan-master/loanMasterThunk';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const AllLoan = ({filteredLoans, customers}) => {
@@ -48,14 +47,14 @@ const AllLoan = ({filteredLoans, customers}) => {
               <DataTable.Title style={style.columnHeader} width={200}>
                 <Text style={style.tableTitle}>Loan Amount</Text>
               </DataTable.Title>
-              <DataTable.Title style={style.columnHeader} width={200}>
+              <DataTable.Title style={style.columnHeader} width={100}>
                 <Text style={style.tableTitle}>Action</Text>
               </DataTable.Title>
             </DataTable.Header>
             <FlatList
               data={filteredLoans}
               renderItem={({item, index}) => (
-                <DataTable.Row style={style.tableRow}>
+                <DataTable.Row key={item?.response?.id} style={style.tableRow}>
                   <DataTable.Cell style={style.tableCell} width={25}>
                     <Text style={style.tableData}>{index + 1}</Text>
                   </DataTable.Cell>
@@ -74,29 +73,7 @@ const AllLoan = ({filteredLoans, customers}) => {
                       {item?.response?.loanAmount}
                     </Text>
                   </DataTable.Cell>
-                  <DataTable.Cell style={style.tableCell} width={200}>
-                    {/* <Button
-                      style={style.button}
-                      mode="contained"
-                      dark={true}
-                      textColor="white"
-                      onPress={() =>
-                        navigation.navigate('Loan Details', {
-                          id: item?.response?.id,
-                        })
-                      }>
-                      View
-                    </Button>
-                    <Button
-                      style={style.button}
-                      mode="contained"
-                      dark={true}
-                      textColor="white"
-                      onPress={() =>
-                        dispatch(loanUpdateHandler(item?.response?.id))
-                      }>
-                      Update
-                    </Button> */}
+                  <DataTable.Cell style={style.tableCell} width={100}>
                     <View style={{flexDirection: 'row', columnGap: 20}}>
                       <TouchableOpacity>
                         <Icon
@@ -113,9 +90,6 @@ const AllLoan = ({filteredLoans, customers}) => {
 
                       <TouchableOpacity>
                         <Icon
-                          // onPress={() =>
-                          //   dispatch(loanUpdateHandler(item?.response?.id))
-                          // }
                           onPress={() => handleUpdate(item)}
                           name="edit"
                           size={20}
@@ -126,7 +100,7 @@ const AllLoan = ({filteredLoans, customers}) => {
                   </DataTable.Cell>
                 </DataTable.Row>
               )}
-              keyExtractor={item => item.id}
+              keyExtractor={item => item?.response?.id}
             />
           </DataTable>
         </ScrollView>

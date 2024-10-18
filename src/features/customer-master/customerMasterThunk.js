@@ -1,68 +1,37 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import axiosInstance from '../../api/axiosInstence.js';
 import {CUSTOMERMASTER_ENDPOINT} from '../../api/endpoints.js';
-// import {customerParamsClearState} from './customerMasterSlice.js';
-
-// const addcustomer = createAsyncThunk(
-//   'customer/addcustomer',
-//   async (credentials, thunkAPI) => {
-//     console.log('addcustomer', credentials);
-//     try {
-//       const config = {
-//         headers: {
-//           'Content-Type': 'multipart/form-data',
-//         },
-//       };
-//       const response = await axiosInstance.post(
-//         '/customer',
-//         credentials,
-//         config,
-//       );
-//       return response.data;
-//     } catch (error) {
-//       console.error("Error",error);
-//       return thunkAPI.rejectWithValue(error.response.data);
-//     }
-//   },
-// );
 
 const addcustomer = createAsyncThunk(
-  'customer/addcustomer',
-  async (credentials, thunkAPI) => {
-    // console.log('addcustomer', credentials);
+  'customer_master/addcustomer',
+  async (formData, thunkAPI) => {
     try {
-      const response = await axiosInstance.post('/customer', credentials, {
+      const response = await axiosInstance.post('/customer', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Accept: 'application/json',
         },
       });
-      // console.log('data', response);
+
+      console.log('Request Headers:', response);
       return response;
-    } catch (error) {
-      console.error('Thunk Error', error);
-      return thunkAPI.rejectWithValue(error.response?.data || error.message);
+    } catch (err) {
+      console.error('Thunk Error', err);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   },
 );
 
 const customerMasterHandler = createAsyncThunk(
   'customer-master/getAllCustomer',
-  async (_id, {rejectWithValue}) => {
+  async (_, {rejectWithValue}) => {
     try {
       const {data} = await axiosInstance.get(
-        `${CUSTOMERMASTER_ENDPOINT}/all?pageNumber=0&pageSize=10`,
+        `${CUSTOMERMASTER_ENDPOINT}/all?pageNumber=0&pageSize=2000`,
       );
-      // console.log("Customer mAster Data Handler", data)
+
       return data;
-    } catch (error) {
-      if (error.response && error.response.data.message) {
-        console.log('error.response.data.message', error.response.data.message);
-        return rejectWithValue(error.response.data.message);
-      } else {
-        console.log('error.message', error.message);
-        return rejectWithValue(error.message);
-      }
+    } catch (err) {
+      return rejectWithValue(err);
     }
   },
 );
@@ -71,19 +40,10 @@ const getCustomerWithId = createAsyncThunk(
   'customer-master/getCustomerWithId',
   async (_id, {rejectWithValue}) => {
     try {
-      const {data} = await axiosInstance.get(
-        `${CUSTOMERMASTER_ENDPOINT}/${_id}`,
-      );
-      // console.log("singal Customer thunk document", data)
-      return data;
-    } catch (error) {
-      if (error.response && error.response.data.message) {
-        console.log('error.response.data.message', error.response.data.message);
-        return rejectWithValue(error.response.data.message);
-      } else {
-        console.log('error.message', error.message);
-        return rejectWithValue(error.message);
-      }
+      const res = await axiosInstance.get(`${CUSTOMERMASTER_ENDPOINT}/${_id}`);
+      return res;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
     }
   },
 );
@@ -117,8 +77,8 @@ const searchCustomerByParameter = createAsyncThunk(
       const {data} = await axiosInstance.get(endpoint);
       // console.log('criteria data', data);
       return data;
-    } catch (error) {
-      return rejectWithValue(error.message);
+    } catch (err) {
+      return rejectWithValue(err);
     }
   },
 );
@@ -142,8 +102,7 @@ const patchCustomerHandler = createAsyncThunk(
 
       console.log('data', response.data);
       return response;
-    } catch (error) {
-      console.error('Thunk Error', error);
+    } catch (err) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   },

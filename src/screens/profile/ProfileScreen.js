@@ -45,7 +45,9 @@ const Profile = ({navigation}) => {
     scpUserHandler();
   }, [dispatch]);
 
-  const {userByScpDetails, isLoading} = useSelector(state => state.scpUser);
+  const {scpUser, isLoading, isError, error} = useSelector(
+    state => state.scpUser,
+  );
 
   const {
     scpNo,
@@ -67,9 +69,9 @@ const Profile = ({navigation}) => {
     settlementAccountNum,
     receivedDate,
     amount,
-  } = userByScpDetails?.scpDetail ?? {};
+  } = scpUser?.scpDetail ?? {};
 
-  const documents = userByScpDetails?.documents ?? [];
+  const documents = scpUser?.documents ?? [];
 
   const capitalizeFirstLetter = str => {
     if (str) {
@@ -183,110 +185,125 @@ const Profile = ({navigation}) => {
     );
   };
 
+  if (isLoading) {
+    return (
+      <ActivityIndicator
+        animating={true}
+        size="small"
+        color="green"
+        style={{flex: 1, backgroundColor: 'white'}}
+      />
+    );
+  }
+
+  if (isError) {
+    return (
+      <View
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          fontWeight: 400,
+        }}>
+        <Text>{error?.message}</Text>
+      </View>
+    );
+  }
   return (
     <SafeAreaView style={style.container}>
-      {isLoading ? (
-        <ActivityIndicator
-          animating={true}
-          size="large"
-          style={{flex: 1, backgroundColor: 'white'}}
-          color="green"
-        />
-      ) : (
-        <ScrollView>
-          <PaperProvider>
-            <Portal>
-              <Modal
-                visible={visible}
-                onDismiss={hideModal}
-                dismissableBackButton={true}
-                contentContainerStyle={containerStyle}>
-                <Text style={{fontSize: 24, color: 'black'}}>Edit Profile</Text>
-              </Modal>
-            </Portal>
+      <ScrollView>
+        <PaperProvider>
+          <Portal>
+            <Modal
+              visible={visible}
+              onDismiss={hideModal}
+              dismissableBackButton={true}
+              contentContainerStyle={containerStyle}>
+              <Text style={{fontSize: 24, color: 'black'}}>Edit Profile</Text>
+            </Modal>
+          </Portal>
 
-            <View>
-              <View style={style.profileDetails}>
-                <View style={style.profileSection}>
-                  <Image
-                    source={require('../../assets/images/profile.png')}
-                    style={style.profileAvatar}
-                  />
-                  <View style={style.profileInfo}>
-                    <Text style={style.profileName}>
-                      {title && name
-                        ? `${title.toUpperCase()}.${name.toUpperCase()}`
-                        : 'Unknown SCP'}
-                    </Text>
-                    <Text style={style.SCPNumber}>{scpNo}</Text>
-                  </View>
-
-                  <View style={style.groupIcon}>
-                    <TouchableOpacity>
-                      <Icon
-                        // onPress={showModal}
-                        name="edit"
-                        size={20}
-                        color="#000"
-                      />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity>
-                      <Icon
-                        onPress={handleLogout}
-                        name="logout"
-                        size={20}
-                        color="#000"
-                      />
-                    </TouchableOpacity>
-                  </View>
+          <View>
+            <View style={style.profileDetails}>
+              <View style={style.profileSection}>
+                <Image
+                  source={require('../../assets/images/profile.png')}
+                  style={style.profileAvatar}
+                />
+                <View style={style.profileInfo}>
+                  <Text style={style.profileName}>
+                    {title && name
+                      ? `${title.toUpperCase()}.${name.toUpperCase()}`
+                      : 'Unknown SCP'}
+                  </Text>
+                  <Text style={style.SCPNumber}>{scpNo}</Text>
                 </View>
 
-                <Divider bold={true} />
+                <View style={style.groupIcon}>
+                  <TouchableOpacity>
+                    <Icon
+                      // onPress={showModal}
+                      name="edit"
+                      size={20}
+                      color="#000"
+                    />
+                  </TouchableOpacity>
 
-                <View style={style.info}>
-                  <Text style={style.AC_Info}>Account Info</Text>
-                  <FlatList
-                    scrollEnabled={false}
-                    data={acinfo}
-                    renderItem={({item}) =>
-                      bcaFbc === 'yes' || item.key !== 'BCA / FBA' ? (
-                        <View style={style.itemContainer}>
-                          <Text style={style.label}>{item.key} :</Text>
-                          <Text style={style.textValue}>
-                            {item.value || 'NA'}
-                          </Text>
-                        </View>
-                      ) : null
-                    }
-                    keyExtractor={(item, index) => `${item.key}-${index}`}
-                  />
+                  <TouchableOpacity>
+                    <Icon
+                      onPress={handleLogout}
+                      name="logout"
+                      size={20}
+                      color="#000"
+                    />
+                  </TouchableOpacity>
                 </View>
+              </View>
 
-                <Divider bold={true} />
+              <Divider bold={true} />
 
-                <View style={style.info}>
-                  <Text style={[style.AC_Info]}>Bank & Payment Details</Text>
-
-                  <FlatList
-                    scrollEnabled={false}
-                    data={bankpayment}
-                    renderItem={({item}) => (
+              <View style={style.info}>
+                <Text style={style.AC_Info}>Account Info</Text>
+                <FlatList
+                  scrollEnabled={false}
+                  data={acinfo}
+                  renderItem={({item}) =>
+                    bcaFbc === 'yes' || item.key !== 'BCA / FBA' ? (
                       <View style={style.itemContainer}>
                         <Text style={style.label}>{item.key} :</Text>
                         <Text style={style.textValue}>
                           {item.value || 'NA'}
                         </Text>
                       </View>
-                    )}
-                    keyExtractor={(item, index) => `${item.key}-${index}`}
-                  />
-                </View>
+                    ) : null
+                  }
+                  keyExtractor={(item, index) => `${item.key}-${index}`}
+                />
+              </View>
+
+              <Divider bold={true} />
+
+              <View style={style.info}>
+                <Text style={[style.AC_Info]}>Bank & Payment Details</Text>
+
+                <FlatList
+                  scrollEnabled={false}
+                  data={bankpayment}
+                  renderItem={({item}) => (
+                    <View style={style.itemContainer}>
+                      <Text style={style.label}>{item.key} :</Text>
+                      <Text style={style.textValue}>{item.value || 'NA'}</Text>
+                    </View>
+                  )}
+                  keyExtractor={(item, index) => `${item.key}-${index}`}
+                />
               </View>
             </View>
-          </PaperProvider>
-        </ScrollView>
-      )}
+          </View>
+        </PaperProvider>
+      </ScrollView>
     </SafeAreaView>
   );
 };

@@ -29,7 +29,9 @@ const LoanMasterScreen = ({navigation}) => {
   const [visible, setVisible] = useState(false);
 
   const dispatch = useDispatch();
-  const {loan, isLoading} = useSelector(state => state.loanMaster);
+  const {loan, isLoading, isError, error} = useSelector(
+    state => state.loanMaster,
+  );
   const {user} = useSelector(state => state.auth);
   const {loginId} = user.data || {};
 
@@ -66,9 +68,6 @@ const LoanMasterScreen = ({navigation}) => {
   }, [searchQuery, loan]);
 
   const handleSearchCustomer = () => {
-    // setToggleLoanForm(true);
-    // setVisible(false);
-
     if (selectQuery.value && modalSearchQuery) {
       dispatch(
         searchCustomerByParameter({
@@ -80,85 +79,65 @@ const LoanMasterScreen = ({navigation}) => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <ActivityIndicator size="small" color="green" style={style.loader} />
+    );
+  }
+
+  if (isError) {
+    return (
+      <View
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          fontWeight: 400,
+        }}>
+        <Text>{error?.message}</Text>
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={style.container}>
-      {isLoading ? (
-        <>
-          <ActivityIndicator
-            size="large"
-            color="green"
-            style={style.loadingIndicator}
-          />
-        </>
-      ) : (
-        <>
-          <PaperProvider>
-            <ScrollView style={style.scrollview}>
-              <View style={{rowGap: 10}}>
-                <Portal>
-                  <Modal
-                    // visible={!toggleLoanForm ? visible : hide}
-                    visible={visible}
-                    onDismiss={hideModal}
-                    // dismissable={false}
-                    dismissableBackButton={false}
-                    contentContainerStyle={style.modal}>
-                    <Text style={style.modalText}>SCP No. : {loginId}</Text>
+      <PaperProvider>
+        <ScrollView style={style.scrollview}>
+          <View style={{rowGap: 10}}>
+            <Portal>
+              <Modal
+                // visible={!toggleLoanForm ? visible : hide}
+                visible={visible}
+                onDismiss={hideModal}
+                // dismissable={false}
+                dismissableBackButton={false}
+                contentContainerStyle={style.modal}>
+                <Text style={style.modalText}>SCP No. : {loginId}</Text>
 
-                    <View style={style.modalSection}>
-                      <Dropdown
-                        style={style.dropdown}
-                        data={Data}
-                        mode="default"
-                        labelField="label"
-                        valueField="value"
-                        placeholder={
-                          <Text style={{color: 'black'}}>Select Customer</Text>
-                        }
-                        value={selectQuery}
-                        onFocus={() => setIsFocus(true)}
-                        onBlur={() => setIsFocus(false)}
-                        onChange={setSelectQuery}
-                        iconColor="black"
-                        placeholderStyle={{color: 'black'}}
-                      />
+                <View style={style.modalSection}>
+                  <Dropdown
+                    style={style.dropdown}
+                    data={Data}
+                    mode="default"
+                    labelField="label"
+                    valueField="value"
+                    placeholder={
+                      <Text style={{color: 'black'}}>Select Customer</Text>
+                    }
+                    value={selectQuery}
+                    onChange={setSelectQuery}
+                    iconColor="black"
+                    placeholderStyle={{color: 'black'}}
+                  />
 
-                      <Searchbar
-                        style={style.modalSearchBar}
-                        placeholder="Search"
-                        onChangeText={setModalSearchQuery}
-                        value={modalSearchQuery}
-                        mode="bar"
-                        icon={() => (
-                          <TouchableOpacity>
-                            <Icon name="search" size={20} color="#000" />
-                          </TouchableOpacity>
-                        )}
-                        clearIcon={() => (
-                          <TouchableOpacity>
-                            <Icon name="close" size={20} color="#000" />
-                          </TouchableOpacity>
-                        )}
-                        placeholderTextColor="black"
-                      />
-
-                      <Button
-                        style={style.modalButton}
-                        mode="contained"
-                        dark={true}
-                        textColor="white"
-                        onPress={handleSearchCustomer}>
-                        Search Customer
-                      </Button>
-                    </View>
-                  </Modal>
-                </Portal>
-                <View style={style.elementGroup}>
                   <Searchbar
-                    style={style.search}
+                    style={style.modalSearchBar}
                     placeholder="Search"
-                    // onChangeText={item => onChangeHandler(item)}
-                    onChangeText={setSearchQuery}
+                    onChangeText={setModalSearchQuery}
+                    value={modalSearchQuery}
+                    mode="bar"
                     icon={() => (
                       <TouchableOpacity>
                         <Icon name="search" size={20} color="#000" />
@@ -169,26 +148,54 @@ const LoanMasterScreen = ({navigation}) => {
                         <Icon name="close" size={20} color="#000" />
                       </TouchableOpacity>
                     )}
-                    value={searchQuery}
-                    mode="bar"
+                    placeholderTextColor="black"
                   />
 
                   <Button
-                    style={style.button}
+                    style={style.modalButton}
                     mode="contained"
                     dark={true}
                     textColor="white"
-                    onPress={showModal}>
-                    Add New
+                    onPress={handleSearchCustomer}>
+                    Search Customer
                   </Button>
                 </View>
+              </Modal>
+            </Portal>
+            <View style={style.elementGroup}>
+              <Searchbar
+                style={style.search}
+                placeholder="Search"
+                // onChangeText={item => onChangeHandler(item)}
+                onChangeText={setSearchQuery}
+                icon={() => (
+                  <TouchableOpacity>
+                    <Icon name="search" size={20} color="#000" />
+                  </TouchableOpacity>
+                )}
+                clearIcon={() => (
+                  <TouchableOpacity>
+                    <Icon name="close" size={20} color="#000" />
+                  </TouchableOpacity>
+                )}
+                value={searchQuery}
+                mode="bar"
+              />
 
-                <AllLoan filteredLoans={filteredLoans} />
-              </View>
-            </ScrollView>
-          </PaperProvider>
-        </>
-      )}
+              <Button
+                style={style.button}
+                mode="contained"
+                dark={true}
+                textColor="white"
+                onPress={showModal}>
+                Add New
+              </Button>
+            </View>
+
+            <AllLoan filteredLoans={filteredLoans} />
+          </View>
+        </ScrollView>
+      </PaperProvider>
     </SafeAreaView>
   );
 };
@@ -241,7 +248,7 @@ const style = StyleSheet.create({
     marginTop: 20,
   },
   modalSearchBar: {borderRadius: 4, backgroundColor: '#ecf9ec'},
-  loadingIndicator: {
+  loader: {
     flex: 1,
     backgroundColor: 'white',
   },

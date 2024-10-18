@@ -17,7 +17,7 @@ import {customerMasterHandler} from '../../../features/customer-master/customerM
 import NewCustomer from '../../../components/Features/financial sourcing/customer-master/NewCustomer';
 import AllCustomer from '../../../components/Features/financial sourcing/customer-master/AllCustomer';
 
-const data = [
+const searchOptions = [
   {label: 'Name', value: 'customerName'},
   {label: 'CustomerId', value: 'customerId'},
   {label: 'Mobile Number', value: 'mobileNumber'},
@@ -26,7 +26,9 @@ const data = [
 
 const CustomerMasterScreen = () => {
   const dispatch = useDispatch();
-  const {customer, isLoading} = useSelector(state => state.customerMaster);
+  const {customer, isLoading, isError, error} = useSelector(
+    state => state.customerMaster,
+  );
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -78,15 +80,13 @@ const CustomerMasterScreen = () => {
   });
 
   const handleSearch = query => {
-    if (!dropdownQuery) return false;
-
+    if (!dropdownQuery) return;
     let filteredQuery;
 
     switch (dropdownQuery) {
       case 'customerName':
         filteredQuery = query.replace(/[^a-zA-Z\s]/g, '');
         break;
-      case 'customerId':
       case 'mobileNumber':
         filteredQuery = query.replace(/\D/g, '');
         break;
@@ -94,87 +94,102 @@ const CustomerMasterScreen = () => {
         filteredQuery = query.replace(/[^a-zA-Z@._]/g, '');
         break;
       default:
-        console.log('Please select the right value');
-        return;
+        return new Error('Please select the right value');
     }
 
     setSearchQuery(filteredQuery);
   };
 
+  if (isLoading) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color="green"
+        style={styles.loader}
+      />
+    );
+  }
+
+  if (isError) {
+    return (
+      <View
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          fontWeight: 400,
+        }}>
+        <Text>{error?.message}</Text>
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator
-          size="large"
-          color="green"
-          style={styles.loadingIndicator}
-        />
-      ) : (
-        <>
-          <ScrollView style={styles.scrollView}>
-            <View>
-              <TouchableOpacity
-                onPress={toggleExpand}
-                style={styles.toggleExpand}>
-                <Text style={styles.title}>Add New Customer</Text>
-                <Animated.View
-                  style={{transform: [{rotate: rotateInterpolate}]}}>
-                  <Icon name="keyboard-arrow-down" size={20} color="#fff" />
-                </Animated.View>
-              </TouchableOpacity>
-              <Animated.View
-                style={[styles.content, {height: animationHeight}]}>
-                {expanded && <NewCustomer />}
+      <>
+        <ScrollView style={styles.scrollView}>
+          <View>
+            <TouchableOpacity
+              onPress={toggleExpand}
+              style={styles.toggleExpand}>
+              <Text style={styles.title}>Add New Customer</Text>
+              <Animated.View style={{transform: [{rotate: rotateInterpolate}]}}>
+                <Icon name="keyboard-arrow-down" size={20} color="#fff" />
               </Animated.View>
-            </View>
+            </TouchableOpacity>
+            <Animated.View style={[styles.content, {height: animationHeight}]}>
+              {expanded && <NewCustomer />}
+            </Animated.View>
+          </View>
 
-            <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'black'}]}
-              data={data}
-              mode="default"
-              labelField="label"
-              valueField="value"
-              selectedTextStyle={{color: 'white', fontWeight: 'bold'}}
-              placeholder={
-                <Text style={{color: 'white', fontSize: 16, fontWeight: '700'}}>
-                  Select
-                </Text>
-              }
-              onFocus={() => setIsFocus(true)}
-              onChange={item => {
-                setDropdownQuery(item.value);
-                setIsFocus(false);
-              }}
-              iconColor="white"
-            />
+          <Dropdown
+            style={[styles.dropdown, isFocus && {borderColor: 'black'}]}
+            data={searchOptions}
+            mode="default"
+            labelField="label"
+            valueField="value"
+            selectedTextStyle={{color: 'white', fontWeight: 'bold'}}
+            placeholder={
+              <Text style={{color: 'white', fontSize: 16, fontWeight: '700'}}>
+                Select
+              </Text>
+            }
+            onFocus={() => setIsFocus(true)}
+            onChange={item => {
+              setDropdownQuery(item.value);
+              setIsFocus(false);
+            }}
+            iconColor="white"
+          />
 
-            <Searchbar
-              style={styles.search}
-              placeholder="Search Customer"
-              onChangeText={item => handleSearch(item)}
-              value={searchQuery}
-              mode="bar"
-              inputStyle={{color: 'white'}}
-              // rippleColor='green'
-              searchAccessibilityLabel="Search Customer"
-              icon={() => (
-                <TouchableOpacity>
-                  <Icon name="search" size={20} color="#fff" />
-                </TouchableOpacity>
-              )}
-              clearIcon={() => (
-                <TouchableOpacity>
-                  <Icon name="close" size={20} color="#fff" />
-                </TouchableOpacity>
-              )}
-              placeholderTextColor="white"
-              fontWeight="bold"
-            />
+          <Searchbar
+            style={styles.search}
+            placeholder="Search Customer"
+            onChangeText={item => handleSearch(item)}
+            value={searchQuery}
+            mode="bar"
+            inputStyle={{color: 'white'}}
+            // rippleColor='green'
+            searchAccessibilityLabel="Search Customer"
+            icon={() => (
+              <TouchableOpacity>
+                <Icon name="search" size={20} color="#fff" />
+              </TouchableOpacity>
+            )}
+            clearIcon={() => (
+              <TouchableOpacity>
+                <Icon name="close" size={20} color="#fff" />
+              </TouchableOpacity>
+            )}
+            placeholderTextColor="white"
+            fontWeight="bold"
+          />
 
-            <AllCustomer customer={customer?.customers} query={searchQuery} />
-          </ScrollView>
-        </>
-      )}
+          <AllCustomer customer={customer?.customers} query={searchQuery} />
+        </ScrollView>
+      </>
     </SafeAreaView>
   );
 };
@@ -213,7 +228,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     height: 55,
   },
-  loadingIndicator: {
+  loader: {
     flex: 1,
     backgroundColor: 'white',
   },

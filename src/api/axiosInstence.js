@@ -7,6 +7,7 @@ import {store} from '../store/store';
 // Axios Instance.
 const axiosInstance = axios.create({
   baseURL: 'http://192.168.29.113:8589/api/v1/los',
+  // baseURL: 'http://192.168.64.16:8589/api/v1/los',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -21,6 +22,7 @@ axiosInstance.interceptors.request.use(
     } else {
       delete axiosInstance.defaults.headers.common['Authorization'];
     }
+    console.log("config", config)
     return config;
   },
   error => {
@@ -36,6 +38,7 @@ axiosInstance.interceptors.response.use(
       `Your Session is Expire within a ${available_session_time} Seconds.`,
     );
 
+    // console.log(response)
     if (available_session_time <= 60) {
       setTimeout(() => {
         Alert.alert('Session Expiring', `Your session will expire soon`, [

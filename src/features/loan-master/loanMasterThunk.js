@@ -13,18 +13,11 @@ const loanMasterHandler = createAsyncThunk(
         'http://192.168.29.113:8589/api/v1/los/loan/master?pageNumber=0&pageSize=2000',
       );
 
-      const {status, data} = response;
-      const {record} = data.records;
-      // console.log("Loan Records",record);
+      // const {status, data} = response;
+      const {record} = response?.data?.records;
       return record;
-    } catch (error) {
-      if (error.response && error.response.data.message) {
-        console.log('error.response.data.message', error.response.data.message);
-        return rejectWithValue(error.response.data.message);
-      } else {
-        console.log('error.message', error.message);
-        return rejectWithValue(error.message);
-      }
+    } catch (err) {
+      return rejectWithValue(err);
     }
   },
 );
@@ -109,7 +102,7 @@ const loanUpdateHandler = createAsyncThunk(
   'loan-Master/update-loan',
   async (payload, {rejectWithValue}) => {
     const {id, formData} = payload;
-    
+
     console.log('id, payload', formData);
     try {
       const response = await axiosInstance.put(
@@ -119,7 +112,7 @@ const loanUpdateHandler = createAsyncThunk(
 
       const {data} = response;
 
-      console.log('loanUpdateHandler', response);
+      // console.log('loanUpdateHandler', response);
       return response;
     } catch (error) {
       console.log('generate-loan', error);
