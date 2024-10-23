@@ -126,7 +126,7 @@ const NewCustomer = () => {
       initialValues={formValues}
       enableReinitialize
       // validationSchema={validationSchema}
-      onSubmit={(values, {resetForm}) => {
+      onSubmit={async (values, {resetForm}) => {
         try {
           const payload = {
             ...values.customer,
@@ -138,12 +138,13 @@ const NewCustomer = () => {
 
           const formData = new FormData();
 
-          formData.append(
-            'customer',
-            new Blob([JSON.stringify(payload)], {
-              type: 'application/json',
-            }),
-          );
+          // Create a Blob from the customer payload
+          const _blob = new Blob([JSON.stringify(payload)], {
+            type: 'application/json',
+          });
+
+          // Append the customer data blob correctly
+          // formData.append('customer', payload);
 
           formData.append('idDocument', {
             uri: values.documents.idDocument.uri,
@@ -175,7 +176,7 @@ const NewCustomer = () => {
 
           // console.log('FormData contents:', formDataContents);
 
-          dispatch(addcustomer(formData));
+          await dispatch(addcustomer(formData));
         } catch (err) {
           console.log('Form submit error:', err);
         } finally {

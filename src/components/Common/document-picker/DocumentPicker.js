@@ -15,15 +15,11 @@ const DocumentPicker = ({label, file, onFileChange}) => {
       await onFileChange(_file);
     } catch (err) {
       if (isCancel(err)) {
-        console.log('User cancelled the upload', err);
+        return;
       } else {
-        console.error('Error picking document', err);
+        throw new Error('An error occurred while picking the document.');
       }
     }
-  };
-
-  const removeFile = () => {
-    onFileChange(null);
   };
 
   return (
@@ -60,7 +56,9 @@ const DocumentPicker = ({label, file, onFileChange}) => {
         </View>
 
         {file && (
-          <TouchableOpacity style={styles.closeIcon} onPress={removeFile}>
+          <TouchableOpacity
+            style={styles.closeIcon}
+            onPress={() => onFileChange(null)}>
             <Icon name="close" size={20} color="#000" />
           </TouchableOpacity>
         )}

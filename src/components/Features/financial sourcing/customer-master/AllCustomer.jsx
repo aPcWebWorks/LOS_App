@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {DataTable} from 'react-native-paper';
-import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
+// import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 

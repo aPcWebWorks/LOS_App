@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {
   Modal,
   Portal,
@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {loanMasterHandler} from '../../../features/loan-master/loanMasterThunk';
 import {searchCustomerByParameter} from '../../../features/customer-master/customerMasterThunk';
 import AllLoan from '../../../components/Features/financial sourcing/loan-master/AllLoan';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+// import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const Data = [
   {label: 'Name', value: 'name'},

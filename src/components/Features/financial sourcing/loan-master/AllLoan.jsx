@@ -1,10 +1,10 @@
 import React from 'react';
-import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {FlatList, ScrollView, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import {DataTable} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+// import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const AllLoan = ({filteredLoans, customers}) => {
   const dispatch = useDispatch();

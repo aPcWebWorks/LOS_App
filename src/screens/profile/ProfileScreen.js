@@ -7,13 +7,12 @@ import {
   Alert,
   SafeAreaView,
   FlatList,
+  TouchableOpacity,
 } from 'react-native';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5.js';
+import {ScrollView} from 'react-native-gesture-handler';
 import {
   Modal,
   Portal,
-  Button,
   PaperProvider,
   Divider,
   ActivityIndicator,

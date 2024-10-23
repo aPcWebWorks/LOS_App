@@ -1,22 +1,58 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import axiosInstance from '../../api/axiosInstence.js';
 import {CUSTOMERMASTER_ENDPOINT} from '../../api/endpoints.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// const addcustomer = createAsyncThunk(
+//   'customer_master/addcustomer',
+//   async (formData, {rejectWithValue}) => {
+//     try {
+//       const response = await axiosInstance.post('/customer', formData, {
+//         headers: {'Content-Type': 'multipart/form-data'},
+//       });
+
+//       console.log('response:', response);
+//       return response;
+//     } catch (err) {
+//       console.error('Thunk Error', err);
+//       return rejectWithValue(err.response?.data || err.message);
+//     }
+//   },
+// );
 
 const addcustomer = createAsyncThunk(
   'customer_master/addcustomer',
-  async (formData, thunkAPI) => {
+  async (formData, {rejectWithValue}) => {
     try {
-      const response = await axiosInstance.post('/customer', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const token = await AsyncStorage.getItem('token');
 
-      console.log('Request Headers:', response);
-      return response;
+      if (!token) {
+        return rejectWithValue('No token found');
+      }
+
+      const response = await fetch(
+        'http://192.168.29.113:8589/api/v1/los/customer',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+          body: formData,
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      console.log('Response Data:', data);
+      return data;
     } catch (err) {
-      console.error('Thunk Error', err);
-      return thunkAPI.rejectWithValue(err.response?.data || err.message);
+      console.error('Server Error', err);
+      return rejectWithValue(err.message);
     }
   },
 );
