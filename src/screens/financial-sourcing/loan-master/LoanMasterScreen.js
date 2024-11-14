@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {
   Modal,
   Portal,
@@ -14,7 +21,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {loanMasterHandler} from '../../../features/loan-master/loanMasterThunk';
 import {searchCustomerByParameter} from '../../../features/customer-master/customerMasterThunk';
 import AllLoan from '../../../components/Features/financial sourcing/loan-master/AllLoan';
-// import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const Data = [
   {label: 'Name', value: 'name'},
@@ -67,16 +73,15 @@ const LoanMasterScreen = ({navigation}) => {
     }
   }, [searchQuery, loan]);
 
-  const handleSearchCustomer = () => {
-    if (selectQuery.value && modalSearchQuery) {
-      dispatch(
-        searchCustomerByParameter({
-          criteriaType: selectQuery.value,
-          criteriaValue: modalSearchQuery,
-        }),
-      );
-      navigation.navigate('Searched Customer');
-    }
+  const handleSearchCustomer = async () => {
+    await dispatch(
+      searchCustomerByParameter({
+        criteriaType: selectQuery.value,
+        criteriaValue: modalSearchQuery,
+      }),
+    );
+
+    navigation.navigate('Searched Customer', {location: 'loan-generate'});
   };
 
   if (isLoading) {
@@ -108,10 +113,8 @@ const LoanMasterScreen = ({navigation}) => {
           <View style={{rowGap: 10}}>
             <Portal>
               <Modal
-                // visible={!toggleLoanForm ? visible : hide}
                 visible={visible}
                 onDismiss={hideModal}
-                // dismissable={false}
                 dismissableBackButton={false}
                 contentContainerStyle={style.modal}>
                 <Text style={style.modalText}>SCP No. : {loginId}</Text>
@@ -156,6 +159,7 @@ const LoanMasterScreen = ({navigation}) => {
                     mode="contained"
                     dark={true}
                     textColor="white"
+                    disabled={!selectQuery.value && !modalSearchQuery}
                     onPress={handleSearchCustomer}>
                     Search Customer
                   </Button>
@@ -223,10 +227,11 @@ const style = StyleSheet.create({
     justifyContent: 'center',
   },
   dropdown: {
-    height: 55,
+    marginTop: 8,
     fontSize: 18,
-    color: 'black',
+    height: 55,
     backgroundColor: '#ecf9ec',
+    paddingHorizontal: 10,
   },
   modal: {
     backgroundColor: 'white',

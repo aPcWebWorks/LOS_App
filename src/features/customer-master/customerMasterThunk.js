@@ -2,6 +2,8 @@ import {createAsyncThunk} from '@reduxjs/toolkit';
 import axiosInstance from '../../api/axiosInstence.js';
 import {CUSTOMERMASTER_ENDPOINT} from '../../api/endpoints.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {store} from '../../store/store.js';
+import documentHandler from '../documents/documentThunk.js';
 
 // const addcustomer = createAsyncThunk(
 //   'customer_master/addcustomer',
@@ -76,8 +78,19 @@ const getCustomerWithId = createAsyncThunk(
   'customer-master/getCustomerWithId',
   async (_id, {rejectWithValue}) => {
     try {
-      const res = await axiosInstance.get(`${CUSTOMERMASTER_ENDPOINT}/${_id}`);
-      return res;
+      const result = await axiosInstance.get(
+        `${CUSTOMERMASTER_ENDPOINT}/${_id}`,
+      );
+
+      if (result.status === 200 && result.data.documents) {
+        const ids = result.data.documents.map(doc => doc.id);
+
+        for (let i = 0; i < ids.length; i++) {
+          const docId = ids[i];
+          await store.dispatch(documentHandler(docId));
+        }
+      }
+      return result;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -106,12 +119,11 @@ const searchCustomerByParameter = createAsyncThunk(
         //   break;
 
         default:
-          // customerParamsClearState();
+          customerParamsClearState();
           break;
       }
 
       const {data} = await axiosInstance.get(endpoint);
-      // console.log('criteria data', data);
       return data;
     } catch (err) {
       return rejectWithValue(err);

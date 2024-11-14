@@ -8,7 +8,7 @@ import {
   Image,
   ScrollView,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {Button, Searchbar, Modal, Portal} from 'react-native-paper';
@@ -159,18 +159,16 @@ const LoanUpdateScreen = ({navigation, route}) => {
     }));
   };
 
-  const handleSearchCustomer = () => {
-    if (selectQuery.value && modalSearchQuery) {
-      dispatch(
-        searchCustomerByParameter({
-          criteriaType: selectQuery.value,
-          criteriaValue: modalSearchQuery,
-        }),
-      );
-      setVisible(false);
-      navigation.navigate('Searched Customer');
-    }
-    return;
+  const handleSearchCustomer = async () => {
+    await dispatch(
+      searchCustomerByParameter({
+        criteriaType: selectQuery.value,
+        criteriaValue: modalSearchQuery,
+      }),
+    );
+    setVisible(false);
+
+    navigation.navigate('Searched Customer', {location: 'loan-update'});
   };
 
   const bankChangeHandler = item => {
@@ -208,221 +206,199 @@ const LoanUpdateScreen = ({navigation, route}) => {
       id: updatePayload?.id,
       formData,
     };
+
     await dispatch(loanUpdateHandler(params));
   };
 
   return (
     <>
       <SafeAreaView style={styles.container}>
-        {/* {isLoading ? (
-          <>
-            <ActivityIndicator
-              size="large"
-              color="green"
-              style={styles.loadingIndicator}
-            />
-          </>
-        ) : ( */}
-        <>
-          <ScrollView style={styles.scrollView}>
-            <View style={{rowGap: 10}}>
-              <Button
-                style={styles.button}
-                mode="contained"
-                onPress={showModal}>
-                Update Customer
-              </Button>
-            </View>
-            <View style={{marginTop: 10}}>
-              <FlatList
-                scrollEnabled={false}
-                data={obj.concat(image)}
-                renderItem={({item}) => (
-                  <View style={styles.itemContainer}>
-                    <Text style={styles.label}>{item.key}</Text>
-                    {item.key.startsWith('Photo') ? (
-                      <Image source={{uri: uri}} style={styles.photo} />
-                    ) : (
-                      <Text style={styles.textValue}>{item.value}</Text>
-                    )}
-                  </View>
-                )}
-                keyExtractor={(item, index) => `${item.key}-${index}`}
-              />
-            </View>
-
-            <View style={styles.dropdownGroup}>
-              <Dropdown
-                style={styles.dropdown}
-                data={
-                  allbanks?.map(item => ({
-                    id: item.response.id,
-                    label: item.response.bankName,
-                    value: item.response.bankName,
-                  })) || []
-                }
-                mode="default"
-                value={selectBankQuery}
-                onChange={item => {
-                  bankChangeHandler(item);
-                }}
-                labelField="label"
-                valueField="value"
-                placeholder={
-                  <Text style={{color: 'black'}}>Select Bank Name</Text>
-                }
-                iconColor="black"
-              />
-
-              <Dropdown
-                style={styles.dropdown}
-                data={filteredBranches}
-                mode="default"
-                labelField="label"
-                valueField="value"
-                placeholder={
-                  <Text style={{color: 'black'}}>Select Branch Name</Text>
-                }
-                // disable={!filteredBranches.length}
-                onChange={item => {
-                  setSelectedBranchQuery(item.value);
-                }}
-                // value={selectedBranchQuery}
-                iconColor="black"
-              />
-
-              <Dropdown
-                style={styles.dropdown}
-                data={
-                  loans.map(item => ({
-                    id: item.response.id,
-                    label: item.response.productName,
-                    value: item.response.productName,
-                  })) || []
-                }
-                mode="default"
-                labelField="label"
-                valueField="value"
-                value={selectLoanQuery}
-                onChange={item => {
-                  loanTypeChangeHandler(item);
-                }}
-                placeholder={
-                  <Text style={{color: 'black'}}>Select product Name</Text>
-                }
-                iconColor="black"
-              />
-
-              <Dropdown
-                style={styles.dropdown}
-                data={filteredLoans}
-                mode="default"
-                labelField="label"
-                valueField="value"
-                placeholder={
-                  <Text style={{color: 'black'}}>Select Sub product Name</Text>
-                }
-                onChange={item => {
-                  setSelectLoanProductQuery(item.value);
-                }}
-                disable={!filteredLoans.length}
-                value={selectLoanProductQuery}
-                iconColor="black"
-              />
-              <TextInput
-                style={styles.dropdown}
-                placeholder="Existing Account Number"
-                placeholderTextColor="black"
-                value={formData?.existingAccountNumber}
-                onChangeText={value =>
-                  handleChange('existingAccountNumber', value)
-                }
-              />
-
-              <TextInput
-                style={styles.dropdown}
-                placeholder="Loan Amount"
-                placeholderTextColor="black"
-                value={formData?.loanAmount}
-                onChangeText={value => handleChange('loanAmount', value)}
-              />
-            </View>
-
-            <View style={styles.buttonGroup}>
-              <Button
-                style={styles.button}
-                mode="contained"
-                onPress={handleUpdate}>
-                <Text>Update</Text>
-              </Button>
-
-              <Button
-                style={styles.button}
-                mode="contained"
-                // onPress={handleCancel}
-              >
-                <Text>Cancel</Text>
-              </Button>
-            </View>
-            <Portal>
-              <Modal
-                // visible={!toggleLoanForm ? visible : hide}
-                visible={visible}
-                onDismiss={hideModal}
-                // dismissable={false}
-                dismissableBackButton={false}
-                contentContainerStyle={styles.modal}>
-                {/* <Text style={styles.modalText}>SCP No. : {loginId}</Text> */}
-
-                <View style={styles.modalSection}>
-                  <Dropdown
-                    style={styles.dropdown}
-                    data={Data}
-                    mode="default"
-                    labelField="label"
-                    valueField="value"
-                    placeholder={
-                      <Text style={{color: 'black'}}>Select Customer</Text>
-                    }
-                    value={selectQuery}
-                    onChange={setSelectQuery}
-                    iconColor="black"
-                    placeholderStyle={{color: 'black'}}
-                  />
-
-                  <Searchbar
-                    style={styles.modalSearchBar}
-                    placeholder="Search"
-                    onChangeText={setModalSearchQuery}
-                    value={modalSearchQuery}
-                    mode="bar"
-                    icon={() => (
-                      <TouchableOpacity>
-                        <Icon name="search" size={20} color="#000" />
-                      </TouchableOpacity>
-                    )}
-                    clearIcon={() => (
-                      <TouchableOpacity>
-                        <Icon name="close" size={20} color="#000" />
-                      </TouchableOpacity>
-                    )}
-                    placeholderTextColor="black"
-                  />
-
-                  <Button
-                    style={styles.modalButton}
-                    mode="contained"
-                    dark={true}
-                    textColor="white"
-                    onPress={handleSearchCustomer}>
-                    Search Customer
-                  </Button>
+        <ScrollView style={styles.scrollView}>
+          <View style={{rowGap: 10}}>
+            <Button style={styles.button} mode="contained" onPress={showModal}>
+              Update Customer
+            </Button>
+          </View>
+          <View style={{marginTop: 10}}>
+            <FlatList
+              scrollEnabled={false}
+              data={obj.concat(image)}
+              renderItem={({item}) => (
+                <View style={styles.itemContainer}>
+                  <Text style={styles.label}>{item.key}</Text>
+                  {item.key.startsWith('Photo') ? (
+                    <Image source={{uri: uri}} style={styles.photo} />
+                  ) : (
+                    <Text style={styles.textValue}>{item.value}</Text>
+                  )}
                 </View>
-              </Modal>
-            </Portal>
-          </ScrollView>
-        </>
-        {/* )} */}
+              )}
+              keyExtractor={(item, index) => `${item.key}-${index}`}
+            />
+          </View>
+
+          <View style={styles.dropdownGroup}>
+            <Dropdown
+              style={styles.dropdown}
+              data={
+                allbanks?.map(item => ({
+                  id: item.response.id,
+                  label: item.response.bankName,
+                  value: item.response.bankName,
+                })) || []
+              }
+              mode="default"
+              value={selectBankQuery}
+              onChange={item => {
+                bankChangeHandler(item);
+              }}
+              labelField="label"
+              valueField="value"
+              placeholder={
+                <Text style={{color: 'black'}}>Select Bank Name</Text>
+              }
+              iconColor="black"
+            />
+
+            <Dropdown
+              style={styles.dropdown}
+              data={filteredBranches}
+              mode="default"
+              labelField="label"
+              valueField="value"
+              placeholder={
+                <Text style={{color: 'black'}}>Select Branch Name</Text>
+              }
+              // disable={!filteredBranches.length}
+              onChange={item => {
+                setSelectedBranchQuery(item.value);
+              }}
+              // value={selectedBranchQuery}
+              iconColor="black"
+            />
+
+            <Dropdown
+              style={styles.dropdown}
+              data={
+                loans.map(item => ({
+                  id: item.response.id,
+                  label: item.response.productName,
+                  value: item.response.productName,
+                })) || []
+              }
+              mode="default"
+              labelField="label"
+              valueField="value"
+              value={selectLoanQuery}
+              onChange={item => {
+                loanTypeChangeHandler(item);
+              }}
+              placeholder={
+                <Text style={{color: 'black'}}>Select product Name</Text>
+              }
+              iconColor="black"
+            />
+
+            <Dropdown
+              style={styles.dropdown}
+              data={filteredLoans}
+              mode="default"
+              labelField="label"
+              valueField="value"
+              placeholder={
+                <Text style={{color: 'black'}}>Select Sub product Name</Text>
+              }
+              onChange={item => {
+                setSelectLoanProductQuery(item.value);
+              }}
+              disable={!filteredLoans.length}
+              value={selectLoanProductQuery}
+              iconColor="black"
+            />
+            <TextInput
+              style={styles.dropdown}
+              placeholder="Existing Account Number"
+              placeholderTextColor="black"
+              value={formData?.existingAccountNumber}
+              onChangeText={value => {
+                handleChange('existingAccountNumber', value);
+              }}
+            />
+
+            <TextInput
+              style={styles.dropdown}
+              placeholder="Loan Amount"
+              placeholderTextColor="black"
+              value={formData?.loanAmount}
+              onChangeText={value => handleChange('loanAmount', value)}
+            />
+          </View>
+
+          <Button
+            style={[styles.button, {marginTop: 20, marginBottom: 20}]}
+            mode="contained"
+            onPress={handleUpdate}>
+            <Text>Update</Text>
+          </Button>
+
+          <Portal>
+            <Modal
+              // visible={!toggleLoanForm ? visible : hide}
+              visible={visible}
+              onDismiss={hideModal}
+              // dismissable={false}
+              dismissableBackButton={false}
+              contentContainerStyle={styles.modal}>
+              {/* <Text style={styles.modalText}>SCP No. : {loginId}</Text> */}
+
+              <View style={styles.modalSection}>
+                <Dropdown
+                  style={styles.dropdown}
+                  data={Data}
+                  mode="default"
+                  labelField="label"
+                  valueField="value"
+                  placeholder={
+                    <Text style={{color: 'black'}}>Select Customer</Text>
+                  }
+                  value={selectQuery}
+                  onChange={setSelectQuery}
+                  iconColor="black"
+                  placeholderStyle={{color: 'black'}}
+                />
+
+                <Searchbar
+                  style={styles.modalSearchBar}
+                  placeholder="Search"
+                  onChangeText={setModalSearchQuery}
+                  value={modalSearchQuery}
+                  mode="bar"
+                  icon={() => (
+                    <TouchableOpacity>
+                      <Icon name="search" size={20} color="#000" />
+                    </TouchableOpacity>
+                  )}
+                  clearIcon={() => (
+                    <TouchableOpacity>
+                      <Icon name="close" size={20} color="#000" />
+                    </TouchableOpacity>
+                  )}
+                  placeholderTextColor="black"
+                />
+
+                <Button
+                  style={styles.modalButton}
+                  mode="contained"
+                  dark={true}
+                  textColor="white"
+                  disabled={!selectQuery.value && !modalSearchQuery}
+                  onPress={handleSearchCustomer}>
+                  Search Customer
+                </Button>
+              </View>
+            </Modal>
+          </Portal>
+        </ScrollView>
       </SafeAreaView>
     </>
   );
@@ -473,6 +449,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'black',
     backgroundColor: '#ecf9ec',
+    paddingHorizontal: 8,
   },
   modalSearchBar: {borderRadius: 4, backgroundColor: '#ecf9ec'},
   buttonGroup: {
@@ -501,7 +478,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
-    height: 45,
+    // height: 45,
     borderRadius: 0,
     backgroundColor: 'green',
   },

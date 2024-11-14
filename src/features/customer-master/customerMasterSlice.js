@@ -61,6 +61,8 @@ const getCustomerWithIdSlice = createSlice({
       .addCase(getCustomerWithId.fulfilled, (state, {payload}) => {
         state.customer = payload?.data;
         state.isLoading = false;
+
+        // console.log("payload", payload.data.documents)
       })
       .addCase(getCustomerWithId.rejected, (state, {payload}) => {
         state.isError = true;

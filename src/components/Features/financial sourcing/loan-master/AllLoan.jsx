@@ -1,5 +1,12 @@
 import React from 'react';
-import {FlatList, ScrollView, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import {DataTable} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
@@ -7,7 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 // import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const AllLoan = ({filteredLoans, customers}) => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const navigation = useNavigation();
   // const numberOfCustomersPerPageList = [2, 3, 4];
 
@@ -22,13 +29,13 @@ const AllLoan = ({filteredLoans, customers}) => {
   //   setPage(0);
   // }, [numberOfCustomersPerPage]);
 
-  const handleUpdate = item => {
-    if (item.response) {
-      navigation.navigate('Loan Update', {updatePayload: item.response});
-    } else {
-      console.log('please select customer');
-    }
-  };
+  // const handleUpdate = item => {
+  //   if (item.response) {
+  //     navigation.navigate('Loan Update', {updatePayload: item.response});
+  //   } else {
+  //     console.log('please select customer');
+  //   }
+  // };
   return (
     <>
       <View style={style.table}>
@@ -90,7 +97,12 @@ const AllLoan = ({filteredLoans, customers}) => {
 
                       <TouchableOpacity>
                         <Icon
-                          onPress={() => handleUpdate(item)}
+                          // onPress={() => handleUpdate(item)}
+                          onPress={() =>
+                            navigation.navigate('Loan Update', {
+                              updatePayload: item.response,
+                            })
+                          }
                           name="edit"
                           size={20}
                           color="#000"

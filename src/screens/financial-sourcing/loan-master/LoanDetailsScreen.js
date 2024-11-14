@@ -1,9 +1,10 @@
 import React, {useEffect} from 'react';
-import {SafeAreaView, StyleSheet} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {ActivityIndicator} from 'react-native-paper';
 import {loanDetailsHandler} from '../../../features/loan-master/loanMasterThunk';
 import LoanDetails from '../../../components/Features/financial sourcing/loan-master/LoanDetails';
+import {resetDocumentState} from '../../../features/documents/documentSlice';
 
 const LoanDetailsScreen = ({route}) => {
   const dispatch = useDispatch();
@@ -17,8 +18,13 @@ const LoanDetailsScreen = ({route}) => {
   const {id} = route.params;
 
   useEffect(() => {
-    dispatch(loanDetailsHandler(id));
-  }, [dispatch]);
+    const handleFiles = async () => {
+      await dispatch(resetDocumentState());
+      dispatch(loanDetailsHandler(id));
+    };
+
+    handleFiles();
+  }, [id]);
 
   const singalLoanDetails = {
     ScpNo: loginId,
@@ -37,20 +43,21 @@ const LoanDetailsScreen = ({route}) => {
     LoanAmount: loanDetails?.loanAmount,
   };
 
+  if (isLoading)
+    return (
+      <ActivityIndicator
+        size="large"
+        color="green"
+        style={styles.loadingIndicator}
+      />
+    );
+
   return (
     <>
       <SafeAreaView style={styles.container}>
-        {isLoading ? (
-          <ActivityIndicator
-            size="large"
-            color="green"
-            style={styles.loadingIndicator}
-          />
-        ) : (
-          <>
-            <LoanDetails singalLoanDetails={singalLoanDetails} />
-          </>
-        )}
+        <ScrollView>
+          <LoanDetails singalLoanDetails={singalLoanDetails} />
+        </ScrollView>
       </SafeAreaView>
     </>
   );

@@ -1,7 +1,10 @@
 import React from 'react';
-import {StyleSheet, View, Text, FlatList} from 'react-native';
+import {StyleSheet, View, Text, FlatList, Image} from 'react-native';
+import {useSelector} from 'react-redux';
 
 const LoanDetails = ({singalLoanDetails}) => {
+  const {documents} = useSelector(state => state.document);
+
   const data = Object.entries(singalLoanDetails).map(([key, value]) => ({
     label: key,
     value: value,
@@ -11,6 +14,7 @@ const LoanDetails = ({singalLoanDetails}) => {
     <>
       <FlatList
         data={data}
+        scrollEnabled={false}
         renderItem={({item}) => (
           <>
             <View style={styles.itemContainer}>
@@ -18,6 +22,23 @@ const LoanDetails = ({singalLoanDetails}) => {
                 {item.label.split(/(?=[A-Z])/).join(' ')} :
               </Text>
               <Text style={styles.textValue}>{item.value}</Text>
+            </View>
+          </>
+        )}
+        keyExtractor={(item, index) => index.toString()}
+      />
+
+      <FlatList
+        data={documents}
+        scrollEnabled={false}
+        renderItem={({item, index}) => (
+          <>
+            <View style={styles.itemContainer}>
+              <Text style={styles.label}>Document {index + 1} :</Text>
+              <Image
+                source={{uri: item}}
+                style={{width: 200, height: 100, objectFit: 'contain'}}
+              />
             </View>
           </>
         )}

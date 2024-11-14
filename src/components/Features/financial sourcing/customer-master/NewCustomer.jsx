@@ -64,7 +64,6 @@ const validationSchema = Yup.object().shape({
   }),
 });
 
-// Main Component
 const NewCustomer = () => {
   const theme = useTheme();
   const styles = getStyles(theme);
@@ -127,6 +126,8 @@ const NewCustomer = () => {
       enableReinitialize
       // validationSchema={validationSchema}
       onSubmit={async (values, {resetForm}) => {
+        const token = await AsyncStorage.getItem('token');
+
         try {
           const payload = {
             ...values.customer,
@@ -136,47 +137,41 @@ const NewCustomer = () => {
             annualIncome: parseInt(values.customer.annualIncome),
           };
 
-          const formData = new FormData();
+          const myHeaders = new Headers();
+          myHeaders.append('Authorization', `Bearer ${token}`);
 
-          // Create a Blob from the customer payload
-          const _blob = new Blob([JSON.stringify(payload)], {
-            type: 'application/json',
-          });
-
-          // Append the customer data blob correctly
-          // formData.append('customer', payload);
-
-          formData.append('idDocument', {
+          const formdata = new FormData();
+          formdata.append('customer', JSON.stringify(payload));
+          formdata.append('idDocument', {
             uri: values.documents.idDocument.uri,
             name: values.documents.idDocument.name,
             type: values.documents.idDocument.type,
           });
-
-          formData.append('panCard', {
+          formdata.append('panCard', {
             uri: values.documents.panCard.uri,
             name: values.documents.panCard.name,
             type: values.documents.panCard.type,
           });
-
-          formData.append('aadhaarCard', {
+          formdata.append('aadhaarCard', {
             uri: values.documents.aadhaarCard.uri,
             name: values.documents.aadhaarCard.name,
             type: values.documents.aadhaarCard.type,
           });
 
-          // Log FormData for debugging
-          // const formDataContents = [];
-          // const formDataParts = formData['_parts'];
 
-          // if (formDataParts) {
-          //   formDataParts.forEach(([key, value]) => {
-          //     formDataContents.push({key, value});
-          //   });
-          // }
-
-          // console.log('FormData contents:', formDataContents);
-
-          await dispatch(addcustomer(formData));
+          try {
+            fetch('http://192.168.29.113:8589/api/v1/los/customer', {
+              method: 'POST',
+              headers: myHeaders,
+              body: formdata,
+              redirect: 'follow',
+            })
+              .then(response => response.json())
+              .then(data => console.log(data))
+              .catch(error => console.error('Error:', error));
+          } catch (error) {
+            console.error('Error uploading files:', error);
+          }
         } catch (err) {
           console.log('Form submit error:', err);
         } finally {
@@ -476,26 +471,6 @@ const NewCustomer = () => {
             ) : null}
           </View>
 
-          {/* <DocumentPicker
-            label="Id Size Photo*"
-            file={values.idDocument}
-            onFileChange={value => setFieldValue('documents.idDocument', value)}
-          />
-
-          <DocumentPicker
-            label="PAN Card Photo*"
-            file={values.panCard}
-            onFileChange={value => setFieldValue('documents.panCard', value)}
-          />
-
-          <DocumentPicker
-            label="Aadhar Card Photo*"
-            file={values.aadhaarCard}
-            onFileChange={value =>
-              setFieldValue('documents.aadhaarCard', value)
-            }
-          /> */}
-
           <DocumentPicker
             label="Id Size Photo*"
             file={values.documents.idDocument}
@@ -528,11 +503,7 @@ const NewCustomer = () => {
               </Text>
             )}
 
-          <Button
-            style={styles.submitButton}
-            mode="contained"
-            buttonColor="green"
-            onPress={handleSubmit}>
+          <Button mode="contained" buttonColor="green" onPress={handleSubmit}>
             Submit
           </Button>
         </SafeAreaView>

@@ -26,6 +26,7 @@ const documentHandler = createAsyncThunk(
       return base64Str;
     } catch (error) {
       console.log(error);
+      return rejectWithValue(error.message);
     }
   },
 );

@@ -1,9 +1,10 @@
 import React, {useEffect} from 'react';
 import CustomerDetails from '../../../components/Features/financial sourcing/customer-master/CustomerDetails';
-import {SafeAreaView, ScrollView, StyleSheet} from 'react-native';
+import {Image, SafeAreaView, ScrollView, StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {ActivityIndicator} from 'react-native-paper';
 import {getCustomerWithId} from '../../../features/customer-master/customerMasterThunk';
+import {resetDocumentState} from '../../../features/documents/documentSlice';
 
 const CustomerDetailsScreen = ({route}) => {
   const dispatch = useDispatch();
@@ -11,8 +12,13 @@ const CustomerDetailsScreen = ({route}) => {
   const {id} = route.params;
 
   useEffect(() => {
-    dispatch(getCustomerWithId(id));
-  }, [dispatch]);
+    const handleFiles = async () => {
+      await dispatch(resetDocumentState());
+      dispatch(getCustomerWithId(id));
+    };
+
+    handleFiles();
+  }, [id]);
 
   const customerDetails = {
     Id: customer?.externalCustomerId,
@@ -26,20 +32,22 @@ const CustomerDetailsScreen = ({route}) => {
     PanCardNumber: customer?.panCardNumber,
   };
 
+  if (isLoading) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color="green"
+        style={styles.loadingIndicator}
+      />
+    );
+  }
+
   return (
     <>
       <SafeAreaView style={styles.container}>
-        {isLoading ? (
-          <ActivityIndicator
-            size="large"
-            color="green"
-            style={styles.loadingIndicator}
-          />
-        ) : (
-          <>
-            <CustomerDetails customerDetails={customerDetails} />
-          </>
-        )}
+        <ScrollView>
+          <CustomerDetails customerDetails={customerDetails} />
+        </ScrollView>
       </SafeAreaView>
     </>
   );

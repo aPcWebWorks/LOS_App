@@ -23,7 +23,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {userLogout} from '../../features/auth/authThunks';
 
-const Profile = ({navigation}) => {
+const ProfileScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [visible, setVisible] = React.useState(false);
 
@@ -392,9 +392,5 @@ const style = StyleSheet.create({
     color: 'black',
   },
 });
-
-const ProfileScreen = () => {
-  return <Profile />;
-};
 
 export default ProfileScreen;

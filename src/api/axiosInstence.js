@@ -7,7 +7,7 @@ import {store} from '../store/store';
 // Axios Instance.
 const axiosInstance = axios.create({
   baseURL: 'http://192.168.29.113:8589/api/v1/los',
-  // baseURL: 'http://192.168.64.16:8589/api/v1/los',
+  // baseURL: 'http://viselagroretail.com:8589/api/v1/los',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -22,7 +22,7 @@ axiosInstance.interceptors.request.use(
     } else {
       delete axiosInstance.defaults.headers.common['Authorization'];
     }
-    console.log("config", config)
+    // console.log("config", config)
     return config;
   },
   error => {

@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {DataTable} from 'react-native-paper';
 // import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
@@ -126,7 +133,7 @@ const AllCustomer = ({customer, query}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 20,
+    marginVertical: 20,
   },
   tableHeader: {
     backgroundColor: '#ecf9ec',

@@ -36,12 +36,14 @@ const scpUserSlice = createSlice({
       // Get With SCP Number Handler
       .addCase(getWithSCPNumberHandler.pending, state => {
         state.isLoading = true;
-        state.scpNumber = null;
+        // state.scpNumber = null;
+        state.scpUser = null;
         state.isError = false;
         state.error = null;
       })
       .addCase(getWithSCPNumberHandler.fulfilled, (state, {payload}) => {
-        state.scpNumber = payload;
+        // state.scpNumber = payload;
+        state.scpUser = payload;
         state.isLoading = false;
       })
       .addCase(getWithSCPNumberHandler.rejected, (state, {payload}) => {

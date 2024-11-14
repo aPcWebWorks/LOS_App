@@ -1,7 +1,10 @@
 import React from 'react';
-import {StyleSheet, View, Text, FlatList} from 'react-native';
+import {StyleSheet, View, Text, FlatList, Image} from 'react-native';
+import {useSelector} from 'react-redux';
 
 const CustomerDetails = ({customerDetails}) => {
+  const {documents} = useSelector(state => state.document);
+
   const data = Object.entries(customerDetails).map(([key, value]) => ({
     label: key,
     value: value,
@@ -11,6 +14,7 @@ const CustomerDetails = ({customerDetails}) => {
     <>
       <FlatList
         data={data}
+        scrollEnabled={false}
         renderItem={({item}) => (
           <>
             <View style={styles.itemContainer}>
@@ -23,6 +27,23 @@ const CustomerDetails = ({customerDetails}) => {
         )}
         keyExtractor={(item, index) => index.toString()}
       />
+
+      <FlatList
+        data={documents}
+        scrollEnabled={false}
+        renderItem={({item, index}) => (
+          <>
+            <View style={styles.itemContainer}>
+              <Text style={styles.label}>Document {index + 1} :</Text>
+              <Image
+                source={{uri: item}}
+                style={{width: 200, height: 100, objectFit: 'contain'}}
+              />
+            </View>
+          </>
+        )}
+        keyExtractor={(item, index) => index.toString()}
+      />
     </>
   );
 };
@@ -30,12 +51,11 @@ const CustomerDetails = ({customerDetails}) => {
 const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 10,
     padding: 10,
     backgroundColor: '#f0f0f0',
-    // backgroundColor: '#ecf9ec',
     borderRadius: 8,
   },
   label: {

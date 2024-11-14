@@ -3,7 +3,7 @@ import documentHandler from './documentThunk';
 
 const initialState = {
   isLoading: false,
-  document: null,
+  documents: [],
   error: null,
 };
 
@@ -12,10 +12,9 @@ const documentSlice = createSlice({
   initialState,
   reducers: {
     resetDocumentState: state => {
-      state.document = null;
+      state.documents = [];
       state.isLoading = false;
       state.error = null;
-      // console.log('reset state');
     },
   },
   extraReducers: builder => {
@@ -25,12 +24,10 @@ const documentSlice = createSlice({
         state.error = null;
       })
       .addCase(documentHandler.fulfilled, (state, {payload}) => {
-        state.document = payload;
+        state.documents.push(payload);
         state.isLoading = false;
-        // console.log('payload Ids', payload);
       })
       .addCase(documentHandler.rejected, (state, {error}) => {
-        // Use error instead of payload for rejected case
         state.error = error.message;
         state.isLoading = false;
       });

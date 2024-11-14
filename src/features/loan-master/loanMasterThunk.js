@@ -74,10 +74,9 @@ const loanGenerationHandler = createAsyncThunk(
         payload,
       );
 
-      const {data} = response;
       return response;
     } catch (error) {
-      console.log('generate-loan', error);
+      return rejectWithValue(error);
     }
   },
 );

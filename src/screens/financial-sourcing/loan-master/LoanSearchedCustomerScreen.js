@@ -8,25 +8,29 @@ import {
 import {useSelector} from 'react-redux';
 import SearchedCustomers from '../../../components/Features/financial sourcing/loan-master/SearchedCustomers';
 
-const SearchedCustomer = () => {
-  const {customers, isLoading} = useSelector(state => state.searchCustomerByParameter);
+const SearchedCustomer = ({route}) => {
+  const {params} = route;
+
+  console.log('params', params);
+  const {customers, isLoading} = useSelector(
+    state => state.searchCustomerByParameter,
+  );
+
+  if (isLoading)
+    return (
+      <ActivityIndicator
+        size="large"
+        color="green"
+        style={style.loadingIndicator}
+      />
+    );
 
   return (
     <>
       <SafeAreaView style={style.container}>
-        {isLoading ? (
-          <ActivityIndicator
-            size="large"
-            color="green"
-            style={style.loadingIndicator}
-          />
-        ) : (
-          <>
-            <ScrollView style={style.scrollview}>
-              <SearchedCustomers customers={customers} />
-            </ScrollView>
-          </>
-        )}
+        <ScrollView style={style.scrollview}>
+          <SearchedCustomers customers={customers} location={params.location} />
+        </ScrollView>
       </SafeAreaView>
     </>
   );

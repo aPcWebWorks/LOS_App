@@ -340,7 +340,8 @@ function getStyles(theme) {
     container: {
       flex: 1,
       rowGap: 14,
-      marginTop: 4,
+      margin: 4,
+      marginBottom: 20,
     },
 
     scpId: {
@@ -365,6 +366,7 @@ function getStyles(theme) {
       marginTop: 4,
       borderRadius: 4,
       backgroundColor: 'white',
+      paddingHorizontal: 5
     },
 
     customerName: {
