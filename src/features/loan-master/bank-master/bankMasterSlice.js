@@ -21,7 +21,6 @@ const bankMasterSlice = createSlice({
         state.bank = payload;
         state.isLoading = false;
         state.isError = null;
-        // console.log("payload", payload)
       })
       .addCase(bankMasterHandler.rejected, (state, {payload}) => {
         state.isError = payload;

@@ -5,10 +5,10 @@ import {
   StyleSheet,
   SafeAreaView,
   FlatList,
-  Image,
   ScrollView,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {Button, Searchbar, Modal, Portal} from 'react-native-paper';
@@ -32,13 +32,9 @@ const LoanUpdateScreen = ({navigation, route}) => {
   const {user} = useSelector(state => state.auth);
   const {loginId} = user.data || {};
   const {customer} = useSelector(state => state.getCustomerById);
-  const {document} = useSelector(state => state.document);
   const {allbanks} = useSelector(state => state.banks);
   const {loans} = useSelector(state => state.loanType);
   const [obj, setObj] = useState([]);
-  const [image, setImage] = useState([]);
-  const [fetchedDocuments, setFetchedDocuments] = useState([]);
-  let uri;
   const [selectBankQuery, setSelectBankQuery] = useState(null);
   const [selectedBranchQuery, setSelectedBranchQuery] = useState(null);
   const [selectLoanQuery, setSelectLoanQuery] = useState(null);
@@ -49,13 +45,18 @@ const LoanUpdateScreen = ({navigation, route}) => {
   const [visible, setVisible] = useState(false);
   const [selectQuery, setSelectQuery] = useState('');
 
+  const {isLoading: customerLoading} = useSelector(
+    state => state.getCustomerById,
+  );
+  const {isLoading: banksLoading} = useSelector(state => state.banks);
+
   const Data = [
     {label: 'Name', value: 'name'},
     {label: 'Aadhar or PAN Number', value: 'aadharorpannumber'},
     {label: 'Customer ID', value: 'customerid'},
   ];
 
-  const {updatePayload} = route.params || {};
+  const {updatePayload, id} = route.params || {};
   const {bank} = useSelector(state => state.bankMaster);
   const {loanType} = useSelector(state => state.loanTypeWithId);
 
@@ -70,10 +71,6 @@ const LoanUpdateScreen = ({navigation, route}) => {
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
-
-  // useEffect(() => {
-  //   getDocumentHandler(customer.documents);
-  // }, []);
 
   useEffect(() => {
     if (customer) {
@@ -91,50 +88,18 @@ const LoanUpdateScreen = ({navigation, route}) => {
         {key: 'PAN No.', value: customer?.panCardNumber},
         {key: 'Aadhar No.', value: customer?.aadhaarNumber},
         {key: 'Occupation ', value: customer?.occupation},
-        // {key: 'ID Photo :', value: fetchedDocuments[0]},
-        // {key: 'PAN Photo :', value: fetchedDocuments[1]},
-        // {key: 'Aadhar Photo :', value: fetchedDocuments[2]},
       ];
       setObj(objData);
     }
   }, [customer]);
 
-  // const getDocumentHandler = async documents => {
-  //   await dispatch(documentHandler(documents[0].id));
-  //   await dispatch(documentHandler(documents[1].id));
-  //   dispatch(documentHandler(documents[2].id));
-  //   return;
-  // };
-
-  // useEffect(() => {
-  //   getDocumentHandler(customer?.documents);
-  //   // console.log(customer?.documents);
-  // }, []);
-
-  // const getDocumentHandler = async docs => {
-  //   for (let i = 0; i < 1; i++) {
-  //     await dispatch(documentHandler(docs[2].id));
-  //   }
-  //   dispatch(resetDocumentState());
-  //   return;
-  // };
-
-  useEffect(() => {
-    if (document) {
-      setFetchedDocuments(prevDocs => [...prevDocs, document]);
-    }
-  }, [document]);
-
-  const dispatchHandler = async () => {
-    // await getDocumentHandler(customer.documents);
-
-    dispatch(getAllBankHandller());
-  };
-
   useEffect(() => {
     bankUpdateHandler();
   }, [dispatch]);
 
+  useEffect(() => {
+    dispatch(getCustomerWithId(id));
+  }, [id]);
   const bankUpdateHandler = async () => {
     await dispatch(getCustomerWithId(formData.customerId));
     await dispatch(bankMasterHandler(formData.bankId));
@@ -207,9 +172,20 @@ const LoanUpdateScreen = ({navigation, route}) => {
       formData,
     };
 
-    await dispatch(loanUpdateHandler(params));
+    const result = await dispatch(loanUpdateHandler(params));
+    const {success, id} = result.payload.data;
+
+    if (success === true) {
+      navigation.navigate('Loan Details', {id});
+    }
+    return;
   };
 
+  if (customerLoading || banksLoading) {
+    return (
+      <ActivityIndicator size="large" color="green" style={styles.loader} />
+    );
+  }
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -222,15 +198,11 @@ const LoanUpdateScreen = ({navigation, route}) => {
           <View style={{marginTop: 10}}>
             <FlatList
               scrollEnabled={false}
-              data={obj.concat(image)}
+              data={obj}
               renderItem={({item}) => (
                 <View style={styles.itemContainer}>
                   <Text style={styles.label}>{item.key}</Text>
-                  {item.key.startsWith('Photo') ? (
-                    <Image source={{uri: uri}} style={styles.photo} />
-                  ) : (
-                    <Text style={styles.textValue}>{item.value}</Text>
-                  )}
+                  <Text style={styles.textValue}>{item.value}</Text>
                 </View>
               )}
               keyExtractor={(item, index) => `${item.key}-${index}`}
@@ -478,11 +450,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
-    // height: 45,
     borderRadius: 0,
     backgroundColor: 'green',
   },
-  loadingIndicator: {
+  loader: {
     flex: 1,
     backgroundColor: 'white',
   },

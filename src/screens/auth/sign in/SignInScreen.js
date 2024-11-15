@@ -15,44 +15,6 @@ import * as Yup from 'yup';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {userLogin} from '../../../features/auth/authThunks.js';
 
-// const CustomSnackbar = ({}) => {
-//   const [visible, setVisible] = useState(false);
-//   const onToggleSnackBar = () => setVisible(!visible);
-
-//   const onDismissSnackBar = () => setVisible(false);
-
-//   return (
-//     <View style={styles.snackContainer}>
-//       <Button onPress={onToggleSnackBar}>{visible ? 'Hide' : 'Show'}</Button>
-//       <Snackbar
-//         style={styles.snackbar}
-//         visible={visible}
-//         onDismiss={onDismissSnackBar}
-//         action={{
-//           label: 'Close',
-//           onPress: () => {
-//             // Do something
-//           },
-//         }}>
-//         Hey there! I'm a Snackbar.
-//       </Snackbar>
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   snackContainer: {
-//     backgroundColor: 'red',
-//     position: 'relative',
-//     width: '100%',
-//     bottom: 10,
-//     zIndex: 1,
-//   },
-//   snackbar: {
-//     backgroundColor: 'green',
-//   },
-// });
-
 const SignInScreen = ({navigation}) => {
   const dispatch = useDispatch();
 

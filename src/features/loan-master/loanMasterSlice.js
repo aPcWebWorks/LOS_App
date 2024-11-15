@@ -25,7 +25,6 @@ const loanMasterSlice = createSlice({
         state.isLoading = true;
         state.isError = false;
         state.error = null;
-        console.log('pending');
       })
       .addCase(loanMasterHandler.fulfilled, (state, {payload}) => {
         state.loan = payload;
@@ -35,7 +34,6 @@ const loanMasterSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.error = payload;
-        console.log('payload', payload);
       });
   },
 });
@@ -52,7 +50,6 @@ const loanDetailsSlice = createSlice({
         state.isError = null;
       })
       .addCase(loanDetailsHandler.fulfilled, (state, {payload}) => {
-        // state.loanDetails = payload?.records?.record;
         state.loanDetails = payload;
         state.isLoading = false;
         state.isError = null;

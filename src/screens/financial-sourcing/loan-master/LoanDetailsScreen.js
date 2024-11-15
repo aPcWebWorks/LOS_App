@@ -2,11 +2,12 @@ import React, {useEffect} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {ActivityIndicator} from 'react-native-paper';
+import {BackHandler} from 'react-native';
 import {loanDetailsHandler} from '../../../features/loan-master/loanMasterThunk';
 import LoanDetails from '../../../components/Features/financial sourcing/loan-master/LoanDetails';
 import {resetDocumentState} from '../../../features/documents/documentSlice';
 
-const LoanDetailsScreen = ({route}) => {
+const LoanDetailsScreen = ({navigation, route}) => {
   const dispatch = useDispatch();
   const {user} = useSelector(state => state.auth);
   const {loginId} = user.data || {};
@@ -25,6 +26,17 @@ const LoanDetailsScreen = ({route}) => {
 
     handleFiles();
   }, [id]);
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.pop(2);
+      return true;
+    };
+    BackHandler.addEventListener('hardwareBackPress', backAction);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backAction);
+    };
+  }, [navigation]);
 
   const singalLoanDetails = {
     ScpNo: loginId,

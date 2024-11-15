@@ -12,7 +12,6 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {ActivityIndicator, Button} from 'react-native-paper';
 import {Dropdown} from 'react-native-element-dropdown';
-import {BackHandler} from 'react-native';
 import {getAllBankHandller} from '../../../features/loan-master/bank-master/bankMasterThunk';
 import {loanGenerationHandler} from '../../../features/loan-master/loanMasterThunk';
 import {getCustomerWithId} from '../../../features/customer-master/customerMasterThunk';
@@ -53,8 +52,13 @@ const LoanGenerationScreen = ({navigation, route}) => {
   };
 
   useEffect(() => {
-    dispatch(getCustomerWithId(id));
-    dispatch(getAllBankHandller());
+    async function dispatchHandler() {
+      await dispatch(resetDocumentState());
+      dispatch(getCustomerWithId(id));
+      dispatch(getAllBankHandller());
+    }
+
+    dispatchHandler();
   }, [id]);
 
   useEffect(() => {
@@ -79,17 +83,6 @@ const LoanGenerationScreen = ({navigation, route}) => {
 
     setObj(objData);
   }, [customer, scpUser, documents]);
-
-  useEffect(() => {
-    const backAction = () => {
-      navigation.pop(2);
-      return true;
-    };
-    BackHandler.addEventListener('hardwareBackPress', backAction);
-    return () => {
-      BackHandler.removeEventListener('hardwareBackPress', backAction);
-    };
-  }, [navigation]);
 
   const bankChangeHandler = item => {
     setSelectBankQuery(item.value);
@@ -131,24 +124,6 @@ const LoanGenerationScreen = ({navigation, route}) => {
       }
     } catch (error) {
       console.error('Error during loan generation:', error);
-    } finally {
-      setObj([
-        {key: 'SCP No.', value: ''},
-        {key: 'Customer Name', value: ''},
-        {key: 'Gender', value: ''},
-        {key: 'Address', value: ''},
-        {key: 'Pincode', value: ''},
-        {key: 'E-Mail ID', value: ''},
-        {key: 'Mobile', value: ''},
-        {key: 'PAN No.', value: ''},
-        {key: 'Aadhar No.', value: ''},
-        {key: 'Occupation', value: ''},
-        {key: 'ID Photo :', value: ''},
-        {key: 'PAN Photo :', value: ''},
-        {key: 'Aadhar Photo :', value: ''},
-      ]);
-
-      dispatch(resetDocumentState());
     }
   };
 

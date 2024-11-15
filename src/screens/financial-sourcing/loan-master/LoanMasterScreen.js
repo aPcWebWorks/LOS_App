@@ -48,6 +48,10 @@ const LoanMasterScreen = ({navigation}) => {
     dispatch(loanMasterHandler());
   }, [dispatch]);
 
+  useEffect(() => {
+    setVisible(false);
+  }, []);
+
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 

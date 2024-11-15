@@ -10,10 +10,8 @@ const loanMasterHandler = createAsyncThunk(
   async (_id, {rejectWithValue}) => {
     try {
       const response = await axiosInstance.get(
-        'http://192.168.29.113:8589/api/v1/los/loan/master?pageNumber=0&pageSize=2000',
+        `${LOANDETAILS_ENDPOINT}/master?pageNumber=0&pageSize=2000`,
       );
-
-      // const {status, data} = response;
       const {record} = response?.data?.records;
       return record;
     } catch (err) {
@@ -29,7 +27,6 @@ const loanDetailsHandler = createAsyncThunk(
       const {data} = await axiosInstance.get(
         `${LOANDETAILS_ENDPOINT}/${_id}/master`,
       );
-      //  console.log('Loan Details Response Data:', data);
       if (data) {
         await store.dispatch(getCustomerWithId(data?.customerId));
         await store.dispatch(bankMasterHandler(data?.bankId));
@@ -37,13 +34,7 @@ const loanDetailsHandler = createAsyncThunk(
 
       return data;
     } catch (error) {
-      if (error.response && error.response.data.message) {
-        console.log('error.response.data.message', error.response.data.message);
-        return rejectWithValue(error.response.data.message);
-      } else {
-        console.log('error.message', error.message);
-        return rejectWithValue(error.message);
-      }
+      return rejectWithValue(error);
     }
   },
 );
@@ -53,14 +44,13 @@ const getAllLoanTypeHandler = createAsyncThunk(
   async (_, {rejectWithValue}) => {
     try {
       const response = await axiosInstance.get(
-        'http://192.168.29.113:8589/api/v1/los/loan/type?pageNumber=0&pageSize=2000',
+        `${LOANDETAILS_ENDPOINT}/type?pageNumber=0&pageSize=2000`,
       );
       const {status, data} = response;
       const {record} = data.records;
-      //  console.log("Loans",record)
       return record;
     } catch (error) {
-      console.log('get-all-loan', error);
+      return rejectWithValue(error);
     }
   },
 );
@@ -70,7 +60,7 @@ const loanGenerationHandler = createAsyncThunk(
   async (payload, {rejectWithValue}) => {
     try {
       const response = await axiosInstance.post(
-        'http://192.168.29.113:8589/api/v1/los/loan/master',
+        `${LOANDETAILS_ENDPOINT}/master`,
         payload,
       );
 
@@ -86,13 +76,11 @@ const getLoanTypeWithIdHandler = createAsyncThunk(
   async (id, {rejectWithValue}) => {
     try {
       const response = await axiosInstance.get(
-        `http://192.168.29.113:8589/api/v1/los/loan/type/${id}`,
+        `${LOANDETAILS_ENDPOINT}/type/${id}`,
       );
-
-      console.log('get-loantype-with-id', response.data);
       return response;
     } catch (error) {
-      console.log('get-all-loan', error);
+      return rejectWithValue(error);
     }
   },
 );
@@ -102,19 +90,17 @@ const loanUpdateHandler = createAsyncThunk(
   async (payload, {rejectWithValue}) => {
     const {id, formData} = payload;
 
-    console.log('id, payload', formData);
     try {
       const response = await axiosInstance.put(
-        `http://192.168.29.113:8589/api/v1/los/loan/${id}/master`,
+        `${LOANDETAILS_ENDPOINT}/${id}/master`,
         formData,
       );
 
       const {data} = response;
 
-      // console.log('loanUpdateHandler', response);
       return response;
     } catch (error) {
-      console.log('generate-loan', error);
+      return rejectWithValue(error);
     }
   },
 );

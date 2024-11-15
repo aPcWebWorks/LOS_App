@@ -34,7 +34,6 @@ const scpUserDetailsHandler = createAsyncThunk(
   async (_id, {rejectWithValue}) => {
     try {
       const {data} = await axiosInstance.get(`${SCP_ENDPOINT}/${_id}`);
-      // console.log("SCP User Details Data Handler", _id)
       return data;
     } catch (err) {
       return rejectWithValue(err);

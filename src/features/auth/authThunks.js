@@ -53,7 +53,6 @@ const tokenChecker = createAsyncThunk(
 const userLogout = createAsyncThunk(
   'auth/user-logout',
   async (_, {rejectWithValue}) => {
-    console.log('user logout succesfully');
     try {
       await AsyncStorage.clear();
       delete axiosInstance.defaults.headers.common['Authorization'];

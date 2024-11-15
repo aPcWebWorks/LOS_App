@@ -11,7 +11,6 @@ import SearchedCustomers from '../../../components/Features/financial sourcing/l
 const SearchedCustomer = ({route}) => {
   const {params} = route;
 
-  console.log('params', params);
   const {customers, isLoading} = useSelector(
     state => state.searchCustomerByParameter,
   );

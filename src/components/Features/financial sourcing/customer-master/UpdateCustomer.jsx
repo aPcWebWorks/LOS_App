@@ -74,17 +74,6 @@ const UpdateCustomer = ({customer}) => {
     }));
   };
 
-  // const handleSubmit = async () => {
-  //   if (isMinimalChange(formData, updatedFormData)) {
-  //     await dispatch(patchCustomerHandler(formData));
-  //     console.log('patchCustomerHandler', formData);
-  //   } else {
-  //     // dispatch(updateCustomerHandler('CFCFL2DZ9V', updatedFormData));
-  //     console.log('updateCustomerHandler');
-  //   }
-  //   // console.log(formData);
-  // };
-
   const handleSubmit = async () => {
     dispatch(patchCustomerHandler({id: 'CFCFL2DZ9V', credentials: formData}));
   };
@@ -366,7 +355,7 @@ function getStyles(theme) {
       marginTop: 4,
       borderRadius: 4,
       backgroundColor: 'white',
-      paddingHorizontal: 5
+      paddingHorizontal: 5,
     },
 
     customerName: {

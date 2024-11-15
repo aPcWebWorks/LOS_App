@@ -5,23 +5,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {store} from '../../store/store.js';
 import documentHandler from '../documents/documentThunk.js';
 
-// const addcustomer = createAsyncThunk(
-//   'customer_master/addcustomer',
-//   async (formData, {rejectWithValue}) => {
-//     try {
-//       const response = await axiosInstance.post('/customer', formData, {
-//         headers: {'Content-Type': 'multipart/form-data'},
-//       });
-
-//       console.log('response:', response);
-//       return response;
-//     } catch (err) {
-//       console.error('Thunk Error', err);
-//       return rejectWithValue(err.response?.data || err.message);
-//     }
-//   },
-// );
-
 const addcustomer = createAsyncThunk(
   'customer_master/addcustomer',
   async (formData, {rejectWithValue}) => {
@@ -50,7 +33,6 @@ const addcustomer = createAsyncThunk(
 
       const data = await response.json();
 
-      console.log('Response Data:', data);
       return data;
     } catch (err) {
       console.error('Server Error', err);
@@ -134,7 +116,6 @@ const searchCustomerByParameter = createAsyncThunk(
 const patchCustomerHandler = createAsyncThunk(
   'customer/update-customer',
   async ({id, credentials}, thunkAPI) => {
-    console.log('addcustomer', credentials);
     try {
       const config = {
         headers: {
@@ -148,7 +129,6 @@ const patchCustomerHandler = createAsyncThunk(
         config,
       );
 
-      console.log('data', response.data);
       return response;
     } catch (err) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);

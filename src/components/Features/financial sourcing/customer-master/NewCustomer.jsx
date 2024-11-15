@@ -115,7 +115,7 @@ const NewCustomer = () => {
   }, []);
 
   const logFormData = formData => {
-    const entries = Array.from(formData.entries()); // Convert FormData to an array
+    const entries = Array.from(formData.entries());
     entries.forEach(([key, value]) => {
       console.log(`${key}:`, value);
     });

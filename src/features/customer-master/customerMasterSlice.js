@@ -16,15 +16,6 @@ const customerMasterSlice = createSlice({
   name: 'customer-master',
   initialState,
   reducers: {},
-  // filterHandler: (state, {payload}) =>{
-  //   console.log("Filter Handler is clicking", payload);
-  //   state.filteredCustomers = state.customers.filter((customer)=>{
-  //     return (
-  //       customer.customerName===payload.customerName &&
-  //       customer.customerId===payload.customerId &&
-  //       customer.mobilenumber===payload.mobilenumber &&
-  //       customer.email===payload.email
-  //     );
 
   extraReducers: builder => {
     builder
@@ -45,10 +36,6 @@ const customerMasterSlice = createSlice({
   },
 });
 
-// export const customerCredentials = state => state.customer_master;
-// export const {setCredentialsReducer} = customerSlice.actions;
-// export const {filterHandler}=customerMasterSlice.actions;
-
 const getCustomerWithIdSlice = createSlice({
   name: 'getCustomerWithId',
   initialState: {isLoading: false, isError: true, error: null, customer: null},
@@ -61,8 +48,6 @@ const getCustomerWithIdSlice = createSlice({
       .addCase(getCustomerWithId.fulfilled, (state, {payload}) => {
         state.customer = payload?.data;
         state.isLoading = false;
-
-        // console.log("payload", payload.data.documents)
       })
       .addCase(getCustomerWithId.rejected, (state, {payload}) => {
         state.isError = true;
@@ -83,7 +68,6 @@ const searchCustomerByParameterSlice = createSlice({
   reducers: {
     customerParamsClearState: state => {
       state.customerParams = null;
-      console.log('customerParamsClearState');
     },
   },
   extraReducers: builder => {
